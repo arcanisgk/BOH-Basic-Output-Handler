@@ -34,9 +34,15 @@ Standalone implementation that can be used for any project and does not require 
 if you want to collaborate with the development of the library; You can express your ideas or report any situation related to this in:
 https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/issues
 
+## Example output:
+
+![Image of Example Output ](https://i.imgur.com/TNiJK3y.jpg)
+
+
+
 
 ## *[BOH]* Configuration:
 None necessary.
 
 ### Contributors
-- (c) 2020 Walter Francisco Núñez Cruz icarosnet@gmail.com [![Donate](https://img.shields.io/static/v1?label=Donate&message=PayPal.me/wnunez86&color=brightgreen)](https://www.paypal.me/wnunez86/4.99USD)
+- (c) 2021 Walter Francisco Núñez Cruz icarosnet@gmail.com [![Donate](https://img.shields.io/static/v1?label=Donate&message=PayPal.me/wnunez86&color=brightgreen)](https://www.paypal.me/wnunez86/4.99USD)
