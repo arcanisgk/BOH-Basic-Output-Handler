@@ -1,0 +1,16 @@
+{
+  "name": "arcanisgk/boh-basic-ouput-handler",
+  "description": "[BOH] is a very simple PHP [output handler] implementation that show Human readable information instead of using the default PHP Method",
+  "authors": [
+    {
+      "name": "arcanisgk",
+      "email": "icarosnet@gmail.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "IcarosNet\\BOHBasicOutputHandler\\": "src/"
+    }
+  }
+}

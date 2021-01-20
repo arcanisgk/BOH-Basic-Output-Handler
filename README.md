@@ -39,10 +39,22 @@ https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/issues
 ![Image of Example Output ](https://i.imgur.com/TNiJK3y.jpg)
 
 
-
-
 ## *[BOH]* Configuration:
 None necessary.
+
+## *[BOH]* Installation:
+None necessary.
+
+## *[BOH]* Usage:
+
+```php
+
+use \IcarosNet\BOHBasicOuputHandler as Output;
+require __DIR__.'\..\vendor\autoload.php';
+$output = new Output\Output_Handler();
+$output->output('example_array');
+
+```
 
 ### Contributors
 - (c) 2021 Walter Francisco Núñez Cruz icarosnet@gmail.com [![Donate](https://img.shields.io/static/v1?label=Donate&message=PayPal.me/wnunez86&color=brightgreen)](https://www.paypal.me/wnunez86/4.99USD)
