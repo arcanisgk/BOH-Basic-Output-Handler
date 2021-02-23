@@ -52,12 +52,12 @@ class OutputHandler
         }
     }
 
-    public function output($varname)
+    public function output($varname, $retrive = false)
     {
         $indents = $this->getIndent($varname);
         $string  = $this->GetString($varname, $indents);
         $string  = $this->HighlightCode($string);
-        $this->OutView($string);
+        return ($retrive ? $string : $this->OutView($string));
     }
 
     /*
