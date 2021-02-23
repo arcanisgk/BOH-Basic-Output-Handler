@@ -147,7 +147,13 @@ class OutputHandler
             return $r;
         };
         $varlentitle = mb_strlen('$' . $varname);
-        return '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '=[' . str_repeat(" ", $indents['val'] - 1) . '// main array node' . rtrim($pretty($indents, $varlentitle, $var), ',');
+        if (in_array(gettype($var), array('object', 'array'))) {
+            return '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '=[' . str_repeat(" ", $indents['val'] - 1) . '// main array node' . rtrim($pretty($indents, $varlentitle, $var), ',') . ';';
+        } else {
+            $eval = $this->EvalVariable($var);
+            return '$' . $varname . str_repeat(" ", $indents['key']) . '=' . $eval['val'] . ';' . str_repeat(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
+        }
+
     }
 
     public function EvalVariable($var): array
@@ -274,7 +280,7 @@ class OutputHandler
     private function HighlightCode(string $string): string
     {
         $bg = $this->background;
-        return '<style>body{background-color: ' . ($bg == '' ? white : $bg) . '}</style>' . highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10) . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . ";\n?>", true);
+        return '<style>body{background-color: ' . ($bg == '' ? white : $bg) . '}</style>' . highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10) . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true);
     }
 
     private function OutView($string)
