@@ -127,13 +127,20 @@ class OutputHandler
                 $v      = (array) $v;
                 $lenkey = $indents['val'] - mb_strlen($eval['val']) + 1;
                 if (empty($v)) {
-                    $r .= ($in != 0 ? str_repeat($c, $in) : '') . (is_null($k) ? '' : "'$k'" . str_repeat($c, $lenkeys) . "=> " . $eval['val'] . "[]," . str_repeat(" ", $lenkey - 6) . "// " . $eval['desc']) . (empty($v) ? '' : PHP_EOL);
+                    $r .= ($in != 0 ? str_repeat($c, $in) : '') . (is_null($k) ? '' : "'$k'"
+                            . str_repeat($c, $lenkeys) . "=> " . $eval['val'] . "[],"
+                            . str_repeat(" ", $lenkey - 6) . "// "
+                            . $eval['desc']) . (empty($v) ? '' : PHP_EOL);
                 } else {
-                    $r .= ($in != 0 ? str_repeat($c, $in) : '') . (is_null($k) ? '' : "'$k'" . str_repeat($c, $lenkeys) . "=> " . $eval['val'] . "[" . str_repeat(" ", $lenkey - 4) . "// " . $eval['desc']) . (empty($v) ? '' : PHP_EOL);
+                    $r .= ($in != 0 ? str_repeat($c, $in) : '') . (is_null($k) ? '' : "'$k'"
+                            . str_repeat($c, $lenkeys) . "=> " . $eval['val'] . "["
+                            . str_repeat(" ", $lenkey - 4) . "// "
+                            . $eval['desc']) . (empty($v) ? '' : PHP_EOL);
                     foreach ($v as $sk => $vl) {
                         $r .= $pretty($indents, $varlentitle, $vl, $c, $in + 4, $sk) . PHP_EOL;
                     }
-                    $r .= (empty($v) ? '],' : ($in != 0 ? str_repeat($c, $in / 2) : '') . (is_null($v) ? '' : str_repeat($c, $in / 2) . "],"));
+                    $r .= (empty($v) ? '],' : ($in != 0 ? str_repeat($c, $in / 2) : '')
+                        . (is_null($v) ? '' : str_repeat($c, $in / 2) . "],"));
                 }
             } else {
                 $lenkey = $indents['key'] - mb_strlen("'$k'") - $in;
@@ -145,16 +152,21 @@ class OutputHandler
                 if ($lenval < 0) {
                     $lenval = 0;
                 }
-                $r .= ($in != -1 ? str_repeat($c, $in) : '') . (is_null($k) ? '' : "'$k'" . str_repeat($c, $lenkey) . '=> ') . $eval['val'] . str_repeat(" ", $lenval) . '// ' . $eval['desc'];
+                $r .= ($in != -1 ? str_repeat($c, $in) : '') . (is_null($k) ? '' : "'$k'"
+                        . str_repeat($c, $lenkey) . '=> ') . $eval['val']
+                    . str_repeat(" ", $lenval) . '// ' . $eval['desc'];
             }
             return $r;
         };
         $varlentitle = mb_strlen('$' . $varname);
         if (in_array(gettype($var), array('object', 'array'))) {
-            return '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '=[' . str_repeat(" ", $indents['val'] - 1) . '// main array node' . rtrim($pretty($indents, $varlentitle, $var), ',') . ';';
+            return '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '=['
+                . str_repeat(" ", $indents['val'] - 1) . '// main array node'
+                . rtrim($pretty($indents, $varlentitle, $var), ',') . ';';
         } else {
             $eval = $this->EvalVariable($var);
-            return '$' . $varname . str_repeat(" ", $indents['key']) . '=' . $eval['val'] . ';' . str_repeat(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
+            return '$' . $varname . str_repeat(" ", $indents['key']) . '=' . $eval['val'] . ';'
+                . str_repeat(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
         }
 
     }
@@ -243,7 +255,11 @@ class OutputHandler
 
         if (is_string($var)) {
             $arr           = $this->StrSplitUnicode($var);
-            $currencylist  = ['¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴', '₯', '₮', '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥', '₦', '₨', '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿'];
+            $currencylist  = [
+                '¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴',
+                '₯', '₮', '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥', '₦',
+                '₨', '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿'
+            ];
             $currencycheck = [];
             foreach ($arr as $char) {
                 if (in_array($char, $currencylist, true)) {
@@ -251,7 +267,10 @@ class OutputHandler
                 }
             }
             if (!empty($currencycheck)) {
-                return ['val' => "'" . $var . "'", 'desc' => 'string/amount value related to currency (' . implode(',', $currencycheck) . ').'];
+                return [
+                    'val' => "'" . $var . "'", 'desc' => 'string/amount value related to currency ('
+                        . implode(',', $currencycheck) . ').'
+                ];
             }
         }
 
