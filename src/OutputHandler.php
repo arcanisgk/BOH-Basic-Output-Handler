@@ -5,16 +5,16 @@ namespace IcarosNet\BOHBasicOutputHandler;
 
 class OutputHandler
 {
-    public string $background = 'null';
+    public string $background = '';
     public string $themeused;
 
     public function __construct($theme = 'default')
     {
         $this->themeused = $theme;
-        $this->themeselector($theme);
+        $this->ThemeSelector($theme);
     }
 
-    private function themeselector(string $theme)
+    private function ThemeSelector(string $theme)
     {
         switch ($theme) {
             case 'x-space':
@@ -49,12 +49,15 @@ class OutputHandler
                 ini_set("highlight.keyword", "#F92672; font-weight: bold");
                 ini_set("highlight.string", "#A39249");
                 break;
+            default:
+                $this->background = 'white';
+                break;
         }
     }
 
-    public function output($varname, $retrive = false)
+    public function Output($varname, $retrive = false)
     {
-        $indents = $this->getIndent($varname);
+        $indents = $this->GetIndent($varname);
         $string  = $this->GetString($varname, $indents);
         $string  = $this->HighlightCode($string);
         return ($retrive ? $string : $this->OutView($string));
@@ -67,7 +70,7 @@ class OutputHandler
     }
     */
 
-    private function getIndent(string $varname): array
+    private function GetIndent(string $varname): array
     {
         $data    = $GLOBALS[$varname];
         $indents = ['key' => 0, 'val' => 0];
@@ -75,7 +78,7 @@ class OutputHandler
             array_walk_recursive($data, function (&$value) {
                 $value = is_object($value) ? (array) $value : $value;
             });
-            $deep = ($this->calcDeepArray($data) + 1) * 4;
+            $deep = ($this->CalcDeepArray($data) + 1) * 4;
             array_walk_recursive($data, function ($value, $key) use (&$indents) {
                 $indents['key'] = ($indents['key'] >= mb_strlen($key)) ? $indents['key'] : mb_strlen($key);
                 if (!is_array($value) && !is_object($value) && !is_resource($value)) {
@@ -90,12 +93,12 @@ class OutputHandler
         return $indents;
     }
 
-    private function calcDeepArray(array $array): int
+    private function CalcDeepArray(array $array): int
     {
         $max_depth = 0;
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $depth = $this->calcDeepArray($value) + 1;
+                $depth = $this->CalcDeepArray($value) + 1;
                 if ($depth > $max_depth) {
                     $max_depth = $depth;
                 }
@@ -106,7 +109,7 @@ class OutputHandler
 
     private function GetString(string $varname, array $indents): string
     {
-        $var = &$GLOBALS[$varname];
+        $var = $GLOBALS[$varname];
         return $this->AnalVariable($varname, $var, $indents);
     }
 
@@ -206,14 +209,14 @@ class OutputHandler
         ob_start();
         var_dump($var);
         $string = ob_get_clean();
-        if (strpos($string, 'resource') !== false) {
+        if (mb_strpos($string, 'resource') !== false) {
             return ['val' => 'resource', 'desc' => rtrim($string) . '.'];
-        } elseif (strpos($string, 'of type ') !== false) {
+        } elseif (mb_strpos($string, 'of type ') !== false) {
             return ['val' => 'resource', 'desc' => rtrim($string) . '.'];
         }
         unset($string);
 
-        if (strpos($var, ' ') !== false && strpos($var, ':') !== false && strpos($var, '-') !== false) {
+        if (mb_strpos($var, ' ') !== false && mb_strpos($var, ':') !== false && mb_strpos($var, '-') !== false) {
             $datetime = explode(" ", $var);
             $validate = 0;
             foreach ($datetime as $value) {
@@ -226,20 +229,20 @@ class OutputHandler
             }
         }
 
-        if ($this->ValidateDate($var) && strpos($var, ':') !== false) {
+        if ($this->ValidateDate($var) && mb_strpos($var, ':') !== false) {
             return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value time.'];
         }
 
-        if ($this->ValidateDate($var) && mb_strlen($var) >= 8 && strpos($var, '-') !== false) {
+        if ($this->ValidateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
             return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value date.'];
         }
 
-        if ($this->ValidateDate($var) && mb_strlen($var) >= 8 && strpos($var, '-') !== false) {
+        if ($this->ValidateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
             return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value date.'];
         }
 
         if (is_string($var)) {
-            $arr           = $this->strsplitunicode($var);
+            $arr           = $this->StrSplitUnicode($var);
             $currencylist  = ['¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴', '₯', '₮', '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥', '₦', '₨', '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿'];
             $currencycheck = [];
             foreach ($arr as $char) {
@@ -256,15 +259,15 @@ class OutputHandler
             return ['val' => "'" . $var . "'", 'desc' => 'string value of ' . mb_strlen($var) . ' character.'];
         }
 
-        return ['val' => 'unknow', 'desc' => 'unknow'];;
+        return ['val' => 'unknow', 'desc' => 'unknow'];
     }
 
     private function ValidateDate(string $date): bool
     {
-        return ($timestamp = strtotime($date)) != false;
+        return (strtotime($date) !== false);
     }
 
-    private function strsplitunicode(string $str, $length = 1): array
+    private function StrSplitUnicode(string $str, $length = 1): array
     {
         $tmp = preg_split('~~u', $str, -1, PREG_SPLIT_NO_EMPTY);
         if ($length > 1) {
@@ -279,8 +282,11 @@ class OutputHandler
 
     private function HighlightCode(string $string): string
     {
-        $bg = $this->background;
-        return '<style>body{background-color: ' . ($bg == '' ? white : $bg) . '}</style>' . highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10) . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true);
+        $bg    = $this->background;
+        $class = mt_rand();
+        return '<style>.outputhandler-' . $class . '{background-color: ' . $bg . '; padding: 8px}</style><div class="outputhandler-' . $class . '">'
+            . highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10)
+                . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true) . '</div>';
     }
 
     private function OutView(string $string)
