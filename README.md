@@ -36,7 +36,7 @@ https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/issues
 
 ## Example output:
 
-![Image of Example Output ](https://i.imgur.com/TNiJK3y.jpg)
+![Image of Example Output ](https://i.imgur.com/5WQ1Dd4.jpg)
 
 
 ## *[BOH]* Configuration:
