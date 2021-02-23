@@ -303,7 +303,8 @@ class OutputHandler
     {
         $bg    = $this->background;
         $class = mt_rand();
-        return '<style>.outputhandler-' . $class . '{background-color: ' . $bg . '; padding: 8px}</style><div class="outputhandler-' . $class . '">'
+        return '<style>.outputhandler-' . $class
+            . '{background-color: ' . $bg . '; padding: 8px}</style><div class="outputhandler-' . $class . '">'
             . highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10)
                 . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true) . '</div>';
     }
