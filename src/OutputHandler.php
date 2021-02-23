@@ -14,7 +14,7 @@ class OutputHandler
         $this->themeselector($theme);
     }
 
-    private function themeselector($theme)
+    private function themeselector(string $theme)
     {
         switch ($theme) {
             case 'x-space':
@@ -259,12 +259,12 @@ class OutputHandler
         return ['val' => 'unknow', 'desc' => 'unknow'];;
     }
 
-    private function ValidateDate($date): bool
+    private function ValidateDate(string $date): bool
     {
         return ($timestamp = strtotime($date)) != false;
     }
 
-    private function strsplitunicode($str, $length = 1)
+    private function strsplitunicode(string $str, $length = 1): array
     {
         $tmp = preg_split('~~u', $str, -1, PREG_SPLIT_NO_EMPTY);
         if ($length > 1) {
@@ -283,7 +283,7 @@ class OutputHandler
         return '<style>body{background-color: ' . ($bg == '' ? white : $bg) . '}</style>' . highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10) . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true);
     }
 
-    private function OutView($string)
+    private function OutView(string $string)
     {
         echo $string;
     }

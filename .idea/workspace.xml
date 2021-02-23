@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="755b8c6f-f0d5-466c-9881-ab484b81d299" name="Default Changelist" comment="imagen update">
+    <list default="true" id="755b8c6f-f0d5-466c-9881-ab484b81d299" name="Default Changelist" comment="update remove idea">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/OutputHandler.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/OutputHandler.php" afterDir="false" />
     </list>
@@ -54,7 +54,7 @@
       <workItem from="1613931654817" duration="40000" />
       <workItem from="1613932110421" duration="12183000" />
       <workItem from="1613973757075" duration="560000" />
-      <workItem from="1614104540441" duration="3807000" />
+      <workItem from="1614104540441" duration="4952000" />
     </task>
     <task id="LOCAL-00001" summary="First update">
       <created>1611120025186</created>
@@ -77,7 +77,21 @@
       <option name="project" value="LOCAL" />
       <updated>1614105649190</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="BOHBasicOutputHandler RC1">
+      <created>1614108943927</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1614108943927</updated>
+    </task>
+    <task id="LOCAL-00005" summary="update remove idea">
+      <created>1614109021615</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1614109021615</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -97,9 +111,10 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First update" />
-    <MESSAGE value="BOHBasicOutputHandler RC1" />
     <MESSAGE value="imagen update" />
-    <option name="LAST_COMMIT_MESSAGE" value="imagen update" />
+    <MESSAGE value="BOHBasicOutputHandler RC1" />
+    <MESSAGE value="update remove idea" />
+    <option name="LAST_COMMIT_MESSAGE" value="update remove idea" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
