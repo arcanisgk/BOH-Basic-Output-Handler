@@ -29,7 +29,7 @@ namespace IcarosNet\BOHBasicOutputHandler;
  *
  */
 
-if (!version_compare(phpversion(), '7.4', '>=')) {
+if (!version_compare(PHP_VERSION, '7.4', '>=')) {
     die('IcarosNet\BOHBasicOutputHandler requires PHP ver. 7.4 or higher');
 }
 
@@ -45,14 +45,6 @@ if (!defined('ENVIRONMENT_OUTPUT_HANDLER')) {
 
 class OutputHandler
 {
-
-    /**
-     * background color of output.
-     * Options: empty (default), dependent on selected theme.
-     *
-     * @var string
-     */
-    public string $background = '';
 
     /**
      * theme selected by implementer.
@@ -73,6 +65,63 @@ class OutputHandler
      */
     public string $defenv = '';
 
+    /**
+     * List of TOKENS and Respective flags for Cli Themes.
+     *
+     * @var array
+     */
+    const TOKENSLIST = [
+        T_AS                       => "as",
+        T_CLOSE_TAG                => "tag",
+        T_COMMENT                  => "comment",
+        T_CONCAT_EQUAL             => "",
+        T_CONSTANT_ENCAPSED_STRING => "string",
+        T_CONTINUE                 => "keyword",
+        T_DOUBLE_ARROW             => "variable",
+        T_ECHO                     => "keyword",
+        T_ELSE                     => "keyword",
+        T_FILE                     => "magic",
+        T_FOREACH                  => "keyword",
+        T_FUNCTION                 => "keyword",
+        T_IF                       => "keyword",
+        T_IS_EQUAL                 => "",
+        T_ISSET                    => "keyword",
+        T_LIST                     => "keyword",
+        T_OPEN_TAG                 => "tag",
+        T_RETURN                   => "keyword",
+        T_STATIC                   => "keyword",
+        T_VARIABLE                 => "variable",
+        T_WHITESPACE               => "",
+        T_LNUMBER                  => "function",
+        T_DNUMBER                  => "function",
+        T_OBJECT_CAST              => "variable",
+        T_STRING                   => "function",
+        T_INLINE_HTML              => "",
+    ];
+
+    /**
+     * List of CURENCY and Respective flags for Cli Themes.
+     *
+     * @var array
+     */
+    const CURRENCIESLIST = [
+        '¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴', '₯', '₮',
+        '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥', '₦', '₨',
+        '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿'
+    ];
+
+    /**
+     * List of default themes colors.
+     *
+     * @var array
+     */
+    const THEMESLIST = [
+        'x-space'      => ['043,128,041', '099,099,099', '128,128,128', '072,094,187', '221,079,079', '000,000,000'],
+        'mauro-dark'   => ['187,134,252', '250,250,250', '003,218,197', '255,204,255', '207,102,121', '018,018,018'],
+        'natural-flow' => ['145,155,152', '030,156,107', '003,218,197', '006,156,004', '139,156,051', '004,041,003'],
+        'monokai'      => ['117,113,094', '255,255,255', '102,217,239', '249,038,114', '230,219,116', "039,040,034"],
+        'default'      => ['255,095,000', '000,000,255', '000,000,000', '000,175,000', '255,000,000', '255,255,255'],
+    ];
 
     /**
      * definition of colors for implementation in CLI.
@@ -100,7 +149,7 @@ class OutputHandler
      */
     public function __construct($theme = 'default')
     {
-        $this->theme($theme);
+        $this->getTheme($theme);
         $this->defenv = ENVIRONMENT_OUTPUT_HANDLER;
     }
 
@@ -112,9 +161,10 @@ class OutputHandler
         $this->resetHighlight();
     }
 
-    //Theme Code and Highlight
-
-    public function resetHighlight()
+    /**
+     * Call for reset of Theme colors in Web.
+     */
+    public function resetHighlight(): void
     {
         ini_set("highlight.comment", "#FF9900");
         ini_set("highlight.default", "#0000BB");
@@ -129,30 +179,14 @@ class OutputHandler
      * @param  string  $theme
      * Options: 'default' (default),'monokai','natural-flow','mauro-dark','x-space'
      */
-    public function theme(string $theme = 'default'): void
+    public function getTheme(string $theme = 'default'): void
     {
-        $this->themeused = $theme;
-        switch ($theme) {
-            case 'x-space':
-                $color            = ['043,128,041', '099,099,099', '128,128,128', '072,094,187', '221,079,079', '000,000,000'];
-                $this->background = '000000';
-                break;
-            case 'mauro-dark':
-                $color            = ['187,134,252', '250,250,250', '003,218,197', '255,204,255', '207,102,121', '018,018,018'];
-                $this->background = '121212';
-                break;
-            case 'natural-flow':
-                $color            = ['145,155,152', '30,156,107', '003,218,197', '006,156,004', '139,156,51', '004,041,003'];
-                $this->background = '042903';
-                break;
-            case 'monokai':
-                $color            = ['117,113,94', '255,255,255', '102,217,239', '249,038,114', '230,219,116', "039,040,034"];
-                $this->background = '272822';
-                break;
-            default:
-                $color            = ['255,095,000', '000,000,255', '000,000,000', '000,175,000', '255,000,000', '255,255,255'];
-                $this->background = 'ffffff';
-                break;
+        if (isset(self::THEMESLIST[$theme])) {
+            $color           = self::THEMESLIST[$theme];
+            $this->themeused = $theme;
+        } else {
+            $color           = self::THEMESLIST['default'];
+            $this->themeused = 'default';
         }
         $this->setHighlightTheme($color);
         $this->setHighlightThemeCli($color);
@@ -165,11 +199,11 @@ class OutputHandler
      */
     private function setHighlightTheme(array $color): void
     {
-        ini_set("highlight.comment", 'rgb(' . $color[0] . '); background-color: #' . $this->background);
-        ini_set("highlight.default", 'rgb(' . $color[1] . '); background-color: #' . $this->background);
-        ini_set("highlight.html", 'rgb(' . $color[2] . '); background-color: #' . $this->background);
-        ini_set("highlight.keyword", 'rgb(' . $color[3] . "); font-weight: bold; background-color: #" . $this->background);
-        ini_set("highlight.string", 'rgb(' . $color[4] . ');background-color: #' . $this->background);
+        ini_set("highlight.comment", 'rgb(' . $color[0] . '); background-color: rgb(' . $color[5] . ');');
+        ini_set("highlight.default", 'rgb(' . $color[1] . '); background-color: rgb(' . $color[5] . ');');
+        ini_set("highlight.html", 'rgb(' . $color[2] . '); background-color: rgb(' . $color[5] . ');');
+        ini_set("highlight.keyword", 'rgb(' . $color[3] . "); font-weight: bold; background-color: rgb(" . $color[5] . ');');
+        ini_set("highlight.string", 'rgb(' . $color[4] . '); background-color: rgb(' . $color[5] . ');');
     }
 
     /**
@@ -230,35 +264,7 @@ class OutputHandler
         $bg     = $this->colorcli['background'];
         $string = '<?php' . PHP_EOL . $string . PHP_EOL . '?>';
         $string = $this->adjusterSpaceLine($string);
-        $COLORS = $this->colorcli;
-        $TOKENS = [
-            T_AS                       => "as",
-            T_CLOSE_TAG                => "tag",
-            T_COMMENT                  => "comment",
-            T_CONCAT_EQUAL             => "",
-            T_CONSTANT_ENCAPSED_STRING => "string",
-            T_CONTINUE                 => "keyword",
-            T_DOUBLE_ARROW             => "variable",
-            T_ECHO                     => "keyword",
-            T_ELSE                     => "keyword",
-            T_FILE                     => "magic",
-            T_FOREACH                  => "keyword",
-            T_FUNCTION                 => "keyword",
-            T_IF                       => "keyword",
-            T_IS_EQUAL                 => "",
-            T_ISSET                    => "keyword",
-            T_LIST                     => "keyword",
-            T_OPEN_TAG                 => "tag",
-            T_RETURN                   => "keyword",
-            T_STATIC                   => "keyword",
-            T_VARIABLE                 => "variable",
-            T_WHITESPACE               => "",
-            T_LNUMBER                  => "function",
-            T_DNUMBER                  => "function",
-            T_OBJECT_CAST              => "variable",
-            T_STRING                   => "function",
-            T_INLINE_HTML              => "",
-        ];
+        $colors = $this->colorcli;
         $output = "";
         foreach (token_get_all($string) as $token) {
             if (is_string($token)) {
@@ -268,17 +274,17 @@ class OutputHandler
             list($t, $str) = $token;
             if ($t == T_STRING) {
                 if (function_exists($str)) {
-                    $output .= $bg . sprintf($COLORS["function"], $str) . "\033[0m";
+                    $output .= $bg . sprintf($colors["function"], $str) . "\033[0m";
                 } else {
                     if (defined($str)) {
-                        $output .= $bg . sprintf($COLORS["function"], $str) . "\033[0m";
+                        $output .= $bg . sprintf($colors["function"], $str) . "\033[0m";
                     } else {
-                        $output .= $bg . sprintf($COLORS["function"], $str) . "\033[0m";
+                        $output .= $bg . sprintf($colors["function"], $str) . "\033[0m";
                     }
                 }
             } else {
-                if (isset($TOKENS[$t])) {
-                    $output .= $bg . sprintf($COLORS[$TOKENS[$t]], $str) . "\033[0m";
+                if (isset(self::TOKENSLIST[$t])) {
+                    $output .= $bg . sprintf($colors[self::TOKENSLIST[$t]], $str) . "\033[0m";
                 } else {
                     $output .= $bg . sprintf("<%s '%s'>", token_name($t), $str) . "\033[0m";
                 }
@@ -333,7 +339,7 @@ class OutputHandler
      */
     private function applyCss(string $string): string
     {
-        $bg    = '#' . $this->background;
+        $bg    = 'rgb(' . self::THEMESLIST[$this->themeused][5] . ')';
         $class = mt_rand();
         return '<style>
                     .outputhandler-' . $class . '{
@@ -360,7 +366,7 @@ class OutputHandler
     private function checkEnv($env): string
     {
         $iscli = IsCommandLineInterface();
-        $env   = $env == null ? $this->defenv : $env;
+        $env   = $env ?? $this->defenv;
         if ($iscli && $env == 'wb') {
             echo 'error: you are trying to run output() method from CLI and it is not supported, use OutputCli() or AdvanceOutput() with CLI argument  method instead.';
             exit;
@@ -497,7 +503,7 @@ class OutputHandler
         $varname     = 'variable';
         $pretty      = function ($indents, $varlentitle, $v = '', $c = " ", $in = 0, $k = null) use (&$pretty) {
             $r = '';
-            if (in_array(gettype($v), array('object', 'array'))) {
+            if (in_array(gettype($v), ['object', 'array'])) {
                 $lenname = mb_strlen("'$k'");
                 $lenkeys = $indents['key'] - $in - $lenname;
                 if ($lenkeys < 0) {
@@ -519,8 +525,8 @@ class OutputHandler
                     foreach ($v as $sk => $vl) {
                         $r .= $pretty($indents, $varlentitle, $vl, $c, $in + 4, $sk) . PHP_EOL;
                     }
-                    $r .= (empty($v) ? '],' : ($in != 0 ? str_repeat($c, $in / 2) : '')
-                        . (is_null($v) ? '' : str_repeat($c, $in / 2) . "],"));
+                    $r .= (empty($v) ? '],' : ($in != 0 ? str_repeat($c, $in / 2) : '') .
+                        (is_null($v) ? '' : str_repeat($c, $in / 2) . "],"));
                 }
             } else {
                 $lenkey = $indents['key'] - mb_strlen("'$k'") - $in;
@@ -539,8 +545,8 @@ class OutputHandler
             return $r;
         };
         $varlentitle = mb_strlen('$' . $varname);
-        if (in_array(gettype($var), array('object', 'array'))) {
-            $string = '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '= ['
+        if (in_array(gettype($var), ['object', 'array'])) {
+            $string = '$' . $varname . str_repeat(" ", (($indents['key'] - $varlentitle) >= 0 ? $indents['key'] - $varlentitle : 1)) . '= ['
                 . str_repeat(" ", $indents['val'] - 2) . '// main array node'
                 . rtrim($pretty($indents, $varlentitle, $var), ',') . ';';
         } else {
@@ -562,11 +568,8 @@ class OutputHandler
     protected function evaluateVariable($var): array
     {
         if (null === $var || 'null' === $var || 'NULL' === $var) {
-            if (is_string($var)) {
-                return ['val' => "'null'", 'desc' => 'null value string.'];
-            } else {
-                return ['val' => 'null', 'desc' => 'null value.'];
-            }
+            return is_string($var) ? ['val' => "'null'", 'desc' => 'null value string.'] :
+                ['val' => 'null', 'desc' => 'null value.'];
         }
 
         if (is_array($var)) {
@@ -574,11 +577,9 @@ class OutputHandler
         }
 
         if (in_array($var, ["true", "false", true, false], true)) {
-            if (is_string($var)) {
-                return ['val' => "'" . $var . "'", 'desc' => 'string value boolean ' . $var . '.'];
-            } else {
-                return ['val' => ($var ? 'true' : 'false'), 'desc' => 'boolean value ' . ($var ? 'true' : 'false') . '.'];
-            }
+            return is_string($var) ? ['val' => "'" . $var . "'", 'desc' => 'string value boolean ' . $var . '.'] :
+                ['val' => ($var ? 'true' : 'false'), 'desc' => 'boolean value ' . ($var ? 'true' : 'false') . '.'];
+
         }
 
         if (is_object($var)) {
@@ -589,19 +590,13 @@ class OutputHandler
         }
 
         if ((int) $var == $var && is_numeric($var)) {
-            if (is_string($var)) {
-                return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') integer value string.'];
-            } else {
-                return ['val' => $var, 'desc' => '(' . mb_strlen($var) . ') integer value.'];
-            }
+            return is_string($var) ? ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') integer value string.'] :
+                ['val' => $var, 'desc' => '(' . mb_strlen($var) . ') integer value.'];
         }
 
         if ((float) $var == $var && is_numeric($var)) {
-            if (is_string($var)) {
-                return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') float value string.'];
-            } else {
-                return ['val' => $var, 'desc' => '(' . mb_strlen($var) . ') float value.'];
-            }
+            return is_string($var) ? ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') float value string.'] :
+                ['val' => $var, 'desc' => '(' . mb_strlen($var) . ') float value.'];
         }
 
         ob_start();
@@ -641,14 +636,9 @@ class OutputHandler
 
         if (is_string($var)) {
             $arr           = $this->splitStrToUnicode($var);
-            $currencylist  = [
-                '¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴',
-                '₯', '₮', '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥', '₦',
-                '₨', '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿'
-            ];
             $currencycheck = [];
             foreach ($arr as $char) {
-                if (in_array($char, $currencylist, true)) {
+                if (in_array($char, self::CURRENCIESLIST, true)) {
                     $currencycheck[] = $char;
                 }
             }
@@ -664,7 +654,7 @@ class OutputHandler
             return ['val' => "'" . $var . "'", 'desc' => 'string value of ' . mb_strlen($var) . ' character.'];
         }
 
-        return ['val' => 'unknow', 'desc' => 'unknow'];
+        return ['val' => 'unknown', 'desc' => 'unknown'];
     }
 
     /**

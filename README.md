@@ -1,7 +1,7 @@
 # [BOH] Basic Output Handler for PHP
 
 [![GitHub license](https://img.shields.io/github/license/arcanisgk/BOH-Basic-Ouput-Handler)](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/blob/main/LICENSE)
-[![State](https://img.shields.io/static/v1?label=release&message=1.0.0&color=blue 'Latest known version')](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/tree/v0.1.3-alpha) <!-- __SEMANTIC_VERSION_LINE__ -->
+[![State](https://img.shields.io/static/v1?label=release&message=v1.0.4&color=blue 'Latest known version')](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/tree/v1.0.4) <!-- __SEMANTIC_VERSION_LINE__ -->
 [![GitHub issues](https://img.shields.io/github/issues/arcanisgk/BOH-Basic-Ouput-Handler)](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/issues)
 [![Minimum PHP version](https://img.shields.io/static/v1?label=PHP&message=7.4.0+or+higher&color=blue "Minimum PHP version")](https://www.php.net/releases/7_4_0.php)
 
@@ -60,8 +60,8 @@ $output = new Output\Output_Handler();
 ```php
 
 //you can define the theme to be used in the output in web or cli:
-$output = new Output\Output_Handler('monokai');         //in the class Instance or
-$output->Theme('monokai');                              //call the method Theme
+$output = new Output\Output_Handler('monokai'); //in the class Instance or
+$output->Theme('monokai');                      //call the method Theme
 ```
 
 
@@ -79,5 +79,29 @@ $output->output($example_array,'cli',true); // an cli can retrive strings.
 
 ![Image of Example Output ](https://i.imgur.com/5WQ1Dd4.jpg)
 
+## Unit Test for output:
+
+Unit test Pending for version v1.1.0
+
 ### Contributors
-- (c) 2021 Walter Francisco Núñez Cruz icarosnet@gmail.com [![Donate](https://img.shields.io/static/v1?label=Donate&message=PayPal.me/wnunez86&color=brightgreen)](https://www.paypal.me/wnunez86/4.99USD)
+- (c) 2020 - 2021 Walter Francisco Núñez Cruz icarosnet@gmail.com [![Donate](https://img.shields.io/static/v1?label=Donate&message=PayPal.me/wnunez86&color=brightgreen)](https://www.paypal.me/wnunez86/4.99USD)
+
+### I want to give special credit to the Help, Collaboration and Support of the programmers fron php.net, StackExchange Community and Reddit(/r/PHPhelp/):
+
+- Mr_What4 (Reddit)
+- CyberJack77 (Reddit)
+- requinix (PHP.net)
+- patricio-moracho (SOes)
+- quevedo (SOes)
+- mauricio-contreras (SOes)
+- gbianchi (SOes)
+- Triby (SOes)
+- Marcos (SOes)
+- anythingg (SOes)
+- mdfst13 (CodeReview SE)
+- Sᴀᴍ Onᴇᴌᴀ (CodeReview SE)
+- mast (CodeReview SE)
+- der-kommissar (CodeReview SE)
+- peilonrayz (CodeReview SE)
+
+### Those who have supported me in this project in an invaluable way, Greetings Guys.

@@ -14,26 +14,31 @@ require __DIR__ . '\..\vendor\autoload.php';
  */
 class FooBar
 {
-    function foo_function()
+    function foofunction()
     {
         return "Hello World!";
     }
 }
 
 /**
- * $var_class is a variable storage of instance class FooBar.
+ * $varclass is a variable storage of instance class FooBar.
  */
-$var_class = new FooBar;
+$varclass = new FooBar;
 
 /**
- * $example_single is a short variable to use as an example.
+ * $examplesingle is a short variable to use as an example.
  */
-$example_single = 'Hello World';
+$examplesingle = 'Hello World';
 
 /**
- * $example_array is a large array variable to use as an example.
+ * $exampleshortarray is a short variable to use as an example.
  */
-$example_array = [
+$exampleshortarray = ['a' => 1, 'b' => 2];
+
+/**
+ * $examplearray is a large array variable to use as an example.
+ */
+$examplearray = [
     'null'         => null,
     'null_text'    => 'null',
     'integer'      => 10,
@@ -72,7 +77,7 @@ $example_array = [
     ],
     'objects_list' => [
         'object_empty' => (object) [],
-        'class'        => $var_class,
+        'class'        => $varclass,
         'resource'     => curl_init(),
     ],
 ];
@@ -81,12 +86,16 @@ $example_array = [
 $output = new Output\OutputHandler();
 
 //Theme Selection
-$output->theme('monokai');
+$output->getTheme('monokai');
 
 //example 1:
-$output->output($example_array);
+$output->output($examplearray);
 
-$output->theme('natural-flow');
+$output->getTheme('natural-flow');
+
 //example 2:
-$output->output($example_array);
+$output->output($examplearray);
+
+//example 3:
+$output->output($exampleshortarray);
 
