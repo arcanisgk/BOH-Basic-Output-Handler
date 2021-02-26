@@ -1,10 +1,43 @@
 <?php
 
+/**
+ * BOHBasicOutputHandler - Data output manager in PHP development environments.
+ * PHP Version 7.4.
+ *
+ * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
+ *
+ * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
+ * @copyright 2020 - 2021 Marcus Bointon
+ * @license   http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+ * @note      This program is distributed in the hope that it will be useful
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
 namespace IcarosNet\BOHBasicOutputHandler;
+
+/**
+ * BOHBasicOutputHandler - Data output manager in PHP development environments.
+ *
+ * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
+ */
+
+/**
+ * Validation of php version.
+ * strictly equal to or greater than 7.4
+ * a minor version will kill any script.
+ *
+ */
 
 if (!version_compare(phpversion(), '7.4', '>=')) {
     die('IcarosNet\BOHBasicOutputHandler requires PHP ver. 7.4 or higher');
 }
+
+/**
+ * Validation of the environment of use.
+ * support for web and cli environments
+ *
+ */
 
 if (!defined('ENVIRONMENT_OUTPUT_HANDLER')) {
     define('ENVIRONMENT_OUTPUT_HANDLER', (IsCommandLineInterface() ? 'cli' : 'web'));
@@ -12,9 +45,40 @@ if (!defined('ENVIRONMENT_OUTPUT_HANDLER')) {
 
 class OutputHandler
 {
+
+    /**
+     * background color of output.
+     * Options: empty (default), dependent on selected theme.
+     *
+     * @var string
+     */
     public string $background = '';
+
+    /**
+     * theme selected by implementer.
+     * Options: null (default), __construct update to 'default' or theme selected.
+     * 'default','monokai','natural-flow','mauro-dark','x-space'
+     *
+     * @var string
+     */
     public string $themeused;
+
+    /**
+     * capture the environment for usage in the class.
+     * Options: empty (default), __construct update to 'ENVIRONMENT_OUTPUT_HANDLER'
+     * constant or implementor defined environment.
+     * 'cli','web'
+     *
+     * @var string
+     */
     public string $defenv = '';
+
+
+    /**
+     * definition of colors for implementation in CLI.
+     *
+     * @var array
+     */
     public array $colorcli = [
         "comment"    => '',
         "constant"   => '',
@@ -29,20 +93,28 @@ class OutputHandler
         "background" => '',
     ];
 
+    /**
+     * Constructor.
+     *
+     * @param  string  $theme
+     */
     public function __construct($theme = 'default')
     {
-        $this->Theme($theme);
+        $this->theme($theme);
         $this->defenv = ENVIRONMENT_OUTPUT_HANDLER;
     }
 
+    /**
+     * Destructor.
+     */
     public function __destruct()
     {
-        $this->ResetHighlight();
+        $this->resetHighlight();
     }
 
     //Theme Code and Highlight
 
-    public function ResetHighlight()
+    public function resetHighlight()
     {
         ini_set("highlight.comment", "#FF9900");
         ini_set("highlight.default", "#0000BB");
@@ -51,7 +123,13 @@ class OutputHandler
         ini_set("highlight.string", "#DD0000");
     }
 
-    public function Theme(string $theme = 'default')
+    /**
+     * Call theme() for theme select by implementer.
+     *
+     * @param  string  $theme
+     * Options: 'default' (default),'monokai','natural-flow','mauro-dark','x-space'
+     */
+    public function theme(string $theme = 'default'): void
     {
         $this->themeused = $theme;
         switch ($theme) {
@@ -76,11 +154,16 @@ class OutputHandler
                 $this->background = 'ffffff';
                 break;
         }
-        $this->UpdateInitSetHighlight($color);
-        $this->UpdateInitSetHighlightCli($color);
+        $this->setHighlightTheme($color);
+        $this->setHighlightThemeCli($color);
     }
 
-    private function UpdateInitSetHighlight($color)
+    /**
+     * Sets color of theme selected for web design.
+     *
+     * @param  array  $color
+     */
+    private function setHighlightTheme(array $color): void
     {
         ini_set("highlight.comment", 'rgb(' . $color[0] . '); background-color: #' . $this->background);
         ini_set("highlight.default", 'rgb(' . $color[1] . '); background-color: #' . $this->background);
@@ -89,36 +172,64 @@ class OutputHandler
         ini_set("highlight.string", 'rgb(' . $color[4] . ');background-color: #' . $this->background);
     }
 
-    private function UpdateInitSetHighlightCli($color)
+    /**
+     * Sets color of theme selected for cli design.
+     *
+     * @param  array  $color
+     */
+    private function setHighlightThemeCli(array $color): void
     {
-        $this->colorcli['comment']    = "\033[38;2;" . $this->RGBforCLI($color[0]) . "m%s\033[0m";
-        $this->colorcli['constant']   = "\033[38;2;" . $this->RGBforCLI($color[4]) . "m%s\033[0m";
-        $this->colorcli['function']   = "\033[38;2;" . $this->RGBforCLI($color[1]) . "m%s\033[0m";
-        $this->colorcli['keyword']    = "\033[38;2;" . $this->RGBforCLI($color[3]) . "m%s\033[0m";
-        $this->colorcli['magic']      = "\033[38;2;" . $this->RGBforCLI($color[1]) . "m%s\033[0m";
-        $this->colorcli['string']     = "\033[38;2;" . $this->RGBforCLI($color[4]) . "m%s\033[0m";
-        $this->colorcli['tag']        = "\033[38;2;" . $this->RGBforCLI($color[1]) . "m%s\033[0m";
-        $this->colorcli['variable']   = "\033[38;2;" . $this->RGBforCLI($color[3]) . "m%s\033[0m";
-        $this->colorcli['html']       = "\033[38;2;" . $this->RGBforCLI($color[2]) . "m%s\033[0m";
-        $this->colorcli['background'] = "\033[48;2;" . $this->RGBforCLI($color[5]) . "m";
+        $this->colorcli['comment']    = "\033[38;2;" . $this->colorRGBforCLI($color[0]) . "m%s\033[0m";
+        $this->colorcli['constant']   = "\033[38;2;" . $this->colorRGBforCLI($color[4]) . "m%s\033[0m";
+        $this->colorcli['function']   = "\033[38;2;" . $this->colorRGBforCLI($color[1]) . "m%s\033[0m";
+        $this->colorcli['keyword']    = "\033[38;2;" . $this->colorRGBforCLI($color[3]) . "m%s\033[0m";
+        $this->colorcli['magic']      = "\033[38;2;" . $this->colorRGBforCLI($color[1]) . "m%s\033[0m";
+        $this->colorcli['string']     = "\033[38;2;" . $this->colorRGBforCLI($color[4]) . "m%s\033[0m";
+        $this->colorcli['tag']        = "\033[38;2;" . $this->colorRGBforCLI($color[1]) . "m%s\033[0m";
+        $this->colorcli['variable']   = "\033[38;2;" . $this->colorRGBforCLI($color[3]) . "m%s\033[0m";
+        $this->colorcli['html']       = "\033[38;2;" . $this->colorRGBforCLI($color[2]) . "m%s\033[0m";
+        $this->colorcli['background'] = "\033[48;2;" . $this->colorRGBforCLI($color[5]) . "m";
     }
 
-    private function RGBforCLI($color)
+    /**
+     * Convert RGB color String from web standard to ANSI color .
+     *
+     * @param  string  $color
+     *
+     * @return string
+     */
+    private function colorRGBforCLI(string $color): string
     {
         return str_replace(',', ';', $color);
     }
 
-    private function HighlightCode(string $string): string
+    /**
+     * Convert normal string output of variable to
+     * String highlight like php code for web output
+     *
+     * @param  string  $string
+     *
+     * @return string
+     */
+    private function highlightCode(string $string): string
     {
         return highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10)
             . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true);
     }
 
-    private function HighlightCodeCli(string $string): string
+    /**
+     * Convert normal string output of variable to
+     * String highlight like php code for cli output
+     *
+     * @param  string  $string
+     *
+     * @return string
+     */
+    protected function highlightCodeCli(string $string): string
     {
         $bg     = $this->colorcli['background'];
         $string = '<?php' . PHP_EOL . $string . PHP_EOL . '?>';
-        $string = $this->CoverforBackground($string);
+        $string = $this->adjusterSpaceLine($string);
         $COLORS = $this->colorcli;
         $TOKENS = [
             T_AS                       => "as",
@@ -176,8 +287,14 @@ class OutputHandler
         return $output;
     }
 
-
-    private function CoverforBackground(string $string): string
+    /**
+     * space adjuster at the end of the line for full background coverage in cli
+     *
+     * @param  string  $string
+     *
+     * @return string
+     */
+    private function adjusterSpaceLine(string $string): string
     {
         $info      = shell_exec('MODE 2> null') ?? shell_exec('tput cols');
         $widthreal = 80;
@@ -207,17 +324,31 @@ class OutputHandler
         return $string;
     }
 
-    private function ApplyCss(string $string): string
+    /**
+     * CSS applicator for web design.
+     *
+     * @param  string  $string
+     *
+     * @return string
+     */
+    private function applyCss(string $string): string
     {
         $bg    = '#' . $this->background;
         $class = mt_rand();
-        return '<style>.outputhandler-' . $class . '{background-color: ' . $bg . '; padding: 8px;border-radius: 8px;}</style>
+        return '<style>.outputhandler-' . $class . '{background-color: ' . $bg . '; padding: 8px;border-radius: 8px; margin: 5px}</style>
                     <div class="outputhandler-' . $class . '">' . $string . '</div>';
     }
 
-    //core Analysis or OuputHandler
-
-    private function CheckEnv($env): string
+    /**
+     * environment checker; if the implementer is wrong;
+     * the library will abort any execution immediately
+     * and display an error message stating that it has happened.
+     *
+     * @param  null|string  $env
+     *
+     * @return string
+     */
+    private function checkEnv($env): string
     {
         $iscli = IsCommandLineInterface();
         $env   = ($env == null ? $this->defenv : $env);
@@ -231,41 +362,74 @@ class OutputHandler
         return $env;
     }
 
-    public function Output($var, $env = null, $retrive = false)
+    /**
+     * Check and Execute the request to show the formatted data.
+     *
+     * @param  mixed  $var
+     * @param  null|string  $env
+     * @param  bool  $retrieve
+     *
+     * @return void|string
+     */
+    public function output($var, $env = null, $retrieve = false)
     {
-        $env = $this->CheckEnv($env);
+        $env = $this->checkEnv($env);
         if ($env == 'web') {
-            $string = $this->OutputWb($var, $retrive);
+            $string = $this->outputWb($var, $retrieve);
         } elseif ($env == 'cli') {
-            $string = $this->OutputCli($var, $retrive);
+            $string = $this->outputCli($var, $retrieve);
         } else {
-            $string = $this->OutputWb($var, $retrive);
+            $string = $this->outputWb($var, $retrieve);
         }
-        if ($retrive) {
+        if ($retrieve) {
             return $string;
         }
     }
 
-    public function OutputWb($var, $retrive = false)
+    /**
+     * Check and Execute the request to show the formatted data for web environment.
+     *
+     * @param  mixed  $var
+     * @param  bool  $retrieve
+     *
+     * @return void|string
+     */
+    public function outputWb($var, $retrieve = false)
     {
-        $indents = $this->GetIndent($var);
-        $string  = $this->GetString($var, $indents);
-        $string  = $this->HighlightCode($string);
-        $string  = $this->ApplyCss($string);
-        $this->ResetHighlight();
-        return ($retrive ? $string : $this->OutView($string));
+        $indents = $this->getIndent($var);
+        $string  = $this->analyzeVariable($var, $indents);
+        $string  = $this->highlightCode($string);
+        $string  = $this->applyCss($string);
+        $this->resetHighlight();
+        return ($retrieve ? $string : $this->outView($string));
     }
 
-    public function OutputCli($var, $retrive = false)
+    /**
+     * Check and Execute the request to show the formatted data for cli environment.
+     *
+     * @param  mixed  $var
+     * @param  bool  $retrieve
+     *
+     * @return void|string
+     */
+    public function outputCli($var, $retrieve = false)
     {
-        $indents = $this->GetIndent($var);
-        $string  = $this->GetString($var, $indents);
-        $string  = $this->HighlightCodeCli($string);
-        $this->ResetHighlight();
-        return ($retrive ? $string : $this->OutView($string));
+        $indents = $this->getIndent($var);
+        $string  = $this->analyzeVariable($var, $indents);
+        $string  = $this->highlightCodeCli($string);
+        $this->resetHighlight();
+        return ($retrieve ? $string : $this->outView($string));
     }
 
-    private function GetIndent($var): array
+    /**
+     * Evaluates the indentation that the values and
+     * comments should have in the construction of the output
+     *
+     * @param  mixed  $var
+     *
+     * @return array
+     */
+    private function getIndent($var): array
     {
         $data    = $var;
         $indents = ['key' => 0, 'val' => 0];
@@ -273,7 +437,7 @@ class OutputHandler
             array_walk_recursive($data, function (&$value) {
                 $value = is_object($value) ? (array) $value : $value;
             });
-            $deep = ($this->CalcDeepArray($data) + 1) * 4;
+            $deep = ($this->calcDeepArray($data) + 1) * 4;
             array_walk_recursive($data, function ($value, $key) use (&$indents) {
                 $indents['key'] = ($indents['key'] >= mb_strlen($key)) ? $indents['key'] : mb_strlen($key);
                 if (!is_array($value) && !is_object($value) && !is_resource($value)) {
@@ -288,12 +452,20 @@ class OutputHandler
         return $indents;
     }
 
-    private function CalcDeepArray(array $array): int
+    /**
+     * Calculates how many nodes deep the passed variable has if it is an array or object.
+     * note: it does not calculate the number of total nodes.
+     *
+     * @param  array  $array
+     *
+     * @return int
+     */
+    private function calcDeepArray(array $array): int
     {
         $max_depth = 0;
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $depth = $this->CalcDeepArray($value) + 1;
+                $depth = $this->calcDeepArray($value) + 1;
                 if ($depth > $max_depth) {
                     $max_depth = $depth;
                 }
@@ -302,13 +474,18 @@ class OutputHandler
         return $max_depth;
     }
 
-    private function GetString($var, array $indents): string
+    /**
+     * This should parse each variable passed and build the output string,
+     * similar to var_dump or var_export.
+     *
+     * @param  mixed  $var
+     * @param  array  $indents
+     *
+     * @return string
+     */
+    protected function analyzeVariable($var, array $indents): string
     {
-        return $this->AnalysisVariable('variable', $var, $indents);
-    }
-
-    private function AnalysisVariable(string $varname, $var, array $indents): string
-    {
+        $varname     = 'variable';
         $pretty      = function ($indents, $varlentitle, $v = '', $c = " ", $in = 0, $k = null) use (&$pretty) {
             $r = '';
             if (in_array(gettype($v), array('object', 'array'))) {
@@ -317,7 +494,7 @@ class OutputHandler
                 if ($lenkeys < 0) {
                     $lenkeys = 0;
                 }
-                $eval   = $this->EvaluateVariable($v);
+                $eval   = $this->evaluateVariable($v);
                 $v      = (array) $v;
                 $lenkey = $indents['val'] - mb_strlen($eval['val']) + 1;
                 if (empty($v)) {
@@ -341,7 +518,7 @@ class OutputHandler
                 if ($lenkey < 0) {
                     $lenkey = 0;
                 }
-                $eval   = $this->EvaluateVariable($v);
+                $eval   = $this->evaluateVariable($v);
                 $lenval = $indents['val'] - (mb_strlen("'" . $eval['val'] . "'"));
                 if ($lenval < 0) {
                     $lenval = 0;
@@ -354,17 +531,26 @@ class OutputHandler
         };
         $varlentitle = mb_strlen('$' . $varname);
         if (in_array(gettype($var), array('object', 'array'))) {
-            return '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '= ['
+            $string = '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '= ['
                 . str_repeat(" ", $indents['val'] - 2) . '// main array node'
                 . rtrim($pretty($indents, $varlentitle, $var), ',') . ';';
         } else {
-            $eval = $this->EvaluateVariable($var);
-            return '$' . $varname . str_repeat(" ", $indents['key']) . '=' . $eval['val'] . ';'
+            $eval   = $this->evaluateVariable($var);
+            $string = '$' . $varname . str_repeat(" ", $indents['key']) . '=' . $eval['val'] . ';'
                 . str_repeat(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
         }
+        return $string;
     }
 
-    public function EvaluateVariable($var): array
+    /**
+     * This should analyze each variable passed indicate the value and description of it.
+     * note: the description is a rich text.
+     *
+     * @param  mixed  $var
+     *
+     * @return array
+     */
+    protected function evaluateVariable($var): array
     {
         if (null === $var || 'null' === $var || 'NULL' === $var) {
             if (is_string($var)) {
@@ -386,14 +572,12 @@ class OutputHandler
             }
         }
 
-        ob_start();
-        var_dump($var);
-        $string = ob_get_clean();
         if (is_object($var)) {
-            $string = explode('{', $string);
-            return ['val' => '(object) ', 'desc' => rtrim($string[0]) . '.'];
+            ob_start();
+            var_dump($var);
+            $string = explode('{', ob_get_clean());
+            return ['val' => '(object) ', 'desc' => rtrim(reset($string)) . '.'];
         }
-        unset($string);
 
         if ((int) $var == $var && is_numeric($var)) {
             if (is_string($var)) {
@@ -425,7 +609,7 @@ class OutputHandler
             $datetime = explode(" ", $var);
             $validate = 0;
             foreach ($datetime as $value) {
-                if ($this->ValidateDate($value)) {
+                if ($this->validateDate($value)) {
                     $validate++;
                 }
             }
@@ -434,20 +618,20 @@ class OutputHandler
             }
         }
 
-        if ($this->ValidateDate($var) && mb_strpos($var, ':') !== false) {
+        if ($this->validateDate($var) && mb_strpos($var, ':') !== false) {
             return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value time.'];
         }
 
-        if ($this->ValidateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
+        if ($this->validateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
             return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value date.'];
         }
 
-        if ($this->ValidateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
+        if ($this->validateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
             return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value date.'];
         }
 
         if (is_string($var)) {
-            $arr           = $this->StrSplitUnicode($var);
+            $arr           = $this->splitStrToUnicode($var);
             $currencylist  = [
                 '¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴',
                 '₯', '₮', '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥', '₦',
@@ -474,12 +658,27 @@ class OutputHandler
         return ['val' => 'unknow', 'desc' => 'unknow'];
     }
 
-    private function ValidateDate(string $date): bool
+    /**
+     * This should validate Date String.
+     *
+     * @param  string  $date
+     *
+     * @return bool
+     */
+    private function validateDate(string $date): bool
     {
         return (strtotime($date) !== false);
     }
 
-    private function StrSplitUnicode(string $str, $length = 1): array
+    /**
+     * This should cut the strings in unicode format.
+     *
+     * @param  string  $str
+     * @param  int  $length  default 1
+     *
+     * @return array
+     */
+    private function splitStrToUnicode(string $str, $length = 1): array
     {
         $tmp = preg_split('~~u', $str, -1, PREG_SPLIT_NO_EMPTY);
         if ($length > 1) {
@@ -492,12 +691,22 @@ class OutputHandler
         return $tmp;
     }
 
-    private function OutView(string $string)
+    /**
+     * This should send the text on screen.
+     *
+     * @param  string  $string
+     */
+    private function outView(string $string): void
     {
         echo $string;
     }
 }
 
+/**
+ * check if runtime environment is CLI
+ *
+ * @return bool
+ */
 function IsCommandLineInterface(): bool
 {
     return (php_sapi_name() === 'cli');

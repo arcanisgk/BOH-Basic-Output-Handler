@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * This example shows how the BOHBasicOutputHandler class and its methods are declared.
+ */
+
+//Import the PHPMailer class into the global namespace
 use \IcarosNet\BOHBasicOutputHandler as Output;
 
 require __DIR__ . '\..\vendor\autoload.php';
@@ -15,11 +20,20 @@ class FooBar
     }
 }
 
+/**
+ * $var_class is a variable storage of instance class FooBar.
+ */
 $var_class = new FooBar;
 
+/**
+ * $example_single is a short variable to use as an example.
+ */
 $example_single = 'Hello World';
 
-$example_array = [//1
+/**
+ * $example_array is a large array variable to use as an example.
+ */
+$example_array = [
     'null'         => null,
     'null_text'    => 'null',
     'integer'      => 10,
@@ -37,19 +51,19 @@ $example_array = [//1
     'datetime_4'   => '2021-Jan-17 17:31:00',
     'currency_1'   => '1.45$',
     'currency_2'   => 'db£ 1.45 ₹',
-    'array'        => [//2
+    'array'        => [
         'boolean_true'       => true,
         'boolean_false'      => false,
         'boolean_true_text'  => 'true',
         'boolean_false_text' => 'false',
-        'object'             => (object) [//3
+        'object'             => (object) [
             'key_index_most' => 'Hello Wolrd',
-            'joder'          => [//4
+            'joder'          => [
                 'prueba' => 'prueba',
             ]
         ],
-        'nested'             => [                                               // deep = 3 no cuenta ya existe
-            'other_obj' => (object) [                               // deep = 4 no cuenta ya existe
+        'nested'             => [
+            'other_obj' => (object) [
                 'apple',
                 'banana',
                 'coconut',
@@ -63,8 +77,16 @@ $example_array = [//1
     ],
 ];
 
+//Instance Class BOHBasicOutputHandler
 $output = new Output\OutputHandler();
-$output->Theme('monokai');
-$output->Output($example_array);
 
-// Other Examples:
+//Theme Selection
+$output->theme('monokai');
+
+//example 1:
+$output->output($example_array);
+
+$output->theme('natural-flow');
+//example 2:
+$output->output($example_array);
+
