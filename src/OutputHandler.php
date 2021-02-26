@@ -2,73 +2,268 @@
 
 namespace IcarosNet\BOHBasicOutputHandler;
 
+if (!version_compare(phpversion(), '7.4', '>=')) {
+    die('IcarosNet\BOHBasicOutputHandler requires PHP ver. 7.4 or higher');
+}
+
+if (!defined('ENVIRONMENT_OUTPUT_HANDLER')) {
+    define('ENVIRONMENT_OUTPUT_HANDLER', (IsCommandLineInterface() ? 'cli' : 'web'));
+}
 
 class OutputHandler
 {
     public string $background = '';
     public string $themeused;
+    public string $defenv = '';
+    public array $colorcli = [
+        "comment"    => '',
+        "constant"   => '',
+        "function"   => '',
+        "keyword"    => '',
+        "magic"      => '',
+        "string"     => '',
+        "tag"        => '',
+        "variable"   => '',
+        "html"       => '',
+        ""           => "%s",
+        "background" => '',
+    ];
 
     public function __construct($theme = 'default')
     {
-        $this->themeused = $theme;
-        $this->ThemeSelector($theme);
+        $this->Theme($theme);
+        $this->defenv = ENVIRONMENT_OUTPUT_HANDLER;
     }
 
-    private function ThemeSelector(string $theme)
+    public function __destruct()
     {
+        $this->ResetHighlight();
+    }
+
+    //Theme Code and Highlight
+
+    public function ResetHighlight()
+    {
+        ini_set("highlight.comment", "#FF9900");
+        ini_set("highlight.default", "#0000BB");
+        ini_set("highlight.html", "#000000");
+        ini_set("highlight.keyword", "#007700; font-weight: bold");
+        ini_set("highlight.string", "#DD0000");
+    }
+
+    public function Theme(string $theme = 'default')
+    {
+        $this->themeused = $theme;
         switch ($theme) {
             case 'x-space':
-                $this->background = 'black';
-                ini_set("highlight.comment", "#2B8029");
-                ini_set("highlight.default", "#636363");
-                ini_set("highlight.html", "#808080");
-                ini_set("highlight.keyword", "#485EBB; font-weight: bold");
-                ini_set("highlight.string", "#DD4F4F");
+                $color            = ['043,128,041', '099,099,099', '128,128,128', '072,094,187', '221,079,079', '000,000,000'];
+                $this->background = '000000';
                 break;
             case 'mauro-dark':
-                $this->background = '#121212';
-                ini_set("highlight.comment", "#BB86FC");
-                ini_set("highlight.default", "#FAFAFA");
-                ini_set("highlight.html", "#03DAC5");
-                ini_set("highlight.keyword", "#FF7597; font-weight: bold");
-                ini_set("highlight.string", "#CF6679");
+                $color            = ['187,134,252', '250,250,250', '003,218,197', '255,204,255', '207,102,121', '018,018,018'];
+                $this->background = '121212';
                 break;
             case 'natural-flow':
-                $this->background = '#042903';
-                ini_set("highlight.comment", "#919B98");
-                ini_set("highlight.default", "#1E9C6B");
-                ini_set("highlight.html", "#03DAC5");
-                ini_set("highlight.keyword", "#069C04; font-weight: bold");
-                ini_set("highlight.string", "#8B9C33");
+                $color            = ['145,155,152', '30,156,107', '003,218,197', '006,156,004', '139,156,51', '004,041,003'];
+                $this->background = '042903';
                 break;
             case 'monokai':
-                $this->background = '#272822';
-                ini_set("highlight.comment", "#70716A");
-                ini_set("highlight.default", "#FAFAFA");
-                ini_set("highlight.html", "#03DAC5");
-                ini_set("highlight.keyword", "#F92672; font-weight: bold");
-                ini_set("highlight.string", "#A39249");
+                $color            = ['117,113,94', '255,255,255', '102,217,239', '249,038,114', '230,219,116', "039,040,034"];
+                $this->background = '272822';
                 break;
             default:
+                $color            = ['255,095,000', '000,000,255', '000,000,000', '000,175,000', '255,000,000', '255,255,255'];
                 $this->background = 'white';
                 break;
         }
+        $this->UpdateInitSetHighlight($color);
+        $this->UpdateInitSetHighlightCli($color);
     }
 
-    public function Output($varname, $retrive = false)
+    private function UpdateInitSetHighlight($color)
+    {
+        ini_set("highlight.comment", 'rgb(' . $color[0] . ')');
+        ini_set("highlight.default", 'rgb(' . $color[1] . ')');
+        ini_set("highlight.html", 'rgb(' . $color[2] . ')');
+        ini_set("highlight.keyword", 'rgb(' . $color[3] . "); font-weight: bold");
+        ini_set("highlight.string", 'rgb(' . $color[4] . ')');
+    }
+
+    private function UpdateInitSetHighlightCli($color)
+    {
+        $this->colorcli['comment']    = "\033[38;2;" . $this->RGBforCLI($color[0]) . "m%s\033[0m";
+        $this->colorcli['constant']   = "\033[38;2;" . $this->RGBforCLI($color[4]) . "m%s\033[0m";
+        $this->colorcli['function']   = "\033[38;2;" . $this->RGBforCLI($color[1]) . "m%s\033[0m";
+        $this->colorcli['keyword']    = "\033[38;2;" . $this->RGBforCLI($color[3]) . "m%s\033[0m";
+        $this->colorcli['magic']      = "\033[38;2;" . $this->RGBforCLI($color[1]) . "m%s\033[0m";
+        $this->colorcli['string']     = "\033[38;2;" . $this->RGBforCLI($color[4]) . "m%s\033[0m";
+        $this->colorcli['tag']        = "\033[38;2;" . $this->RGBforCLI($color[1]) . "m%s\033[0m";
+        $this->colorcli['variable']   = "\033[38;2;" . $this->RGBforCLI($color[3]) . "m%s\033[0m";
+        $this->colorcli['html']       = "\033[38;2;" . $this->RGBforCLI($color[2]) . "m%s\033[0m";
+        $this->colorcli['background'] = "\033[48;2;" . $this->RGBforCLI($color[5]) . "m";
+    }
+
+    private function RGBforCLI($color)
+    {
+        return str_replace(',', ';', $color);
+    }
+
+    private function HighlightCode(string $string): string
+    {
+        return highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10)
+            . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true);
+    }
+
+    private function HighlightCodeCli(string $string): string
+    {
+        $bg     = $this->colorcli['background'];
+        $string = '<?php' . PHP_EOL . $string . PHP_EOL . '?>';
+        $string = $this->CoverforBackground($string);
+        $COLORS = $this->colorcli;
+        $TOKENS = [
+            T_AS                       => "as",
+            T_CLOSE_TAG                => "tag",
+            T_COMMENT                  => "comment",
+            T_CONCAT_EQUAL             => "",
+            T_CONSTANT_ENCAPSED_STRING => "string",
+            T_CONTINUE                 => "keyword",
+            T_DOUBLE_ARROW             => "variable",
+            T_ECHO                     => "keyword",
+            T_ELSE                     => "keyword",
+            T_FILE                     => "magic",
+            T_FOREACH                  => "keyword",
+            T_FUNCTION                 => "keyword",
+            T_IF                       => "keyword",
+            T_IS_EQUAL                 => "",
+            T_ISSET                    => "keyword",
+            T_LIST                     => "keyword",
+            T_OPEN_TAG                 => "tag",
+            T_RETURN                   => "keyword",
+            T_STATIC                   => "keyword",
+            T_VARIABLE                 => "variable",
+            T_WHITESPACE               => "",
+            T_LNUMBER                  => "function",
+            T_DNUMBER                  => "function",
+            T_OBJECT_CAST              => "variable",
+            T_STRING                   => "function",
+            T_INLINE_HTML              => "",
+        ];
+        $output = "";
+        foreach (token_get_all($string) as $token) {
+            if (is_string($token)) {
+                $output .= $bg . $token . "\033[0m";
+                continue;
+            }
+            list($t, $str) = $token;
+            if ($t == T_STRING) {
+                if (function_exists($str)) {
+                    $output .= $bg . sprintf($COLORS["function"], $str) . "\033[0m";
+                } else {
+                    if (defined($str)) {
+                        $output .= $bg . sprintf($COLORS["function"], $str) . "\033[0m";
+                    } else {
+                        $output .= $bg . sprintf($COLORS["function"], $str) . "\033[0m";
+                    }
+                }
+            } else {
+                if (isset($TOKENS[$t])) {
+                    $output .= $bg . sprintf($COLORS[$TOKENS[$t]], $str) . "\033[0m";
+                } else {
+                    $output .= $bg . sprintf("<%s '%s'>", token_name($t), $str) . "\033[0m";
+                }
+            }
+        }
+        return $output;
+    }
+
+
+    private function CoverforBackground(string $string): string
+    {
+        $info      = shell_exec('MODE 2> null') ?? shell_exec('tput cols');
+        $widthreal = 80;
+        if (strlen($info) > 5) {
+            preg_match('/CON.*:(\n[^|]+?){3}(?<cols>\d+)/', $info, $match);
+            $widthreal = $match['cols'] ?? 80;
+        }
+        $width     = (int) $widthreal - 10;
+        $stringarr = preg_split('/\r\n|\r|\n/', rtrim($string));
+        $numline   = count($stringarr);
+        $maxlen    = max(array_map(function ($el) {
+            return mb_strlen($el);
+        }, $stringarr));
+        $longest   = ($maxlen > $width ? $maxlen : $width);
+        if ($maxlen > $widthreal) {
+            echo 'Oops, your terminal window is not wide enough to display the information correctly.' . PHP_EOL .
+                'If you can increase the amount of characters per line (' . ($maxlen + 10) . ') it would work correctly.';
+            exit;
+        }
+        $string = '';
+        $count  = 1;
+        foreach ($stringarr as $key => $line) {
+            $lenline = mb_strlen($line);
+            $string  .= $line . str_repeat(' ', $longest - $lenline) . ($count < $numline ? PHP_EOL : '');
+            $count++;
+        }
+        return $string;
+    }
+
+    private function ApplyCss(string $string): string
+    {
+        $bg    = '#' . $this->background;
+        $class = mt_rand();
+        return '<style>.outputhandler-' . $class . '{background-color: ' . $bg . '; padding: 8px;border-radius: 8px;}</style>
+                    <div class="outputhandler-' . $class . '">' . $string . '</div>';
+    }
+
+    //core Analysis or OuputHandler
+
+    private function CheckEnv($env): string
+    {
+        $iscli = IsCommandLineInterface();
+        $env   = ($env == null ? $this->defenv : $env);
+        if ($iscli && $env == 'wb') {
+            echo 'error: you are trying to run output() method from CLI and it is not supported, use OutputCli() or AdvanceOutput() with CLI argument  method instead.';
+            exit;
+        } elseif (!$iscli && $env == 'cli') {
+            echo 'error: you are trying to run OutputCli() method from web browser and it is not supported, use Output() or AdvanceOutput() with HTML argument method instead.';
+            exit;
+        }
+        return $env;
+    }
+
+    public function Output($varname, $env = null, $retrive = false)
+    {
+        $env = $this->CheckEnv($env);
+        if ($env == 'web') {
+            $string = $this->OutputWb($varname, $retrive);
+        } elseif ($env == 'cli') {
+            $string = $this->OutputCli($varname, $retrive);
+        } else {
+            $string = $this->OutputWb($varname, $retrive);
+        }
+        if ($retrive) {
+            return $string;
+        }
+    }
+
+    public function OutputWb($varname, $retrive = false)
     {
         $indents = $this->GetIndent($varname);
         $string  = $this->GetString($varname, $indents);
         $string  = $this->HighlightCode($string);
+        $string  = $this->ApplyCss($string);
+        $this->ResetHighlight();
         return ($retrive ? $string : $this->OutView($string));
     }
 
-    /*
-    public function AdvanceOutput($var)
+    public function OutputCli($varname, $retrive = false)
     {
-        echo 'hello world';
+        $indents = $this->GetIndent($varname);
+        $string  = $this->GetString($varname, $indents);
+        $string  = $this->HighlightCodeCli($string);
+        $this->ResetHighlight();
+        return ($retrive ? $string : $this->OutView($string));
     }
-    */
 
     private function GetIndent(string $varname): array
     {
@@ -110,10 +305,10 @@ class OutputHandler
     private function GetString(string $varname, array $indents): string
     {
         $var = $GLOBALS[$varname];
-        return $this->AnalVariable($varname, $var, $indents);
+        return $this->AnalysisVariable($varname, $var, $indents);
     }
 
-    private function AnalVariable(string $varname, $var, array $indents): string
+    private function AnalysisVariable(string $varname, $var, array $indents): string
     {
         $pretty      = function ($indents, $varlentitle, $v = '', $c = " ", $in = 0, $k = null) use (&$pretty) {
             $r = '';
@@ -123,7 +318,7 @@ class OutputHandler
                 if ($lenkeys < 0) {
                     $lenkeys = 0;
                 }
-                $eval   = $this->EvalVariable($v);
+                $eval   = $this->EvaluateVariable($v);
                 $v      = (array) $v;
                 $lenkey = $indents['val'] - mb_strlen($eval['val']) + 1;
                 if (empty($v)) {
@@ -147,7 +342,7 @@ class OutputHandler
                 if ($lenkey < 0) {
                     $lenkey = 0;
                 }
-                $eval   = $this->EvalVariable($v);
+                $eval   = $this->EvaluateVariable($v);
                 $lenval = $indents['val'] - (mb_strlen("'" . $eval['val'] . "'"));
                 if ($lenval < 0) {
                     $lenval = 0;
@@ -160,18 +355,17 @@ class OutputHandler
         };
         $varlentitle = mb_strlen('$' . $varname);
         if (in_array(gettype($var), array('object', 'array'))) {
-            return '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '=['
-                . str_repeat(" ", $indents['val'] - 1) . '// main array node'
+            return '$' . $varname . str_repeat(" ", ($indents['key'] - $varlentitle)) . '= ['
+                . str_repeat(" ", $indents['val'] - 2) . '// main array node'
                 . rtrim($pretty($indents, $varlentitle, $var), ',') . ';';
         } else {
-            $eval = $this->EvalVariable($var);
+            $eval = $this->EvaluateVariable($var);
             return '$' . $varname . str_repeat(" ", $indents['key']) . '=' . $eval['val'] . ';'
                 . str_repeat(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
         }
-
     }
 
-    public function EvalVariable($var): array
+    public function EvaluateVariable($var): array
     {
         if (null === $var || 'null' === $var || 'NULL' === $var) {
             if (is_string($var)) {
@@ -299,18 +493,13 @@ class OutputHandler
         return $tmp;
     }
 
-    private function HighlightCode(string $string): string
-    {
-        $bg    = $this->background;
-        $class = mt_rand();
-        return '<style>.outputhandler-' . $class
-            . '{background-color: ' . $bg . '; padding: 8px}</style><div class="outputhandler-' . $class . '">'
-            . highlight_string("<?php \n#output of Variable:" . str_repeat(' ', 10)
-                . '*****| Theme Used: ' . $this->themeused . " |*****\n" . $string . "\n?>", true) . '</div>';
-    }
-
     private function OutView(string $string)
     {
         echo $string;
     }
+}
+
+function IsCommandLineInterface(): bool
+{
+    return (php_sapi_name() === 'cli');
 }

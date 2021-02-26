@@ -52,8 +52,8 @@ None necessary.
 use \IcarosNet\BOHBasicOuputHandler as Output;
 require __DIR__.'\..\vendor\autoload.php';
 $output = new Output\Output_Handler();
-$output->output('example_array');
-
+$output->output('example_array');       // send the name of the variable
+$output->output('example_array',true);  // or a second argument true if you whant retrive the string instead of output.
 ```
 
 ### Contributors
