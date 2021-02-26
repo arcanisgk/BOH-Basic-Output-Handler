@@ -27,5 +27,8 @@ cabal.project.local~
 *.log
 *.idea*
 /vendor/
+/others/
+
+
 # Semantic version script itself is @internal thing and should be excluded from the root commits
 /semantic-version.php
