@@ -73,7 +73,7 @@ class OutputHandler
                 break;
             default:
                 $color            = ['255,095,000', '000,000,255', '000,000,000', '000,175,000', '255,000,000', '255,255,255'];
-                $this->background = 'white';
+                $this->background = 'ffffff';
                 break;
         }
         $this->UpdateInitSetHighlight($color);
@@ -82,11 +82,11 @@ class OutputHandler
 
     private function UpdateInitSetHighlight($color)
     {
-        ini_set("highlight.comment", 'rgb(' . $color[0] . ')');
-        ini_set("highlight.default", 'rgb(' . $color[1] . ')');
-        ini_set("highlight.html", 'rgb(' . $color[2] . ')');
-        ini_set("highlight.keyword", 'rgb(' . $color[3] . "); font-weight: bold");
-        ini_set("highlight.string", 'rgb(' . $color[4] . ')');
+        ini_set("highlight.comment", 'rgb(' . $color[0] . '); background-color: #' . $this->background);
+        ini_set("highlight.default", 'rgb(' . $color[1] . '); background-color: #' . $this->background);
+        ini_set("highlight.html", 'rgb(' . $color[2] . '); background-color: #' . $this->background);
+        ini_set("highlight.keyword", 'rgb(' . $color[3] . "); font-weight: bold; background-color: #" . $this->background);
+        ini_set("highlight.string", 'rgb(' . $color[4] . ');background-color: #' . $this->background);
     }
 
     private function UpdateInitSetHighlightCli($color)
