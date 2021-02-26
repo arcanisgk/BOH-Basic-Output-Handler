@@ -34,27 +34,50 @@ Standalone implementation that can be used for any project and does not require 
 if you want to collaborate with the development of the library; You can express your ideas or report any situation related to this in:
 https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/issues
 
-## Example output:
-
-![Image of Example Output ](https://i.imgur.com/5WQ1Dd4.jpg)
-
-
 ## *[BOH]* Configuration:
 None necessary.
 
 ## *[BOH]* Installation:
-None necessary.
+
+```cmd
+composer require arcanisgk/boh-basic-ouput-handler
+or 
+composer require arcanisgk/boh-basic-ouput-handler --dev
+```
 
 ## *[BOH]* Usage:
 
+### Instance of Class
 ```php
 
 use \IcarosNet\BOHBasicOuputHandler as Output;
 require __DIR__.'\..\vendor\autoload.php';
 $output = new Output\Output_Handler();
-$output->output('example_array');       // send the name of the variable
-$output->output('example_array',true);  // or a second argument true if you whant retrive the string instead of output.
 ```
+
+### Customiced colors palette:
+
+```php
+
+//you can define the theme to be used in the output in web or cli:
+$output = new Output\Output_Handler('monokai');         //in the class Instance or
+$output->Theme('monokai');                              //call the method Theme
+```
+
+
+### Options for Method:
+```php
+
+$output->output($example_array);            // send the variable and library would check the best output for you.
+$output->output($example_array,'web');      // or send a second argument for enviroment 'web' or 'cli'.
+$output->output($example_array,'web',true); // if you need retrive the string instead of output send true in thirt param.
+$output->output($example_array,'cli');      // the library support output for CLI enviroment.
+$output->output($example_array,'cli',true); // an cli can retrive strings.
+```
+
+## Example output:
+
+![Image of Example Output ](https://i.imgur.com/5WQ1Dd4.jpg)
 
 ### Contributors
 - (c) 2021 Walter Francisco Núñez Cruz icarosnet@gmail.com [![Donate](https://img.shields.io/static/v1?label=Donate&message=PayPal.me/wnunez86&color=brightgreen)](https://www.paypal.me/wnunez86/4.99USD)
