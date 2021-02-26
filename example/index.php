@@ -65,6 +65,6 @@ $example_array = [//1
 
 $output = new Output\OutputHandler();
 $output->Theme('monokai');
-$output->Output('example_array');
+$output->Output($example_array);
 
 // Other Examples:

@@ -231,43 +231,43 @@ class OutputHandler
         return $env;
     }
 
-    public function Output($varname, $env = null, $retrive = false)
+    public function Output($var, $env = null, $retrive = false)
     {
         $env = $this->CheckEnv($env);
         if ($env == 'web') {
-            $string = $this->OutputWb($varname, $retrive);
+            $string = $this->OutputWb($var, $retrive);
         } elseif ($env == 'cli') {
-            $string = $this->OutputCli($varname, $retrive);
+            $string = $this->OutputCli($var, $retrive);
         } else {
-            $string = $this->OutputWb($varname, $retrive);
+            $string = $this->OutputWb($var, $retrive);
         }
         if ($retrive) {
             return $string;
         }
     }
 
-    public function OutputWb($varname, $retrive = false)
+    public function OutputWb($var, $retrive = false)
     {
-        $indents = $this->GetIndent($varname);
-        $string  = $this->GetString($varname, $indents);
+        $indents = $this->GetIndent($var);
+        $string  = $this->GetString($var, $indents);
         $string  = $this->HighlightCode($string);
         $string  = $this->ApplyCss($string);
         $this->ResetHighlight();
         return ($retrive ? $string : $this->OutView($string));
     }
 
-    public function OutputCli($varname, $retrive = false)
+    public function OutputCli($var, $retrive = false)
     {
-        $indents = $this->GetIndent($varname);
-        $string  = $this->GetString($varname, $indents);
+        $indents = $this->GetIndent($var);
+        $string  = $this->GetString($var, $indents);
         $string  = $this->HighlightCodeCli($string);
         $this->ResetHighlight();
         return ($retrive ? $string : $this->OutView($string));
     }
 
-    private function GetIndent(string $varname): array
+    private function GetIndent($var): array
     {
-        $data    = $GLOBALS[$varname];
+        $data    = $var;
         $indents = ['key' => 0, 'val' => 0];
         if (is_array($data) || is_object($data)) {
             array_walk_recursive($data, function (&$value) {
@@ -283,7 +283,7 @@ class OutputHandler
             $indents['key'] += $deep;
             $indents['val'] += $deep / 2;
         } else {
-            $indents = ['key' => mb_strlen($varname), 'val' => mb_strlen($data)];
+            $indents = ['key' => mb_strlen('variable'), 'val' => mb_strlen($data)];
         }
         return $indents;
     }
@@ -302,10 +302,9 @@ class OutputHandler
         return $max_depth;
     }
 
-    private function GetString(string $varname, array $indents): string
+    private function GetString($var, array $indents): string
     {
-        $var = $GLOBALS[$varname];
-        return $this->AnalysisVariable($varname, $var, $indents);
+        return $this->AnalysisVariable('variable', $var, $indents);
     }
 
     private function AnalysisVariable(string $varname, $var, array $indents): string
