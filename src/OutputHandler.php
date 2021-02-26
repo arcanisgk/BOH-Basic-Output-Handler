@@ -335,8 +335,17 @@ class OutputHandler
     {
         $bg    = '#' . $this->background;
         $class = mt_rand();
-        return '<style>.outputhandler-' . $class . '{background-color: ' . $bg . '; padding: 8px;border-radius: 8px; margin: 5px}</style>
-                    <div class="outputhandler-' . $class . '">' . $string . '</div>';
+        return '<style>
+                    .outputhandler-' . $class . '{
+                        background-color: ' . $bg . '; padding: 8px;
+                        border-radius: 8px;
+                        margin: 5px;
+                    }
+                    .outputhandler-' . $class . ' > code {
+                    padding: unset;
+                    }
+                </style>
+                <div class="outputhandler-' . $class . '">' . $string . '</div>';
     }
 
     /**
