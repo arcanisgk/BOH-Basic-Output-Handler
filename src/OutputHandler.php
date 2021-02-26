@@ -7,7 +7,7 @@
  * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
  *
  * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
- * @copyright 2020 - 2021 Marcus Bointon
+ * @copyright 2020 - 2021 Walter Nuñez.
  * @license   http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
  * @note      This program is distributed in the hope that it will be useful
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -360,7 +360,7 @@ class OutputHandler
     private function checkEnv($env): string
     {
         $iscli = IsCommandLineInterface();
-        $env   = ($env == null ? $this->defenv : $env);
+        $env   = $env == null ? $this->defenv : $env;
         if ($iscli && $env == 'wb') {
             echo 'error: you are trying to run output() method from CLI and it is not supported, use OutputCli() or AdvanceOutput() with CLI argument  method instead.';
             exit;
