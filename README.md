@@ -1,7 +1,7 @@
 # [BOH] Basic Output Handler for PHP
 
 [![GitHub license](https://img.shields.io/github/license/arcanisgk/BOH-Basic-Ouput-Handler)](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/blob/main/LICENSE)
-[![State](https://img.shields.io/static/v1?label=release&message=v1.0.4&color=blue 'Latest known version')](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/tree/v1.0.4) <!-- __SEMANTIC_VERSION_LINE__ -->
+[![State](https://img.shields.io/static/v1?label=release&message=v1.0.5&color=blue 'Latest known version')](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/tree/v1.0.5) <!-- __SEMANTIC_VERSION_LINE__ -->
 [![GitHub issues](https://img.shields.io/github/issues/arcanisgk/BOH-Basic-Ouput-Handler)](https://github.com/arcanisgk/BOH-Basic-Ouput-Handler/issues)
 [![Minimum PHP version](https://img.shields.io/static/v1?label=PHP&message=7.4.0+or+higher&color=blue "Minimum PHP version")](https://www.php.net/releases/7_4_0.php)
 

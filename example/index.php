@@ -14,7 +14,17 @@ require __DIR__ . '\..\vendor\autoload.php';
  */
 class FooBar
 {
-    function foofunction()
+    public string $pub_string = 'hello world!';
+    protected int $pro_int = 10;
+    private array $priv_array = ['a' => 1, 'b' => 2];
+    const CONST_OBJECT = ['a' => 1, 'b' => 2];
+
+    public function foofunction()
+    {
+        return "Hello World!";
+    }
+
+    protected function foofunction2()
     {
         return "Hello World!";
     }
@@ -95,6 +105,8 @@ $output->getTheme('natural-flow');
 
 //example 2:
 $output->output($examplearray);
+
+$output->getTheme('x-space');
 
 //example 3:
 $output->output($exampleshortarray);

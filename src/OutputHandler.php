@@ -449,11 +449,16 @@ class OutputHandler
         $data    = $var;
         $indents = ['key' => 0, 'val' => 0];
         if (is_array($data) || is_object($data)) {
+            $data = (array) $data;
             array_walk_recursive($data, function (&$value) {
                 $value = is_object($value) ? (array) $value : $value;
             });
             $deep = ($this->calcDeepArray($data) + 1) * 4;
             array_walk_recursive($data, function ($value, $key) use (&$indents) {
+                if (mb_strpos($key, chr(0)) !== false) {
+                    $key = str_replace(chr(0), "'::'", $key);
+                    $key = substr($key, 4);
+                }
                 $indents['key'] = ($indents['key'] >= mb_strlen($key)) ? $indents['key'] : mb_strlen($key);
                 if (!is_array($value) && !is_object($value) && !is_resource($value)) {
                     $indents['val'] = ($indents['val'] >= mb_strlen($value)) ? $indents['val'] : mb_strlen($value);
@@ -479,8 +484,8 @@ class OutputHandler
     {
         $max_depth = 0;
         foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $depth = $this->calcDeepArray($value) + 1;
+            if (is_array($value) || is_object($value)) {
+                $depth = $this->calcDeepArray((array) $value) + 1;
                 if ($depth > $max_depth) {
                     $max_depth = $depth;
                 }
@@ -501,9 +506,14 @@ class OutputHandler
     protected function analyzeVariable($var, array $indents): string
     {
         $varname     = 'variable';
+        $data        = $var;
         $pretty      = function ($indents, $varlentitle, $v = '', $c = " ", $in = 0, $k = null) use (&$pretty) {
             $r = '';
             if (in_array(gettype($v), ['object', 'array'])) {
+                if (mb_strpos($k, chr(0)) !== false) {
+                    $k = str_replace(chr(0), "'::'", $k);
+                    $k = substr($k, 4);
+                }
                 $lenname = mb_strlen("'$k'");
                 $lenkeys = $indents['key'] - $in - $lenname;
                 if ($lenkeys < 0) {
@@ -529,6 +539,9 @@ class OutputHandler
                         (is_null($v) ? '' : str_repeat($c, $in / 2) . "],"));
                 }
             } else {
+                if (mb_strpos($k, chr(0)) !== false) {
+                    $k = str_replace(chr(0), "", $k);
+                }
                 $lenkey = $indents['key'] - mb_strlen("'$k'") - $in;
                 if ($lenkey < 0) {
                     $lenkey = 0;
@@ -542,15 +555,15 @@ class OutputHandler
                         . str_repeat($c, $lenkey) . '=> ') . $eval['val']
                     . str_repeat(" ", $lenval) . '// ' . $eval['desc'];
             }
-            return $r;
+            return str_replace("\0", "", $r);
         };
         $varlentitle = mb_strlen('$' . $varname);
         if (in_array(gettype($var), ['object', 'array'])) {
             $string = '$' . $varname . str_repeat(" ", (($indents['key'] - $varlentitle) >= 0 ? $indents['key'] - $varlentitle : 1)) . '= ['
-                . str_repeat(" ", $indents['val'] - 2) . '// main array node'
-                . rtrim($pretty($indents, $varlentitle, $var), ',') . ';';
+                . str_repeat(" ", $indents['val'] - 2) . '// main array node.'
+                . rtrim($pretty($indents, $varlentitle, $data), ',') . ';';
         } else {
-            $eval   = $this->evaluateVariable($var);
+            $eval   = $this->evaluateVariable($data);
             $string = '$' . $varname . str_repeat(" ", $indents['key']) . '=' . $eval['val'] . ';'
                 . str_repeat(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
         }
