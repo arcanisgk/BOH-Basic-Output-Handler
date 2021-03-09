@@ -16,7 +16,7 @@ class FooBar
 {
     public string $pub_string = 'hello world!';
     protected int $pro_int = 10;
-    private array $priv_array = ['a' => 1, 'b' => 2];
+    private array $priv_array_long_name = ['a' => 1, 'b' => 2];
     const CONST_OBJECT = ['a' => 1, 'b' => 2];
 
     public function foofunction()
@@ -92,15 +92,43 @@ $examplearray = [
     ],
 ];
 
+/*
+echo '<pre>';
+echo var_dump($examplearray);
+echo '</pre>';
+*/
+
+
 //Instance Class BOHBasicOutputHandler
 $output = new Output\OutputHandler();
 
+
 //Theme Selection
-$output->getTheme('monokai');
+//$output->setTheme('monokai');
+//$output->setEnvironment('web');
+
+$array = [
+    0      => 'nivel 1',
+    1      => 'nivel 1',
+    2      => 'nivel 1',
+    'otro' => (object) [
+        0         => 'nivel 2',
+        1         => 'nivel 2',
+        2         => 'nivel 2',
+        'otro'    => [
+            0 => 'nivel 3',
+            1 => 'nivel 3',
+            2 => 'nivel 3',
+        ],
+        'clasess' => new FooBar,
+    ],
+];
 
 //example 1:
 $output->output($examplearray);
 
+
+/*
 $output->getTheme('natural-flow');
 
 //example 2:
@@ -110,4 +138,4 @@ $output->getTheme('x-space');
 
 //example 3:
 $output->output($exampleshortarray);
-
+*/
