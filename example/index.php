@@ -4,30 +4,51 @@
  * This example shows how the BOHBasicOutputHandler class and its methods are declared.
  */
 
-//Import the PHPMailer class into the global namespace
-use \IcarosNet\BOHBasicOutputHandler as Output;
 
-require __DIR__ . '\..\vendor\autoload.php';
+use IcarosNet\BOHBasicOutputHandler\Output as Output;
+
+const PATH = __DIR__ . '\..\vendor\autoload.php';
+
+if (file_exists(PATH)) {
+    require_once PATH;
+} else {
+    echo 'This library "[BOH] Basic Output Handler for PHP" requires composer installation and autoload; run composer install command in your root.';
+    die;
+}
+
 
 /**
  * FooBar is an example class.
  */
 class FooBar
 {
-    public string $pub_string = 'hello world!';
+    public string $pub_string = 'Hello World!';
+    public static string $pub_st_string = 'Public Static Property';
     protected int $pro_int = 10;
     private array $priv_array_long_name = ['a' => 1, 'b' => 2];
     const CONST_OBJECT = ['a' => 1, 'b' => 2];
 
-    public function foofunction()
+    public function foofunction(): array
     {
-        return "Hello World!";
+        $c          = 0;
+        $array_data = self::CONST_OBJECT;
+        while ($this->pro_int < $c) {
+            $array_data[] = $c;
+            ++$c;
+        }
+        return array_merge($this->priv_array_long_name, $array_data);
     }
 
-    protected function foofunction2()
+    protected function foofunction2(): string
     {
-        return "Hello World!";
+        return $this->pub_string . ' ' . $this->foofunction3();
     }
+
+    public static function foofunction3(): string
+    {
+        return self::$pub_st_string;
+    }
+
 }
 
 /**
@@ -66,6 +87,11 @@ $examplearray = [
     'datetime_4'   => '2021-Jan-17 17:31:00',
     'currency_1'   => '1.45$',
     'currency_2'   => 'db£ 1.45 ₹',
+    'objects_list' => [
+        'object_empty' => (object) [],
+        'class'        => $varclass,
+        'resource'     => curl_init(),
+    ],
     'array'        => [
         'boolean_true'       => true,
         'boolean_false'      => false,
@@ -75,7 +101,7 @@ $examplearray = [
             'key_index_most' => 'Hello Wolrd',
             'joder'          => [
                 'prueba' => 'prueba',
-            ]
+            ],
         ],
         'nested'             => [
             'other_obj' => (object) [
@@ -85,57 +111,41 @@ $examplearray = [
             ],
         ],
     ],
-    'objects_list' => [
-        'object_empty' => (object) [],
-        'class'        => $varclass,
-        'resource'     => curl_init(),
-    ],
+
 ];
-
-/*
-echo '<pre>';
-echo var_dump($examplearray);
-echo '</pre>';
-*/
-
 
 //Instance Class BOHBasicOutputHandler
-$output = new Output\OutputHandler();
+$output = new Output();
 
+/**
+ * only to load and test the user interface with different Designs, do not
+ * implement if your User Interface already implements a design framework.
+ * Instead of this use setOptions()
+ */
 
-//Theme Selection
-//$output->setTheme('monokai');
-//$output->setEnvironment('web');
+//$output->loadBOHDesign('full'); //
 
-$array = [
-    0      => 'nivel 1',
-    1      => 'nivel 1',
-    2      => 'nivel 1',
-    'otro' => (object) [
-        0         => 'nivel 2',
-        1         => 'nivel 2',
-        2         => 'nivel 2',
-        'otro'    => [
-            0 => 'nivel 3',
-            1 => 'nivel 3',
-            2 => 'nivel 3',
-        ],
-        'clasess' => new FooBar,
-    ],
-];
-
-//example 1:
+//Example 1: Output the Basic Html in Line
 $output->output($examplearray);
 
+echo '<br>Hello World<br>';
 
-/*
-$output->getTheme('natural-flow');
 
-//example 2:
-$output->output($examplearray);
 
-$output->getTheme('x-space');
+//Example 2: Output the rich html with theme color based
+//$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
+//$output->output($examplearray);
 
-//example 3:
-$output->output($exampleshortarray);
-*/
+//Example 3: Output json-string
+//$output->outputJson($examplearray);
+
+//Example 4: Output the rich html with theme color based
+//$output->setOptions(['theme' => 'monokai']);
+//$output->outputTerminal($examplearray);
+
+/**
+ * On line Instance:
+ */
+
+//Output::getInstance()->output($examplearray);
+

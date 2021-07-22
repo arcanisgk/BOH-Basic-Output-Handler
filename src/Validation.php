@@ -19,20 +19,8 @@ declare(strict_types=1);
 namespace IcarosNet\BOHBasicOutputHandler;
 
 
-use Exception;
-
-class Validation
+class Validation extends Commons
 {
-    /**
-     * capture the environment for usage in the class.
-     * Options: empty (default), __construct update to 'ENVIRONMENT_OUTPUT_HANDLER'
-     * constant or implementor defined environment.
-     * 'cli','web'
-     *
-     * @var string
-     */
-    protected string $env = '';
-
     /**
      * List of CURENCY and Respective flags for Cli Themes.
      *
@@ -41,207 +29,8 @@ class Validation
     const CURRENCIESLIST = [
         '¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴', '₯', '₮',
         '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥', '₦', '₨',
-        '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿'
+        '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿',
     ];
-
-    /**
-     * Constructor.
-     *
-     */
-    public function __construct()
-    {
-        $this->env = ENVIRONMENT_OUTPUT_HANDLER;
-    }
-
-    /**
-     * check if runtime environment is CLI
-     *
-     * @return bool
-     */
-    public static function IsCommandLineInterface(): bool
-    {
-        return php_sapi_name() === 'cli';
-    }
-
-    /**
-     * environment setter; if the implementer is wrong;
-     * the library will abort any execution immediately
-     *
-     * @param  string  $env
-     *
-     */
-    public function setEnvironment(string $env): void
-    {
-        $this->env = $env;
-    }
-
-    /**
-     * environment checker; if the implementer is wrong;
-     * the library will abort any execution immediately
-     * and display an error message stating that it has happened.
-     *
-     * @param  null|string  $env
-     *
-     * @return string
-     * @throws Exception
-     */
-    protected function validateEnvironment($env): string
-    {
-        try {
-            $env = $env != '' ? $env ?? $this->env : $this->env;
-            if ($this->IsCommandLineInterface() && $env == 'web') {
-                throw new Exception('error: you are trying to run output() ' .
-                    'method from CLI and it is not supported, ' .
-                    'use OutputCli() or AdvanceOutput() with CLI argument  method instead.');
-            } elseif (!$this->IsCommandLineInterface() && $env == 'cli') {
-                throw new Exception('error: you are trying to run OutputCli() ' .
-                    'method from web browser and it is not supported, ' .
-                    'use Output() or AdvanceOutput() with HTML argument method instead.');
-            } elseif ($env != 'web' && $env != 'cli') {
-                throw new Exception('you are trying to run an environment (' . $env .
-                    ') not related to this library, check the documentation.');
-            }
-            return $env;
-        } catch (Exception $e) {
-            echo $e->getMessage() . PHP_EOL;
-            exit;
-        }
-    }
-
-    /**
-     * Evaluates the indentation that the values and
-     * comments should have in the construction of the output
-     *
-     * @param  mixed  $var
-     *
-     * @return array
-     */
-    protected function getIndent($var): array
-    {
-        $data    = $var;
-        $indents = ['key' => 0, 'val' => 0];
-        if (is_array($data) || is_object($data)) {
-            $data           = (array) $data;
-            $data           = $this->convertObject2Array($data);
-            $deep           = $this->calcDeepArray($data) * 4;
-            $indents        = $this->calcIndent($indents, $data);
-            $indents['key'] += $deep;
-            $indents['val'] += $deep / 2;
-        } else {
-            $indents = ['key' => $this->calclen('variable'), 'val' => $this->calclen($data)];
-        }
-        return $indents;
-    }
-
-    /**
-     * convert objets to array.
-     *
-     * @param  mixed
-     *
-     * @return mixed
-     */
-    private function convertObject2Array(&$value)
-    {
-        if (is_object($value) || is_array($value)) {
-            $value = (array) $value;
-            foreach ($value as $key => $child) {
-                $value[$key] = $this->convertObject2Array($child);
-            }
-            return $value;
-        } else {
-            return $value;
-        }
-    }
-
-    /**
-     * Calculates how many nodes deep the passed variable has if it is an array or object.
-     * note: it does not calculate the number of total nodes.
-     *
-     * @param  array  $array
-     *
-     * @return int
-     */
-    private function calcDeepArray(array $array): int
-    {
-        $max_depth = 1;
-        foreach ($array as $key => $value) {
-            if (is_array($value) || is_object($value)) {
-                $depth = $this->calcDeepArray((array) $value) + 1;
-                if ($depth > $max_depth) {
-                    $max_depth = $depth;
-                }
-            }
-        }
-        return $max_depth;
-    }
-
-    /**
-     * Calculate the number of characters in the key and in the value through a passed data..
-     *
-     * @param  array  $indents
-     * @param  mixed  $data
-     *
-     * @return array
-     */
-    private function calcIndent(array &$indents, $data): array
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $child) {
-                $key = (string) $key;
-                if ($this->checkStrPos($key, chr(0)) !== false) {
-                    $key = str_replace(chr(0), "'::'", $key);
-                    $key = substr($key, 4);
-                }
-                $indents['key'] = ($indents['key'] >= $this->calclen($key)) ? $indents['key'] : $this->calclen($key);
-                $this->calcIndent($indents, $child);
-            }
-        } else {
-            if (is_resource($data)) {
-                $temp           = rtrim($this->getBuffer($data));
-                $indents['val'] = ($indents['val'] >= $this->calclen($temp)) ? $indents['val'] : $this->calclen($temp);
-            } else {
-                $data           = (string) $data;
-                $indents['val'] = ($indents['val'] >= $this->calclen($data)) ? $indents['val'] : $this->calclen($data);
-            }
-        }
-        return $indents;
-    }
-
-    /**
-     * This should do a pre-analysis of the passed variable
-     * and reassemble the beginning and end of the parsed text
-     *
-     * @param  mixed  $var
-     * @param  array  $indents
-     *
-     * @return string
-     */
-    protected function analyzeVariable($var, array $indents): string
-    {
-
-
-        $varlentitle = $this->calclen('$variable');
-        $string      = '';
-
-
-        /*
-        if (in_array(gettype($var), ['object', 'array'])) {
-            $string =
-                '$variable' .
-                $this->repeatChar(" ", (($indents['key'] - $varlentitle) >= 0 ? $indents['key'] - $varlentitle : 1)) .
-                '= ['
-                . $this->repeatChar(" ", $indents['val'] - 2) .
-                '// main array node.'
-                . rtrim($this->getVariableParsed($indents, $varlentitle, $var), ',') .
-                ';';
-        } else {
-            $eval   = $this->evaluateVariable($var);
-            $string = '$variable' . $this->repeatChar(" ", $indents['key']) . '=' . $eval['val'] . ';'
-                . $this->repeatChar(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
-        }*/
-        return $string;
-    }
-
 
     /**
      * This should parse each variable passed and build the output string,
@@ -252,40 +41,90 @@ class Validation
      *
      * @return string
      */
-    private function getVariableParsed($indents, $varlentitle, $v = '', $c = " ", $in = 0, $k = null)
+    protected function getVariableToText($data, array $indents): string
+    {
+        $varname  = 'variable';
+        $lentitle = mb_strlen('$' . $varname);
+
+        if (in_array(gettype($data), ['object', 'array'])) {
+            $string = '$variable' . $this->repeatChar(" ", (($indents['key'] - $lentitle) >= 0 ? $indents['key'] - $lentitle : 1)) . '= [' . $this->repeatChar(" ", $indents['val'] - 2) . '// main array node.' . PHP_EOL . rtrim($this->getParsed($indents, $lentitle, $data), ',') . ';';
+        } else {
+            $eval   = $this->evaluateVariable($data);
+            $string = '$variable' . $this->repeatChar(" ", $indents['key']) . '=' . $eval['val'] . ';' . $this->repeatChar(" ", $indents['val'] - 1) . '// ' . $eval['desc'];
+        }
+        return $string;
+    }
+
+    protected function getParsed($indents, $lentitle, $v = '', $c = " ", $in = 0, $k = null): string
     {
         $r = '';
         if (in_array(gettype($v), ['object', 'array'])) {
+
+
             $k = (string) $k;
+
+            /*
             if ($this->checkStrPos($k, chr(0)) !== false) {
                 $k = str_replace(chr(0), "'::'", $k);
                 $k = substr($k, 4);
-            }
+            }*/
+
             $lenname = $this->calclen("'$k'");
             $lenkeys = $indents['key'] - $in - $lenname;
+
             if ($lenkeys < 0) {
                 $lenkeys = 0;
             }
-            $eval   = $this->evaluateVariable($v);
-            $v      = (array) $v;
+
+
+            $eval = $this->evaluateVariable($v);
+
+            if (is_object($v)) {
+                foreach ($v as $sk => $vl) {
+
+                    echo '<pre>';
+                    echo var_dump($sk, gettype($v->$sk));
+                    echo '</pre>';
+                }
+            }
+
+
+            $v = (array) $v;
+
+
             $lenkey = $indents['val'] - $this->calclen($eval['val']) + 1;
+
             if (empty($v)) {
+
                 $r .= ($in != 0 ? $this->repeatChar($c, $in) : '') . (is_null($k) ? '' : "'$k'"
                         . $this->repeatChar($c, $lenkeys) . "=> " . $eval['val'] . "[],"
                         . $this->repeatChar(" ", $lenkey - 6) . "// "
                         . $eval['desc']) . (empty($v) ? '' : PHP_EOL);
+
             } else {
+
                 $r .= ($in != 0 ? $this->repeatChar($c, $in) : '') . (is_null($k) ? '' : "'$k'"
                         . $this->repeatChar($c, $lenkeys) . "=> " . $eval['val'] . "["
                         . $this->repeatChar(" ", $lenkey - 4) . "// "
                         . $eval['desc']) . (empty($v) ? '' : PHP_EOL);
+
+
                 foreach ($v as $sk => $vl) {
-                    $r .= $this->getVariableParsed($indents, $varlentitle, $vl, $c, $in + 4, $sk) . PHP_EOL;
+                    //echo '<pre>';
+                    //echo var_dump($sk, gettype($v[$sk]), $v[$sk]);
+                    //echo '</pre>';
+                    $r .= $this->getParsed($indents, $lentitle, $vl, $c, $in + 4, $sk) . PHP_EOL;
                 }
+
+
                 $r .= (empty($v) ? '],' : ($in != 0 ? $this->repeatChar($c, $in / 2) : '') .
                     (is_null($v) ? '' : $this->repeatChar($c, $in / 2) . "],"));
             }
+
+
         } else {
+
+
             if ($this->checkStrPos($k, chr(0)) !== false) {
                 $k = str_replace(chr(0), "", $k);
             }
@@ -301,8 +140,10 @@ class Validation
             $r .= ($in != -1 ? $this->repeatChar($c, $in) : '') . (is_null($k) ? '' : "'$k'"
                     . $this->repeatChar($c, $lenkey) . '=> ') . $eval['val']
                 . $this->repeatChar(" ", $lenval) . '// ' . $eval['desc'];
+
+
         }
-        return str_replace("\0", "", $r);
+        return $r; //str_replace("\0", "", $r);
     }
 
 
@@ -339,26 +180,26 @@ class Validation
         }
 
         if ((int) $var == $var && is_numeric($var)) {
-            return is_string($var) ? ['val' => "'" . $var . "'", 'desc' => '(' . $this->calclen((string) $var) . ') integer value string.'] :
-                ['val' => $var, 'desc' => '(' . $this->calclen((string) $var) . ') integer value.'];
+            return is_string($var) ? ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') integer value string.'] :
+                ['val' => $var, 'desc' => '(' . mb_strlen((string) $var) . ') integer value.'];
         }
 
         if ((float) $var == $var && is_numeric($var)) {
-            return is_string($var) ? ['val' => "'" . $var . "'", 'desc' => '(' . $this->calclen($var) . ') float value string.'] :
-                ['val' => $var, 'desc' => '(' . $this->calclen($var) . ') float value.'];
+            return is_string($var) ? ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') float value string.'] :
+                ['val' => $var, 'desc' => '(' . mb_strlen((string) $var) . ') float value.'];
         }
 
         ob_start();
         var_dump($var);
         $string = ob_get_clean();
-        if ($this->checkStrPos($string, 'resource') !== false) {
+        if (mb_strpos($string, 'resource') !== false) {
             return ['val' => 'resource', 'desc' => rtrim($string) . '.'];
-        } elseif ($this->checkStrPos($string, 'of type ') !== false) {
+        } elseif (mb_strpos($string, 'of type ') !== false) {
             return ['val' => 'resource', 'desc' => rtrim($string) . '.'];
         }
         unset($string);
 
-        if ($this->checkStrPos($var, ' ') !== false && $this->checkStrPos($var, ':') !== false && $this->checkStrPos($var, '-') !== false) {
+        if (mb_strpos($var, ' ') !== false && mb_strpos($var, ':') !== false && mb_strpos($var, '-') !== false) {
             $datetime = explode(" ", $var);
             $validate = 0;
             foreach ($datetime as $value) {
@@ -367,20 +208,20 @@ class Validation
                 }
             }
             if ($validate >= 2) {
-                return ['val' => "'" . $var . "'", 'desc' => '(' . $this->calclen($var) . ') string value datetime.'];
+                return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value datetime.'];
             }
         }
 
-        if ($this->validateDate($var) && $this->checkStrPos($var, ':') !== false) {
-            return ['val' => "'" . $var . "'", 'desc' => '(' . $this->calclen($var) . ') string value time.'];
+        if ($this->validateDate($var) && mb_strpos($var, ':') !== false) {
+            return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value time.'];
         }
 
-        if ($this->validateDate($var) && $this->calclen($var) >= 8 && $this->checkStrPos($var, '-') !== false) {
-            return ['val' => "'" . $var . "'", 'desc' => '(' . $this->calclen($var) . ') string value date.'];
+        if ($this->validateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
+            return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value date.'];
         }
 
-        if ($this->validateDate($var) && $this->calclen($var) >= 8 && $this->checkStrPos($var, '-') !== false) {
-            return ['val' => "'" . $var . "'", 'desc' => '(' . $this->calclen($var) . ') string value date.'];
+        if ($this->validateDate($var) && mb_strlen($var) >= 8 && mb_strpos($var, '-') !== false) {
+            return ['val' => "'" . $var . "'", 'desc' => '(' . mb_strlen($var) . ') string value date.'];
         }
 
         if (is_string($var)) {
@@ -394,56 +235,17 @@ class Validation
             if (!empty($currencycheck)) {
                 return [
                     'val' => "'" . $var . "'", 'desc' => 'string/amount value related to currency ('
-                        . implode(',', $currencycheck) . ').'
+                        . implode(',', $currencycheck) . ').',
                 ];
             }
         }
 
         if (is_string($var)) {
-            return ['val' => "'" . $var . "'", 'desc' => 'string value of ' . $this->calclen($var) . ' character.'];
+            return ['val' => "'" . $var . "'", 'desc' => 'string value of ' . mb_strlen($var) . ' character.'];
         }
 
         return ['val' => 'unknown', 'desc' => 'unknown'];
     }
-
-    /**
-     * repeater of String.
-     *
-     * @param  $var
-     *
-     * @return int
-     */
-    private function calclen($var): int
-    {
-        return mb_strlen((string) $var);
-    }
-
-    /**
-     * repeater of String.
-     *
-     * @param  string|int|null  $haystack
-     * @param  string|int|null  $needle
-     *
-     * @return false|int
-     */
-    private function checkStrPos($haystack, $needle)
-    {
-        return mb_strpos((string) $haystack, (string) $needle);
-    }
-
-    /**
-     * repeater of String.
-     *
-     * @param  string  $character
-     * @param  int  $repetitions
-     *
-     * @return string
-     */
-    protected function repeatChar(string $character, int $repetitions): string
-    {
-        return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
-    }
-
 
     /**
      * This should validate Date String.
@@ -456,7 +258,6 @@ class Validation
     {
         return (strtotime($date) !== false);
     }
-
 
     /**
      * This should cut the strings in unicode format.
@@ -479,17 +280,4 @@ class Validation
         return $tmp;
     }
 
-    /**
-     * captures a variable buffer and rhetoric as string
-     *
-     * @param  mixed  $data
-     *
-     * @return string
-     */
-    private function getBuffer($data): string
-    {
-        ob_start();
-        var_dump($data);
-        return ob_get_clean();
-    }
 }

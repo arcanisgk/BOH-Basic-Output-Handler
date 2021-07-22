@@ -7,7 +7,10 @@
       "email": "icarosnet@gmail.com"
     }
   ],
-  "require": {},
+  "require": {
+    "ext-curl": "*",
+    "ext-mbstring": "*"
+  },
   "autoload": {
     "psr-4": {
       "IcarosNet\\BOHBasicOutputHandler\\": "src/"

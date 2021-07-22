@@ -1,6 +1,3 @@
-dist
-dist-*
-cabal-dev
 *.o
 *.hi
 *.hie
@@ -8,27 +5,30 @@ cabal-dev
 *.chs.h
 *.dyn_o
 *.dyn_hi
-.hpc
-.hsenv
-.cabal-sandbox/
-cabal.sandbox.config
 *.prof
 *.aux
 *.hp
 *.eventlog
+*.lock
+*.log
+*.idea*
+.ghc.environment.*
+.hpc
+.hsenv
+.cabal-sandbox/
 .stack-work/
+.HTF/
+dist-*
+dist
+cabal-dev
+cabal.sandbox.config
 cabal.project.local
 cabal.project.local~
-.HTF/
-.ghc.environment.*
 /.idea/
 /.htaccess
 /.user.ini
-*.log
-*.idea*
 /vendor/
 /others/
-
 
 # Semantic version script itself is @internal thing and should be excluded from the root commits
 /semantic-version.php
