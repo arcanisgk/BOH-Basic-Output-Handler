@@ -19,8 +19,10 @@ declare(strict_types=1);
 namespace IcarosNet\BOHBasicOutputHandler;
 
 
+use Reflection;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionObject;
 use ReflectionProperty;
 
 class CustomReflectionObject
@@ -32,44 +34,35 @@ class CustomReflectionObject
      */
     public function getProps(object $object): array
     {
-        $props = (new ReflectionClass($object))->getProperties();
-        foreach ($props as $key => $subobject) {
-            $props[$key] = $this->analyzeProperty($subobject);
+        $reflectionObject = new ReflectionObject($object);
+        $proplist         = $reflectionObject->getProperties();
+        foreach ($proplist as $key => $prop) {
+            $proplist[$key] = $this->analyzeProperty($prop, $object);
         }
-        foreach ($props as $key => $object) {
-            $props[$key] = (array) $object;
-        }
-        return $props;
+        dd($proplist);
+        die;
     }
 
     /**
+     * @param  object  $prop
      * @param  object  $object
      * @return array
      * @throws ReflectionException
      */
-    private function analyzeProperty(object $object): array
+    private function analyzeProperty(object $prop, object $object): array
     {
-        $prop               = new ReflectionProperty($object->class, $object->name);
-        $name               = $prop->getName();
-        $modifier           = $this->getPropertyModifiers($prop);
-        $reflectionProperty = (new ReflectionClass($object->class))->getProperty($object->name);
-        if ($prop->isPrivate() || $prop->isProtected()) {
-            $reflectionProperty->setAccessible(true);
-        }
-        $value = $reflectionProperty->getValue(new $object->class);
-        $type  = $prop->getType() !== null ? $prop->getType()->getName() : gettype($value);
-        return ['name' => $name, 'scope' => $modifier, 'type' => $type, 'value' => $value];
+        $prop->setAccessible(true);
+        $propinit = $prop->isInitialized($object);
+        return [
+            'name'       => $prop->getName(),
+            'value'      => $propinit ? $prop->getValue($object) : 'uninitialized',
+            'type'       => $prop->getType() !== null ? $prop->getType()->getName() : ($propinit ? gettype($prop->getValue($object)) : 'null'),
+            'class'      => get_class($object),
+            'scope'      => $prop->isStatic() ? 'static' : 'instance',
+            'visibility' => $prop->isPrivate() ? 'private' : ($prop->isProtected() ? 'protected' : 'public'),
+        ];
     }
 
-    /**
-     * @param  object  $object
-     * @return string
-     */
-    private function getPropertyModifiers(object $object): string
-    {
-        $mod = $object->getModifiers();
-        return implode(' ', \Reflection::getModifierNames($mod));
-    }
 
     public function getConsts($object): array
     {
@@ -85,4 +78,12 @@ class CustomReflectionObject
     }
 
 
+}
+
+function dd(...$args)
+{
+    echo '<pre>';
+    echo var_dump($args);
+    echo '</pre>';
+    die;
 }

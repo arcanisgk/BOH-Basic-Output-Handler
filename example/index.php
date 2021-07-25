@@ -22,15 +22,20 @@ if (file_exists(PATH)) {
  */
 class FooBar
 {
-    public $pub_string = 'Hello World!';
-    public static string $pub_st_string = 'Public Static Property';
+    private static object $public_object_prop;
+    private static $pub_st_string;
+
+    public $public_string_prop = 'Example Hello World!';
+
+    public static string $public_static_string = 'Public Static Property';
     protected int $pro_int = 10;
     protected static string $protected_string = 'Protected';
 
     private array $priv_array_long_name = ['a' => 1, 'b' => 2];
     private static array $priv_static_array_long_name = ['X' => 12, 'Y' => 24];
-    const CONST_OBJECT = ['a' => 1, 'b' => 2];
 
+    const CONST_OBJECT = ['a' => 1, 'b' => 2];
+    private $pub_string;
 
     public function foofunction(): array
     {
@@ -52,7 +57,6 @@ class FooBar
     {
         return self::$pub_st_string;
     }
-
 }
 
 /**
