@@ -25,8 +25,12 @@ class FooBar
     public string $pub_string = 'Hello World!';
     public static string $pub_st_string = 'Public Static Property';
     protected int $pro_int = 10;
+    protected static string $protected_string = 'Protected';
+
     private array $priv_array_long_name = ['a' => 1, 'b' => 2];
+    private static array $priv_static_array_long_name = ['X' => 12, 'Y' => 24];
     const CONST_OBJECT = ['a' => 1, 'b' => 2];
+    
 
     public function foofunction(): array
     {
@@ -123,15 +127,28 @@ $output = new Output();
  * Instead of this use setOptions()
  */
 
-//$output->loadBOHDesign('full'); //
+//$output->loadBOHDesign('full');
 
 //Example 1: Output the Basic Html in Line
-$output->output($examplearray);
+//$output->output($examplearray);
 
 echo '<br>Hello World<br>';
 
+echo '<pre>';
+//secho var_dump($anal->name, $props, $consts);
 
 
+$props = $output->getProps($varclass);
+$const = $output->getConsts($varclass);
+//faltan refleccion de metodos
+
+
+echo var_dump($props, $const);
+
+
+//echo var_dump($output->method($varclass)->isPrivate());
+//echo var_dump($output->parameter($varclass)->getDefaultValue());
+echo '</pre>';
 //Example 2: Output the rich html with theme color based
 //$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
 //$output->output($examplearray);
@@ -144,7 +161,7 @@ echo '<br>Hello World<br>';
 //$output->outputTerminal($examplearray);
 
 /**
- * On line Instance:
+ * In line Instance:
  */
 
 //Output::getInstance()->output($examplearray);

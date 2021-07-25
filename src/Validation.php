@@ -36,7 +36,7 @@ class Validation extends Commons
      * This should parse each variable passed and build the output string,
      * similar to var_dump or var_export.
      *
-     * @param  mixed  $var
+     * @param $data
      * @param  array  $indents
      *
      * @return string
@@ -45,7 +45,6 @@ class Validation extends Commons
     {
         $varname  = 'variable';
         $lentitle = mb_strlen('$' . $varname);
-
         if (in_array(gettype($data), ['object', 'array'])) {
             $string = '$variable' . $this->repeatChar(" ", (($indents['key'] - $lentitle) >= 0 ? $indents['key'] - $lentitle : 1)) . '= [' . $this->repeatChar(" ", $indents['val'] - 2) . '// main array node.' . PHP_EOL . rtrim($this->getParsed($indents, $lentitle, $data), ',') . ';';
         } else {

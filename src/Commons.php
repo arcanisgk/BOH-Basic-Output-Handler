@@ -19,7 +19,11 @@ declare(strict_types=1);
 namespace IcarosNet\BOHBasicOutputHandler;
 
 
-class Commons
+use ReflectionClass;
+use ReflectionException;
+use ReflectionProperty;
+
+class Commons extends CustomReflectionObject
 {
     /**
      * repeater of String.
