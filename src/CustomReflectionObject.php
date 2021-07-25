@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * BOHBasicOutputHandler - Data output manager in PHP development environments.
+ * PHP Version 7.4.
+ *
+ * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
+ *
+ * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
+ * @copyright 2020 - 2021 Walter Nuñez.
+ * @license   http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+ * @note      This program is distributed in the hope that it will be useful
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+declare(strict_types=1);
 
 namespace IcarosNet\BOHBasicOutputHandler;
 
@@ -36,37 +51,24 @@ class CustomReflectionObject
     {
         $prop               = new ReflectionProperty($object->class, $object->name);
         $name               = $prop->getName();
-        $type               = $prop->getType()->getName();
-        $modifier           = ['scope' => 'public', 'expose' => false];
-        $modifier           = $this->getPropertyScope($prop);
+        $modifier           = $this->getPropertyModifiers($prop);
         $reflectionProperty = (new ReflectionClass($object->class))->getProperty($object->name);
-        if ($modifier['expose'] == true) {
+        if ($prop->isPrivate() || $prop->isProtected()) {
             $reflectionProperty->setAccessible(true);
         }
         $value = $reflectionProperty->getValue(new $object->class);
-        return ['name' => $name, 'scope' => $modifier['scope'], 'type' => $type, 'value' => $value];
+        $type  = $prop->getType() !== null ? $prop->getType()->getName() : gettype($value);
+        return ['name' => $name, 'scope' => $modifier, 'type' => $type, 'value' => $value];
     }
 
     /**
      * @param  object  $object
-     * @return array
-     * @throws ReflectionException
+     * @return string
      */
-    private function getPropertyScope(object $object): array
+    private function getPropertyModifiers(object $object): string
     {
-        $scope  = 'public';
-        $expose = false;
-        if ($object->isProtected()) {
-            $scope  = 'protected';
-            $expose = true;
-        } elseif ($object->isPrivate()) {
-            $scope  = 'private';
-            $expose = true;
-        }
-        if ($object->isStatic()) {
-            $scope .= '-static';
-        }
-        return ['scope' => $scope, 'expose' => $expose];
+        $mod = $object->getModifiers();
+        return implode(' ', \Reflection::getModifierNames($mod));
     }
 
     public function getConsts($object): array

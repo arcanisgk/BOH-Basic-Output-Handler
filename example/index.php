@@ -22,7 +22,7 @@ if (file_exists(PATH)) {
  */
 class FooBar
 {
-    public string $pub_string = 'Hello World!';
+    public $pub_string = 'Hello World!';
     public static string $pub_st_string = 'Public Static Property';
     protected int $pro_int = 10;
     protected static string $protected_string = 'Protected';
@@ -30,7 +30,7 @@ class FooBar
     private array $priv_array_long_name = ['a' => 1, 'b' => 2];
     private static array $priv_static_array_long_name = ['X' => 12, 'Y' => 24];
     const CONST_OBJECT = ['a' => 1, 'b' => 2];
-    
+
 
     public function foofunction(): array
     {
