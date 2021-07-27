@@ -20,6 +20,101 @@ namespace IcarosNet\BOHBasicOutputHandler;
 
 class Commons
 {
+    public function getStringFromArray(array $data, array $indent): string
+    {
+
+
+        /*
+        if (in_array(gettype($data), ['object', 'array'])) {
+            $string = $this->fillCharBoth(
+                    $title_text,
+                    $indent['main'] + $indent['value'] + $indent['comments'] - $title_len,
+                    '='
+                ) . PHP_EOL .
+
+
+                $this->repeatChar(" ", (($indent['main'] - $title_len) >= 0 ?
+                    $indent['main'] - $title_len : 1)) . PHP_EOL .
+                '= [' . $this->repeatChar(" ", $indent['value'] - 2);
+        } else {
+            //$eval   = $this->evaluateVariable($var);
+            $string = '$variable' . $this->repeatChar(" ", $indent['main']) . '=' . ';' . $this->repeatChar(" ", $indent['value'] - 1) . '// ';
+        }
+        */
+        return '';
+    }
+
+    /**
+     * Filler of String.
+     * @param  string  $text
+     * @param  int  $repetitions
+     * @param  string  $character
+     * @return string
+     */
+    public function fillCharBoth(string $text, int $repetitions, string $character): string
+    {
+        return $repetitions > 0 ? $this->str_pad_unicode($text, $repetitions, $character, STR_PAD_BOTH) : $text;
+    }
+
+    private function str_pad_unicode($str, $pad_len, $pad_str = ' ', $dir = STR_PAD_RIGHT)
+    {
+        $str_len     = mb_strlen($str);
+        $pad_str_len = mb_strlen($pad_str);
+        if (!$str_len && ($dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT)) {
+            $str_len = 1; // @debug
+        }
+        if (!$pad_len || !$pad_str_len || $pad_len <= $str_len) {
+            return $str;
+        }
+
+        $result = null;
+        if ($dir == STR_PAD_BOTH) {
+            $length = ($pad_len - $str_len) / 2;
+            $repeat = (int) ceil($length / $pad_str_len);
+            $result = mb_substr(str_repeat($pad_str, $repeat), 0, (int) floor($length))
+                . $str
+                . mb_substr(str_repeat($pad_str, $repeat), 0, (int) ceil($length));
+        } else {
+            $repeat = ceil($str_len - $pad_str_len + $pad_len);
+            if ($dir == STR_PAD_RIGHT) {
+                $result = $str . str_repeat($pad_str, (int) $repeat);
+                $result = mb_substr($result, 0, $pad_len);
+            } else {
+                if ($dir == STR_PAD_LEFT) {
+                    $result = str_repeat($pad_str, (int) $repeat);
+                    $result = mb_substr($result, 0,
+                            $pad_len - (($str_len - $pad_str_len) + $pad_str_len))
+                        . $str;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Filler of String.
+     * @param  string  $text
+     * @param  int  $repetitions
+     * @param  string  $character
+     * @return string
+     */
+    public function fillCharRight(string $text, int $repetitions, string $character): string
+    {
+        return $repetitions > 0 ? $this->str_pad_unicode($text, $repetitions, $character, STR_PAD_RIGHT) : $text;
+    }
+
+    /**
+     * repeater of String.
+     * @param  string  $character
+     * @param  int  $repetitions
+     * @return string
+     */
+    public function repeatChar(string $character, int $repetitions): string
+    {
+        return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
+    }
+
     /**
      * repeater of String.
      * @param  string|int|null  $haystack
@@ -41,17 +136,6 @@ class Commons
         ob_start();
         var_dump($data);
         return ob_get_clean();
-    }
-
-    /**
-     * repeater of String.
-     * @param  string  $character
-     * @param  int  $repetitions
-     * @return string
-     */
-    public function repeatChar(string $character, int $repetitions): string
-    {
-        return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
     }
 
     /**

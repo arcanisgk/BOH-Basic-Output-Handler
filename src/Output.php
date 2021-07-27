@@ -118,12 +118,11 @@ class Output
         !$this->validateEnvironment() ?: die('You are trying to use the output from a terminal we recommend using outputTerminal method.');
         $data   = $this->reflector->initReflectVariable($data);
         $indent = $this->designer->getIndent($data);
+        $layout = $this->designer->getLayout($data, $indent);
 
-        //dd($data, $indent);
-        boh($indent, $data);
-        //echo '<pre>';
-        //echo var_dump($data, $indent);
-        //echo '</pre>';
+        echo '<pre>';
+        echo var_dump($indent, $layout);
+        echo '</pre>';
 
 
         //Hydrate Data

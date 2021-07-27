@@ -130,7 +130,21 @@ $example_big_array = [
 ];
 
 //Instance Class BOHBasicOutputHandler
-$output = new Output();
+//Ejemplo 1: Ejecucion con CSS independiente del proyecto
+$output = new Output();                                           //instancia el output
+//$output->loadBOHDesign('full', 'Tailwing');                       // establece que el ouput es independiente al Framwrork del Proyecto.
+//$output->output($example_big_array);                              // ejecuta la salida
+
+//ejecucion con CSS dependiente del proyecto
+//Ejemplo 2: dependecia de BS4
+//$output = new Output();                                           //instancia el output
+//$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);      // establece que el ouput es dependiente de librerias CSS de BS4 usado en el proyecto y que la paleta de colores sera Monokai.
+//$output->output($example_big_array);                              // ejecuta la salida
+
+//Ejemplo 3: dependecia de TailWing
+//$output->setOptions(['css' => 'tailwing', 'theme' => 'monokai']); // establece que el ouput es dependiente de librerias CSS de BS4 usado en el proyecto y que la paleta de colores sera Monokai.
+//$output->output($example_big_array);                              // ejecuta la salida
+
 
 /**
  * only to load and test the user interface with different Designs, do not
@@ -138,7 +152,7 @@ $output = new Output();
  * Instead of this use setOptions()
  */
 //echo '<h1>Hello World</h1>';
-//$output->loadBOHDesign('full');
+//
 
 
 //$examplearray = ['int' => 120, 120.25, 'array' => ['int' => '120', 'float' => '120.25']];

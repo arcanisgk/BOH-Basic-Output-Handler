@@ -69,14 +69,69 @@ class Designer
      */
     public function getIndent(array $data): array
     {
-        return [
+        $indent          = [
             'main'     => (
                 5 + $this->commons->getHighestCharAmountByKey($data, 'name') +
                 $this->commons->getHighestCharAmountByKey($data, 'scope') +
                 $this->commons->getHighestCharAmountByKey($data, 'visibility')),
             'value'    => $this->commons->getHighestCharAmountByKey($data, 'value'),
             'comments' => $this->commons->getHighestCharAmountByKey($data, 'comment') + 10,
+            'min'      => 80,
+            'max'      => 200,
         ];
+        $indent['total'] = $indent['main'] + $indent['value'] + $indent['comments'];
+        return $indent;
+    }
+
+    /**
+     *
+     * @param  array  $data
+     * @param  array  $indent
+     * @return string
+     */
+    public function getLayout(array $data, array $indent): string
+    {
+        //analisis del entorno
+        //aplicar las variables de entorno y themes
+        //obtener el texto parseado
+
+
+        $stringparse = $this->commons->getStringFromArray($data, $indent);
+
+        $theme_applied = '|Theme Applied: Default';
+        $title_text    = $theme_applied . '|Output of Given Variable|';
+        $title_len     = $this->commons->calculateLength($title_text);
+        $total_width   = $indent['total'] < $indent['min'] ? $indent['min'] : $indent['total'];
+        $title_text    = $this->commons->fillCharBoth(
+            $title_text,
+            $total_width,
+            '='
+        );
+        $body_text     = '';
+        $copyright     = $this->getCopyRight($indent, $total_width);
+
+
+        return PHP_EOL . $title_text . PHP_EOL . $body_text . PHP_EOL . $copyright . PHP_EOL;
+    }
+
+    private function getCopyRight(array $indent, int $total_width): string
+    {
+        $copyright1 = $this->commons->fillCharBoth(
+            '[BOH] Basic Output Handler for PHP - Copyright 20020 - ' . date('Y'),
+            $total_width,
+            '='
+        );
+        $copyright2 = $this->commons->fillCharBoth(
+            'Open Source Project Developed by Icaros Net. S.A',
+            $total_width,
+            '='
+        );
+        $copyright3 = $this->commons->fillCharBoth(
+            'URL: https://github.com/arcanisgk/BOH-Basic-Output-Handler',
+            $total_width,
+            '='
+        );
+        return $copyright1 . PHP_EOL . $copyright2 . PHP_EOL . $copyright3;
     }
 
     /**
