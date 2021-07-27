@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace IcarosNet\BOHBasicOutputHandler;
 
-class Commons extends CustomReflectionObject
+class Commons
 {
     /**
      * repeater of String.
@@ -66,7 +66,7 @@ class Commons extends CustomReflectionObject
      *
      * @return string
      */
-    protected function repeatChar(string $character, int $repetitions): string
+    public function repeatChar(string $character, int $repetitions): string
     {
         return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
     }

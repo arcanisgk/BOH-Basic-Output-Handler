@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace IcarosNet\BOHBasicOutputHandler;
 
 
-class Designer extends Validation
+class Designer
 {
     /**
      * Determinate the default theme and css to apply.
@@ -45,9 +45,16 @@ class Designer extends Validation
      */
     public string $defTheme = 'monokai';
 
+    /**
+     * instantiate tool kit of Commons class.
+     * @var Commons
+     */
+    protected Commons $commons;
+
+
     public function __construct()
     {
-
+        $this->commons = new Commons();
     }
 
     /**
@@ -55,8 +62,10 @@ class Designer extends Validation
      * @return array
      * @var mixed
      */
-    protected function getIndent($data): array
+    public function getIndent($data): array
     {
+
+
         $indents = ['key' => 0, 'val' => 0];
         if (is_array($data) || is_object($data)) {
             $newArray       = $this->convertObject2Array($data);
@@ -64,8 +73,10 @@ class Designer extends Validation
             $indents['key'] = $this->calcIndentKey($data) + $deep;
             $indents['val'] = $this->calcIndentVal($newArray, 0) + (int) ($deep / 2);
         } else {
-            $indents = ['key' => $this->calclen('variable'), 'val' => $this->calclen($data)];
+            $indents = ['key' => $this->commons->calclen('variable'), 'val' => $this->commons->calclen($data)];
         }
+
+
         return $indents;
     }
 
@@ -105,16 +116,17 @@ class Designer extends Validation
     private function calcIndentVal($newArray, $len): int
     {
         if (is_array($newArray)) {
-            foreach ($newArray as $key => $child) {
+            foreach ($newArray as $child) {
                 $len = $this->calcIndentVal($child, $len);
             }
         } else {
             if (is_resource($newArray)) {
-                $temp = rtrim($this->getBuffer($newArray));
-                $len  = ($len >= $this->calclen($temp)) ? $len : $this->calclen($temp);
+                $temp = rtrim($this->commons->getBuffer($newArray));
+                $len  = ($len >= $this->commons->calclen($temp)) ? $len : $this->commons->calclen($temp);
             } else {
                 $newArray = (string) $newArray;
-                $len      = ($len >= $this->calclen($newArray)) ? $len : $this->calclen($newArray);
+                $len      = ($len >= $this->commons->calclen($newArray)) ? $len : $this->commons->calclen($newArray);
+
             }
         }
         return $len;

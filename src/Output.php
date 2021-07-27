@@ -27,23 +27,55 @@ if (!version_compare(PHP_VERSION, '7.4', '>=')) {
     die('IcarosNet\BOHBasicOutputHandler requires PHP ver. 7.4 or higher');
 }
 
+/*
+ * On-screen exit help for Library developers..
+ * @param $args
+ */
+function dd(...$args)
+{
+    echo '<pre>';
+    echo var_dump($args);
+    echo '</pre>';
+}
+
 /**
  * BOHBasicOutputHandler - Data output manager in PHP development environments.
  * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
  */
-class Output extends Designer
+class Output
 {
-    private static $instance = null;
+    /**
+     * instantiate tool kit of Reflector class.
+     * @var Reflector
+     */
+    private Reflector $reflector;
+    /**
+     * instantiate tool kit of Designer class.
+     * @var Designer
+     */
+    protected Designer $designer;
+    /**
+     * auto-instantiate tool kit of Validation class.
+     * @var ?Output
+     */
+
+    private static ?Output $instance = null;
     /**
      * Store value if Running from Terminal/Command-Line Environment.
      * @var bool
      */
     public bool $ifTerminal = false;
-    public array $setOptions = [];
+
+
+    /**
+     * Store value if Running from Terminal/Command-Line Environment.
+     * @var bool
+     */
 
     public function __construct()
     {
-        parent::__construct();
+        $this->reflector  = new Reflector();
+        $this->designer   = new Designer();
         $this->ifTerminal = $this->checkTerminal();
     }
 
@@ -68,39 +100,24 @@ class Output extends Designer
     }
 
     /**
-     * @param  array|string[]  $option
-     */
-    public function setOptions(array $option = self::DEFAULTOPTIONS)
-    {
-        //$this->
-        //$color = isset(self::THEMES[$theme]) ? self::THEMES[$theme] : self::THEMES['default'];
-    }
-
-    /*
-    public function loadBOHDesign(array $option = self::DEFAULTOPTIONS)
-    {
-        $this->
-
-
-        $color = isset(self::THEMES[$theme]) ? self::THEMES[$theme] : self::THEMES['default'];
-    }
-    */
-
-
-    /**
      *
      * @param $data
      */
     public function output($data)
     {
         !$this->validateEnvironment() ?: die('You are trying to use the output from a terminal we recommend using outputTerminal method.');
-        $indents = $this->getIndent($data);
-        $string  = $this->getVariableToText($data, $indents);
+        //Dehydrate Data With Reflector.
 
+        $result = $this->reflector->initReflectVariable($data);
         echo '<pre>';
-        echo $string;
-        echo var_dump($data);
+        echo var_dump($result);
         echo '</pre>';
+
+        //Hydrate Data
+
+        //$indents = $this->designer->getIndent($data);
+        //$string  = $this->validator->getVariableToText($data, $indents);
+
     }
 
     /**
@@ -109,9 +126,7 @@ class Output extends Designer
      */
     public function outputJson($data)
     {
-        //echo '<pre>';
-        //echo var_dump($data);
-        //echo '</pre>';
+        //under Development
     }
 
     /**
@@ -121,16 +136,12 @@ class Output extends Designer
     public function outputTerminal($data)
     {
         $this->validateEnvironment() ?: die('You are trying to use the outputTerminal from a Website we recommend using output method.');
-        //echo '<pre>';
-        //echo var_dump($data);
-        //echo '</pre>';
+        //under Development
     }
 
-    public function validateEnvironment()
+    public function validateEnvironment(): bool
     {
         return $this->ifTerminal;
     }
-
-
 }
 

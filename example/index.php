@@ -22,26 +22,30 @@ if (file_exists(PATH)) {
  */
 class FooBar
 {
-    private static object $public_object_prop;
-    private static $pub_st_string;
-
-    public $public_string_prop = 'Example Hello World!';
-
-    public static string $public_static_string = 'Public Static Property';
-    protected int $pro_int = 10;
-    protected static string $protected_string = 'Protected';
-
+    public string $public_string_prop = 'Example Hello World!';
+    public static string $public_static_string_prop = 'Example Hello World! 2';
+    protected int $pro_int_prop = 10;
+    protected static bool $protected_static_boolean_prop = true;
     private array $priv_array_long_name = ['a' => 1, 'b' => 2];
+    private static object $private_static_object_prop;
     private static array $priv_static_array_long_name = ['X' => 12, 'Y' => 24];
 
-    const CONST_OBJECT = ['a' => 1, 'b' => 2];
-    private $pub_string;
+    public $file_read;
+
+    const CONST_ARRAY = ['a' => 1, 'b' => 2];
+    const CONST_STRING = 'Constante String';
+
+    public function __construct()
+    {
+        $nombre_fichero  = "file.txt";
+        $this->file_read = fopen($nombre_fichero, "r");
+    }
 
     public function foofunction(): array
     {
         $c          = 0;
-        $array_data = self::CONST_OBJECT;
-        while ($this->pro_int < $c) {
+        $array_data = self::CONST_ARRAY;
+        while ($this->pro_int_prop < $c) {
             $array_data[] = $c;
             ++$c;
         }
@@ -50,12 +54,17 @@ class FooBar
 
     protected function foofunction2(): string
     {
-        return $this->pub_string . ' ' . $this->foofunction3();
+        return $this->public_string_prop . ' ' . $this->foofunction3();
     }
 
     public static function foofunction3(): string
     {
-        return self::$pub_st_string;
+        return self::$public_static_string_prop;
+    }
+
+    private final function foofunction4()
+    {
+
     }
 }
 
@@ -130,28 +139,19 @@ $output = new Output();
  * implement if your User Interface already implements a design framework.
  * Instead of this use setOptions()
  */
-
+echo '<h1>Hello World</h1>';
 //$output->loadBOHDesign('full');
 
-//Example 1: Output the Basic Html in Line
-//$output->output($examplearray);
 
-echo '<br>Hello World<br>';
+//$examplearray = ['int' => 120, 120.25, 'array' => ['int' => '120', 'float' => '120.25']];
+//Example 1: Output the Basic Html in Line
+$output->output($examplearray);
+
 
 echo '<pre>';
-//secho var_dump($anal->name, $props, $consts);
 
+//$const = $output->getConsts($varclass);
 
-$props = $output->getProps($varclass);
-$const = $output->getConsts($varclass);
-//faltan refleccion de metodos
-
-
-echo var_dump($props, $const);
-
-
-//echo var_dump($output->method($varclass)->isPrivate());
-//echo var_dump($output->parameter($varclass)->getDefaultValue());
 echo '</pre>';
 //Example 2: Output the rich html with theme color based
 //$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
