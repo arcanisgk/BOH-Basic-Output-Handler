@@ -26,6 +26,7 @@ class Designer
      * @var array
      */
     const DEFAULTOPTIONS = ['theme' => 'monokai', 'css' => 'default'];
+
     /**
      * Default Palette Color of
      */
@@ -36,10 +37,12 @@ class Designer
         'monokai'      => ['117,113,094', '255,255,255', '102,217,239', '249,038,114', '230,219,116', "039,040,034"],
         'default'      => ['255,095,000', '000,000,255', '000,000,000', '000,175,000', '255,000,000', '255,255,255'],
     ];
+
     /**
      * @var string
      */
     public string $defCss = 'default';
+
     /**
      * @var string
      */
@@ -51,7 +54,9 @@ class Designer
      */
     protected Commons $commons;
 
-
+    /**
+     * Constructor of the Class Output
+     */
     public function __construct()
     {
         $this->commons = new Commons();
@@ -60,24 +65,18 @@ class Designer
     /**
      *
      * @return array
-     * @var mixed
+     * @var $data array
      */
-    public function getIndent($data): array
+    public function getIndent(array $data): array
     {
-
-
-        $indents = ['key' => 0, 'val' => 0];
-        if (is_array($data) || is_object($data)) {
-            $newArray       = $this->convertObject2Array($data);
-            $deep           = $this->calcDeepArray($newArray) * 4;
-            $indents['key'] = $this->calcIndentKey($data) + $deep;
-            $indents['val'] = $this->calcIndentVal($newArray, 0) + (int) ($deep / 2);
-        } else {
-            $indents = ['key' => $this->commons->calclen('variable'), 'val' => $this->commons->calclen($data)];
-        }
-
-
-        return $indents;
+        return [
+            'main'     => (
+                5 + $this->commons->getHighestCharAmountByKey($data, 'name') +
+                $this->commons->getHighestCharAmountByKey($data, 'scope') +
+                $this->commons->getHighestCharAmountByKey($data, 'visibility')),
+            'value'    => $this->commons->getHighestCharAmountByKey($data, 'value'),
+            'comments' => $this->commons->getHighestCharAmountByKey($data, 'comment') + 10,
+        ];
     }
 
     /**
@@ -122,10 +121,10 @@ class Designer
         } else {
             if (is_resource($newArray)) {
                 $temp = rtrim($this->commons->getBuffer($newArray));
-                $len  = ($len >= $this->commons->calclen($temp)) ? $len : $this->commons->calclen($temp);
+                $len  = ($len >= $this->commons->calculateLength($temp)) ? $len : $this->commons->calculateLength($temp);
             } else {
                 $newArray = (string) $newArray;
-                $len      = ($len >= $this->commons->calclen($newArray)) ? $len : $this->commons->calclen($newArray);
+                $len      = ($len >= $this->commons->calculateLength($newArray)) ? $len : $this->commons->calculateLength($newArray);
 
             }
         }

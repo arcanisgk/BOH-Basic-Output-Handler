@@ -129,91 +129,6 @@ class Reflector
     }
 
     /**
-     * Get Reflector from every Constant of Object given.
-     * @param  object  $object
-     * @return array
-     */
-    private function getConsts(object $object): array
-    {
-        $reflectionClass = new ReflectionClass($object);
-        $constlist       = $reflectionClass->getConstants();
-        $class           = $reflectionClass->getName();
-        $constarray      = [];
-        foreach ($constlist as $key => $const) {
-            $constarray[$key] = $this->analyzeConstant($key, $class, $const);
-        }
-        return $constarray;
-    }
-
-    /**
-     * @param  string  $name
-     * @param  string  $class
-     * @param $value
-     * @return array
-     */
-    private function analyzeConstant(string $name, string $class, $value): array
-    {
-        return [
-            'name'    => $name,
-            'value'   => $this->getReflection($value),
-            'type'    => gettype($value),
-            'class'   => $class,
-            'comment' => $this->evaluateVariable($value)['comment'],
-        ];
-    }
-
-    /**
-     * @param  object  $object
-     * @return array
-     * @throws ReflectionException
-     */
-    private function getMethods(object $object): array
-    {
-        $reflectionClass = new ReflectionClass($object);
-        $methodlist      = $reflectionClass->getMethods();
-        $methodarray     = [];
-        foreach ($methodlist as $method) {
-            $methoddata                       = $this->analyzeMethod($method, $object);
-            $methodarray[$methoddata['name']] = $methoddata;
-        }
-        return $methodarray;
-    }
-
-    /**
-     * @param  object  $method
-     * @param  object  $object
-     * @return array
-     * @throws ReflectionException
-     */
-    private function analyzeMethod(object $method, object $object): array
-    {
-        $method->setAccessible(true);
-        return [
-            'name'      => $method->getName(),
-            'code'      => $this->getCode($object, $method->getName()),
-            'class'     => get_class($object),
-            'modifiers' => '(' . implode(',', Reflection::getModifierNames($method->getModifiers())) . ')',
-        ];
-    }
-
-    /**
-     * Get Reflector from every Constant of Object given.
-     * @param  object  $obj
-     * @param  string  $method
-     * @return string
-     * @throws ReflectionException
-     */
-    private function getCode(object $obj, string $method): string
-    {
-        $method = new ReflectionMethod($obj, $method);
-        $file   = $method->getFileName();
-        $source = file($file);
-        $start  = $method->getStartLine() - 1;
-        $end    = $method->getEndLine() - 1;
-        return implode('', array_slice($source, $start, $end - $start + 1));
-    }
-
-    /**
      * This should analyze each variable passed indicate the value and description of it.
      * note: the description is a rich text.
      *
@@ -349,6 +264,91 @@ class Reflector
             $tmp = $chunks;
         }
         return $tmp;
+    }
+
+    /**
+     * Get Reflector from every Constant of Object given.
+     * @param  object  $object
+     * @return array
+     */
+    private function getConsts(object $object): array
+    {
+        $reflectionClass = new ReflectionClass($object);
+        $constlist       = $reflectionClass->getConstants();
+        $class           = $reflectionClass->getName();
+        $constarray      = [];
+        foreach ($constlist as $key => $const) {
+            $constarray[$key] = $this->analyzeConstant($key, $class, $const);
+        }
+        return $constarray;
+    }
+
+    /**
+     * @param  string  $name
+     * @param  string  $class
+     * @param $value
+     * @return array
+     */
+    private function analyzeConstant(string $name, string $class, $value): array
+    {
+        return [
+            'name'    => $name,
+            'value'   => $this->getReflection($value),
+            'type'    => gettype($value),
+            'class'   => $class,
+            'comment' => $this->evaluateVariable($value)['comment'],
+        ];
+    }
+
+    /**
+     * @param  object  $object
+     * @return array
+     * @throws ReflectionException
+     */
+    private function getMethods(object $object): array
+    {
+        $reflectionClass = new ReflectionClass($object);
+        $methodlist      = $reflectionClass->getMethods();
+        $methodarray     = [];
+        foreach ($methodlist as $method) {
+            $methoddata                       = $this->analyzeMethod($method, $object);
+            $methodarray[$methoddata['name']] = $methoddata;
+        }
+        return $methodarray;
+    }
+
+    /**
+     * @param  object  $method
+     * @param  object  $object
+     * @return array
+     * @throws ReflectionException
+     */
+    private function analyzeMethod(object $method, object $object): array
+    {
+        $method->setAccessible(true);
+        return [
+            'name'      => $method->getName(),
+            'code'      => $this->getCode($object, $method->getName()),
+            'class'     => get_class($object),
+            'modifiers' => '(' . implode(',', Reflection::getModifierNames($method->getModifiers())) . ')',
+        ];
+    }
+
+    /**
+     * Get Reflector from every Constant of Object given.
+     * @param  object  $obj
+     * @param  string  $method
+     * @return string
+     * @throws ReflectionException
+     */
+    private function getCode(object $obj, string $method): string
+    {
+        $method = new ReflectionMethod($obj, $method);
+        $file   = $method->getFileName();
+        $source = file($file);
+        $start  = $method->getStartLine() - 1;
+        $end    = $method->getEndLine() - 1;
+        return implode('', array_slice($source, $start, $end - $start + 1));
     }
 
 }

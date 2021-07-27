@@ -28,14 +28,22 @@ if (!version_compare(PHP_VERSION, '7.4', '>=')) {
 }
 
 /*
- * On-screen exit help for Library developers..
+ * Fast implementation of default data output...
  * @param $args
  */
-function dd(...$args)
+function boh(...$args)
 {
-    echo '<pre>';
-    echo var_dump($args);
-    echo '</pre>';
+    /*
+    $output = new Output();
+    foreach ($args as $arg) {
+        $output->output($arg);
+    }
+    */
+    foreach ($args as $arg) {
+        echo '<pre>';
+        echo var_dump($arg);
+        echo '<pre>';
+    }
 }
 
 /**
@@ -45,37 +53,39 @@ function dd(...$args)
 class Output
 {
     /**
-     * instantiate tool kit of Reflector class.
-     * @var Reflector
-     */
-    private Reflector $reflector;
-    /**
-     * instantiate tool kit of Designer class.
-     * @var Designer
-     */
-    protected Designer $designer;
-    /**
      * auto-instantiate tool kit of Validation class.
      * @var ?Output
      */
-
     private static ?Output $instance = null;
     /**
      * Store value if Running from Terminal/Command-Line Environment.
      * @var bool
      */
     public bool $ifTerminal = false;
-
+    /**
+     * instantiate tool kit of Designer class.
+     * @var Designer
+     */
+    protected Designer $designer;
+    /**
+     * instantiate tool kit of Reflector class.
+     * @var Reflector
+     */
+    private Reflector $reflector;
+    /**
+     * instantiate tool kit of Commons class.
+     * @var Commons
+     */
+    private Commons $commons;
 
     /**
-     * Store value if Running from Terminal/Command-Line Environment.
-     * @var bool
+     * Constructor of the Class Output
      */
-
     public function __construct()
     {
         $this->reflector  = new Reflector();
         $this->designer   = new Designer();
+        $this->commons    = new Commons();
         $this->ifTerminal = $this->checkTerminal();
     }
 
@@ -106,18 +116,26 @@ class Output
     public function output($data)
     {
         !$this->validateEnvironment() ?: die('You are trying to use the output from a terminal we recommend using outputTerminal method.');
-        //Dehydrate Data With Reflector.
+        $data   = $this->reflector->initReflectVariable($data);
+        $indent = $this->designer->getIndent($data);
 
-        $result = $this->reflector->initReflectVariable($data);
-        echo '<pre>';
-        echo var_dump($result);
-        echo '</pre>';
+        //dd($data, $indent);
+        boh($indent, $data);
+        //echo '<pre>';
+        //echo var_dump($data, $indent);
+        //echo '</pre>';
+
 
         //Hydrate Data
 
         //$indents = $this->designer->getIndent($data);
         //$string  = $this->validator->getVariableToText($data, $indents);
 
+    }
+
+    public function validateEnvironment(): bool
+    {
+        return $this->ifTerminal;
     }
 
     /**
@@ -137,11 +155,6 @@ class Output
     {
         $this->validateEnvironment() ?: die('You are trying to use the outputTerminal from a Website we recommend using output method.');
         //under Development
-    }
-
-    public function validateEnvironment(): bool
-    {
-        return $this->ifTerminal;
     }
 }
 

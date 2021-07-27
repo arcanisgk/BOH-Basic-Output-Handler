@@ -22,10 +22,8 @@ class Commons
 {
     /**
      * repeater of String.
-     *
      * @param  string|int|null  $haystack
      * @param  string|int|null  $needle
-     *
      * @return false|int
      */
     public function checkStrPos($haystack, $needle)
@@ -34,21 +32,8 @@ class Commons
     }
 
     /**
-     * repeater of String.
-     *
-     * @param $string
-     * @return int
-     */
-    public function calclen($string): int
-    {
-        return mb_strlen((string) $string);
-    }
-
-    /**
      * captures a variable buffer and rhetoric as string
-     *
      * @param  mixed  $data
-     *
      * @return string
      */
     public function getBuffer($data): string
@@ -60,14 +45,49 @@ class Commons
 
     /**
      * repeater of String.
-     *
      * @param  string  $character
      * @param  int  $repetitions
-     *
      * @return string
      */
     public function repeatChar(string $character, int $repetitions): string
     {
         return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
+    }
+
+    /**
+     * repeater of String.
+     * @param  array|string  $value
+     * @param  string  $key
+     * @param  array  $argument
+     * @return void
+     */
+    public function getArrayData($value, string $key, array &$argument)
+    {
+        if (strcasecmp($key, $argument['search']) == 0 && $this->calculateLength($value) > $argument[0]) {
+            $argument[0] = $this->calculateLength($value);
+        }
+    }
+
+    /**
+     * repeater of String.
+     * @param $string
+     * @return int
+     */
+    public function calculateLength($string): int
+    {
+        return mb_strlen((string) $string);
+    }
+
+    /**
+     * repeater of String.
+     * @param  array  $data
+     * @param  string  $key
+     * @return int
+     */
+    public function getHighestCharAmountByKey(array $data, string $key): int
+    {
+        $name_len = 0;
+        array_walk_recursive($data, [$this, 'getArrayData'], ['search' => $key, &$name_len]);
+        return $name_len;
     }
 }

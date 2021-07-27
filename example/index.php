@@ -10,6 +10,7 @@ use IcarosNet\BOHBasicOutputHandler\Output as Output;
 const PATH = __DIR__ . '\..\vendor\autoload.php';
 
 if (file_exists(PATH)) {
+    /** @noinspection PhpIncludeInspection */
     require_once PATH;
 } else {
     echo 'This library "[BOH] Basic Output Handler for PHP" requires composer installation and autoload; run composer install command in your root.';
@@ -22,26 +23,24 @@ if (file_exists(PATH)) {
  */
 class FooBar
 {
-    public string $public_string_prop = 'Example Hello World!';
-    public static string $public_static_string_prop = 'Example Hello World! 2';
-    protected int $pro_int_prop = 10;
-    protected static bool $protected_static_boolean_prop = true;
-    private array $priv_array_long_name = ['a' => 1, 'b' => 2];
-    private static object $private_static_object_prop;
-    private static array $priv_static_array_long_name = ['X' => 12, 'Y' => 24];
-
-    public $file_read;
-
     const CONST_ARRAY = ['a' => 1, 'b' => 2];
-    const CONST_STRING = 'Constante String';
+    const CONST_STRING = 'Constant String example';
+    public static string $public_static_string_prop = 'Example Hello World! 2';
+    protected static bool $protected_static_boolean_prop = true;
+    private static object $private_static_object_prop;
+    private static array $private_static_array_long_name = ['X' => 12, 'Y' => 24];
+    public string $public_string_prop = 'Example Hello World!';
+    public $file_read;
+    protected int $pro_int_prop = 10;
+    private array $private_array_long_name = ['a' => 1, 'b' => 2];
 
     public function __construct()
     {
-        $nombre_fichero  = "file.txt";
-        $this->file_read = fopen($nombre_fichero, "r");
+        $file_name       = "file.txt";
+        $this->file_read = fopen($file_name, "r");
     }
 
-    public function foofunction(): array
+    public function fooMethod(): array
     {
         $c          = 0;
         $array_data = self::CONST_ARRAY;
@@ -49,44 +48,44 @@ class FooBar
             $array_data[] = $c;
             ++$c;
         }
-        return array_merge($this->priv_array_long_name, $array_data);
+        return array_merge($this->private_array_long_name, $array_data);
     }
 
-    protected function foofunction2(): string
+    protected function fooMethod2(): string
     {
-        return $this->public_string_prop . ' ' . $this->foofunction3();
+        return $this->public_string_prop . ' ' . $this->fooMethod3();
     }
 
-    public static function foofunction3(): string
+    public static function fooMethod3(): string
     {
         return self::$public_static_string_prop;
     }
 
-    private final function foofunction4()
+    private final function fooMethod4()
     {
 
     }
 }
 
 /**
- * $varclass is a variable storage of instance class FooBar.
+ * $variable_class is a variable storage of instance class FooBar.
  */
-$varclass = new FooBar;
+$variable_class = new FooBar;
 
 /**
- * $examplesingle is a short variable to use as an example.
+ * $example_single_string is a short variable to use as an example.
  */
-$examplesingle = 'Hello World';
+$example_single_string = 'Hello World';
 
 /**
- * $exampleshortarray is a short variable to use as an example.
+ * $example_short_array is a short variable to use as an example.
  */
-$exampleshortarray = ['a' => 1, 'b' => 2];
+$example_short_array = ['a' => 1, 'b' => 2];
 
 /**
- * $examplearray is a large array variable to use as an example.
+ * $example_big_array is a large array variable to use as an example.
  */
-$examplearray = [
+$example_big_array = [
     'null'         => null,
     'null_text'    => 'null',
     'integer'      => 10,
@@ -106,7 +105,7 @@ $examplearray = [
     'currency_2'   => 'db£ 1.45 ₹',
     'objects_list' => [
         'object_empty' => (object) [],
-        'class'        => $varclass,
+        'class'        => $variable_class,
         'resource'     => curl_init(),
     ],
     'array'        => [
@@ -115,9 +114,9 @@ $examplearray = [
         'boolean_true_text'  => 'true',
         'boolean_false_text' => 'false',
         'object'             => (object) [
-            'key_index_most' => 'Hello Wolrd',
-            'joder'          => [
-                'prueba' => 'prueba',
+            'key_index_most' => 'Hello World',
+            'other'          => [
+                'other' => 'other',
             ],
         ],
         'nested'             => [
@@ -128,7 +127,6 @@ $examplearray = [
             ],
         ],
     ],
-
 ];
 
 //Instance Class BOHBasicOutputHandler
@@ -139,13 +137,13 @@ $output = new Output();
  * implement if your User Interface already implements a design framework.
  * Instead of this use setOptions()
  */
-echo '<h1>Hello World</h1>';
+//echo '<h1>Hello World</h1>';
 //$output->loadBOHDesign('full');
 
 
 //$examplearray = ['int' => 120, 120.25, 'array' => ['int' => '120', 'float' => '120.25']];
 //Example 1: Output the Basic Html in Line
-$output->output($examplearray);
+$output->output($example_big_array);
 
 
 echo '<pre>';
