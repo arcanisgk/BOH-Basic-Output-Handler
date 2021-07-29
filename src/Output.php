@@ -123,6 +123,7 @@ class Output
         //echo '<pre>';
         //echo var_dump($indent);
         //echo '</pre>';
+
         echo '<div style="font-family: monospace;">' . $this->designer->getLayout($data, $indent) . '</div>';
 
         //echo $layout = nl2br($layout);

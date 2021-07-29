@@ -265,7 +265,9 @@ class Commons
                         }
                     }
                 }
+
                 // Property Constants
+
                 /*
                 if (isset($data['properties'])) {
                     foreach ($data['properties'] as $sk => $sub_data) {
@@ -312,7 +314,9 @@ class Commons
                     }
                 }
                 */
+
                 // Property Methods
+
                 /*
                 if (isset($data['properties'])) {
                     foreach ($data['properties'] as $sk => $sub_data) {
@@ -359,6 +363,7 @@ class Commons
                     }
                 }
                 */
+
                 if ($auto_close != '={}, ') {
                     $buffer .= $this->fillCharRight('', $in - 4, ' ') . $this->fillCharRight('},', $indent['total'], ' ') . PHP_EOL;
                 }

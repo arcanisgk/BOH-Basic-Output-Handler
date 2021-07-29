@@ -41,6 +41,7 @@ class Reflector
      *
      * @param $data
      * @return array
+     * @throws ReflectionException
      */
     public function initReflectVariable($data): array
     {
@@ -198,7 +199,7 @@ class Reflector
      *
      * @return array
      */
-    private function splitStrToUnicode(string $str, $length = 1): array
+    private function splitStrToUnicode(string $str, int $length = 1): array
     {
         $tmp = preg_split('~~u', $str, -1, PREG_SPLIT_NO_EMPTY);
         if ($length > 1) {
@@ -233,6 +234,7 @@ class Reflector
      * Get Reflector from every Property of Object given.
      * @param  object  $object
      * @return array
+     * @throws ReflectionException
      */
     private function getProps(object $object): array
     {
@@ -250,6 +252,7 @@ class Reflector
      * @param  object  $prop
      * @param  object  $object
      * @return array
+     * @throws ReflectionException
      */
     private function analyzeProperty(object $prop, object $object): array
     {

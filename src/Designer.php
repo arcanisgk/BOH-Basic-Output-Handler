@@ -72,6 +72,7 @@ class Designer
         //echo '<pre>';
         //echo var_dump($data);
         //echo '</pre>';
+
         $deep            = $this->calcDeepArray($data);
         $main            = $this->commons->getHighestCharAmountByKey($data, 'name') +
             $this->commons->getHighestCharAmountByKey($data, 'scope') + 12;
