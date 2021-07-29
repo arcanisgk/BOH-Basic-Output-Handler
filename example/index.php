@@ -83,6 +83,21 @@ $example_single_string = 'Hello World';
 $example_short_array = ['a' => 1, 'b' => 2];
 
 /**
+ * $object is a short variable to use as an example stdClass.
+ */
+$object                 = new stdClass();
+$object->int_example    = 100;
+$object->string_example = 'Hello World 1';
+$object->float_example  = 3.1416;
+$object->array_example  = ['Hello World 2', 'test' => [10.35, '500']];
+
+/**
+ * $object_casted is a short variable to use as an example stdClass casted.
+ */
+
+$object_casted = (object) ['int1' => 120, 120.25, 'datos' => ['int2' => '120', 'float' => '120.25']];
+
+/**
  * $example_big_array is a large array variable to use as an example.
  */
 $example_big_array = [
@@ -103,24 +118,27 @@ $example_big_array = [
     'datetime_4'   => '2021-Jan-17 17:31:00',
     'currency_1'   => '1.45$',
     'currency_2'   => 'db£ 1.45 ₹',
+    'array_empty'  => [],
     'objects_list' => [
-        'object_empty' => (object) [],
-        'class'        => $variable_class,
-        'resource'     => curl_init(),
+        'object_empty'   => (object) [],
+        'object_example' => $object,
+        'object_casted'  => $object_casted,
+        'class_stored'   => $variable_class,
+        'resource'       => curl_init(),
     ],
-    'array'        => [
+    'array_node'   => [
         'boolean_true'       => true,
         'boolean_false'      => false,
         'boolean_true_text'  => 'true',
         'boolean_false_text' => 'false',
-        'object'             => (object) [
+        'object_node'        => (object) [
             'key_index_most' => 'Hello World',
             'other'          => [
                 'other' => 'other',
             ],
         ],
         'nested'             => [
-            'other_obj' => (object) [
+            'other_object' => (object) [
                 'apple',
                 'banana',
                 'coconut',
@@ -155,16 +173,18 @@ $output = new Output();                                           //instancia el
 //
 
 
-//$examplearray = ['int' => 120, 120.25, 'array' => ['int' => '120', 'float' => '120.25']];
+//$examplearray = ['int1' => 120, 120.25, 'datos' => ['int2' => '120', 'float' => '120.25']];
 //Example 1: Output the Basic Html in Line
-$output->output($example_big_array);
 
 
-echo '<pre>';
+//echo '<pre>';
+//echo var_dump($object);
+//echo '</pre>';
 
-//$const = $output->getConsts($varclass);
+$output->output(['object_empty' => (object) [], 'object_fill' => $variable_class]);
 
-echo '</pre>';
+//$output->output($example_big_array);
+
 //Example 2: Output the rich html with theme color based
 //$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
 //$output->output($examplearray);

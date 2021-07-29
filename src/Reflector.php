@@ -50,82 +50,27 @@ class Reflector
     /**
      *
      * @param  $value
-     * @param  null  $key
-     * @param  array  $refarray
+     * @param  string|null|int  $key
+     * @param  array|null|int  $reference_array
      * @return array
+     * @throws ReflectionException
      */
-    private function getReflection($value, $key = 'unknown', &$refarray = []): array
+    private function getReflection($value, $key = null, &$reference_array = []): array
     {
         $type = gettype($value);
-        if ($type === 'array') {
-            foreach ($value as $key => $internalvalue) {
-                $refarray[$key] = $this->getReflection($internalvalue, $key, $refarray[$key]);
+        if ($type == 'array') {
+            $evaluation = $this->evaluateVariable($value, (string) $key);
+            $reflection = ['value' => []];
+            foreach ($value as $sk => $internal_value) {
+                $reflection['value'][$sk] = $this->getReflection($internal_value, $sk, $reflection['value'][$sk]);
             }
-        } elseif ($type === 'object') {
+            $reference_array[$key] = array_merge($evaluation, $reflection);
+        } elseif ($type == 'object') {
             return $this->ReflectObject($value);
         } else {
-            return $this->evaluateVariable($value, $key);
+            return $this->evaluateVariable($value, (string) $key);
         }
-        return $refarray;
-    }
-
-    /**
-     *
-     * @param  object  $object
-     * @return array
-     */
-    public function ReflectObject(object $object): array
-    {
-        $reflection = new ReflectionClass($object);
-        $result     = [
-            'class'      => $reflection->getName(),
-            'properties' => $this->getProps($object),
-            'constants'  => $this->getConsts($object),
-            'methods'    => $this->getMethods($object),
-        ];
-        return array_filter($result, fn($value) => !empty($value));
-    }
-
-    /**
-     * Get Reflector from every Property of Object given.
-     * @param  object  $object
-     * @return array
-     */
-    private function getProps(object $object): array
-    {
-        $reflectionObject = new ReflectionObject($object);
-        $proplist         = $reflectionObject->getProperties();
-        $proparray        = [];
-        foreach ($proplist as $prop) {
-            $propdata                     = $this->analyzeProperty($prop, $object);
-            $proparray[$propdata['name']] = $propdata;
-        }
-        return $proparray;
-    }
-
-    /**
-     * @param  object  $prop
-     * @param  object  $object
-     * @return array
-     */
-    private function analyzeProperty(object $prop, object $object): array
-    {
-        $prop->setAccessible(true);
-        $propinit = $prop->isInitialized($object);
-        $value    = $propinit ? $prop->getValue($object) : 'uninitialized';
-        $type     = gettype($value);
-        if ($type === 'array' || $type === 'object') {
-            $value = $this->getReflection($value);
-        }
-        return [
-            'name'       => $prop->getName(),
-            'value'      => $value,
-            'type'       => $prop->getType() !== null ? $prop->getType()->getName() : ($propinit ? gettype($prop->getValue($object)) : 'null'),
-            'class'      => get_class($object),
-            'scope'      => $prop->isStatic() ? 'static' : 'instance',
-            'visibility' => $prop->isPrivate() ? 'private' : ($prop->isProtected() ? 'protected' : 'public'),
-            'comment'    => $propinit ? $this->evaluateVariable($prop->getValue($object), $prop->getName())['comment'] : 'uninitialized',
-        ];
+        return $reference_array;
     }
 
     /**
@@ -267,9 +212,70 @@ class Reflector
     }
 
     /**
+     *
+     * @param  object  $object
+     * @return array
+     * @throws ReflectionException
+     */
+    public function ReflectObject(object $object): array
+    {
+        $reflection = new ReflectionClass($object);
+        $result     = [
+            'class'      => $reflection->getName(),
+            'properties' => $this->getProps($object),
+            'constants'  => $this->getConsts($object),
+            'methods'    => $this->getMethods($object),
+        ];
+        return array_filter($result, fn($value) => !empty($value));
+    }
+
+    /**
+     * Get Reflector from every Property of Object given.
+     * @param  object  $object
+     * @return array
+     */
+    private function getProps(object $object): array
+    {
+        $reflectionObject = new ReflectionObject($object);
+        $proplist         = $reflectionObject->getProperties();
+        $proparray        = [];
+        foreach ($proplist as $prop) {
+            $propdata                     = $this->analyzeProperty($prop, $object);
+            $proparray[$propdata['name']] = $propdata;
+        }
+        return $proparray;
+    }
+
+    /**
+     * @param  object  $prop
+     * @param  object  $object
+     * @return array
+     */
+    private function analyzeProperty(object $prop, object $object): array
+    {
+        $prop->setAccessible(true);
+        $propinit = $prop->isInitialized($object);
+        $value    = $propinit ? $prop->getValue($object) : 'uninitialized';
+        $type     = gettype($value);
+        if ($type === 'array' || $type === 'object') {
+            $value = $this->getReflection($value);
+        }
+        return [
+            'name'       => $prop->getName(),
+            'value'      => $value,
+            'type'       => $prop->getType() !== null ? $prop->getType()->getName() : ($propinit ? gettype($prop->getValue($object)) : 'null'),
+            'class'      => get_class($object),
+            'scope'      => $prop->isStatic() ? 'static' : 'instance',
+            'visibility' => $prop->isPrivate() ? 'private' : ($prop->isProtected() ? 'protected' : 'public'),
+            'comment'    => $propinit ? $this->evaluateVariable($prop->getValue($object), $prop->getName())['comment'] : 'uninitialized',
+        ];
+    }
+
+    /**
      * Get Reflector from every Constant of Object given.
      * @param  object  $object
      * @return array
+     * @throws ReflectionException
      */
     private function getConsts(object $object): array
     {
@@ -288,6 +294,7 @@ class Reflector
      * @param  string  $class
      * @param $value
      * @return array
+     * @throws ReflectionException
      */
     private function analyzeConstant(string $name, string $class, $value): array
     {

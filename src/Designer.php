@@ -69,18 +69,37 @@ class Designer
      */
     public function getIndent(array $data): array
     {
+        //echo '<pre>';
+        //echo var_dump($data);
+        //echo '</pre>';
+        $deep            = $this->calcDeepArray($data);
+        $main            = $this->commons->getHighestCharAmountByKey($data, 'name') +
+            $this->commons->getHighestCharAmountByKey($data, 'scope') + 12;
         $indent          = [
-            'main'     => (
-                5 + $this->commons->getHighestCharAmountByKey($data, 'name') +
-                $this->commons->getHighestCharAmountByKey($data, 'scope') +
-                $this->commons->getHighestCharAmountByKey($data, 'visibility')),
-            'value'    => $this->commons->getHighestCharAmountByKey($data, 'value'),
-            'comments' => $this->commons->getHighestCharAmountByKey($data, 'comment') + 10,
+            'main'     => $main < 8 ? 8 + $deep : $main + $deep,
+            'value'    => $this->commons->getHighestCharAmountByKey($data, 'value') + 5,
+            'comments' => $this->commons->getHighestCharAmountByKey($data, 'comment') + 28,
             'min'      => 80,
             'max'      => 200,
         ];
-        $indent['total'] = $indent['main'] + $indent['value'] + $indent['comments'];
+        $total           = $indent['main'] + $indent['value'] + $indent['comments'];
+        $total           = $total < $indent['min'] ? $indent['min'] : $total;
+        $indent['total'] = $this->commons->checkNumber($total) ? $total : $total + 1;
         return $indent;
+    }
+
+    /**
+     *
+     * @param  array  $data
+     * @return int
+     */
+    private function calcDeepArray(array $data): int
+    {
+        $max_depth = 0;
+        foreach ($data as $inner_array) {
+            $max_depth = is_array($inner_array) ? count($inner_array) > $max_depth ? count($inner_array) : $max_depth : $max_depth;
+        }
+        return ($max_depth - 1) < 0 ? 4 : ($max_depth - 1) * 4;
     }
 
     /**
@@ -94,44 +113,61 @@ class Designer
         //analisis del entorno
         //aplicar las variables de entorno y themes
         //obtener el texto parseado
+        $total_width = $indent['total'] < $indent['min'] ? $indent['min'] : $indent['total'];
+        //echo '<pre>';
+        //echo var_dump($indent, $data);
+        //echo '</pre>';
+        $output = $this->commons->getStringFromArray($indent, $data['analyzed']);
+        $output = $this->commons->cleanLinesString($output, $total_width);
 
+        $body_text  = highlight_string("<?php\n"
+            . $output
+            . "?>", true);
+        $title_text = $this->getTitle($total_width, $data);
+        $copyright  = $this->getCopyRight($total_width);
+        return '<br>' . $title_text . '<br>' . $body_text . '<br>' . $copyright;
+    }
 
-        $stringparse = $this->commons->getStringFromArray($data, $indent);
-
-        $theme_applied = '|Theme Applied: Default';
-        $title_text    = $theme_applied . '|Output of Given Variable|';
-        $title_len     = $this->commons->calculateLength($title_text);
-        $total_width   = $indent['total'] < $indent['min'] ? $indent['min'] : $indent['total'];
-        $title_text    = $this->commons->fillCharBoth(
+    /**
+     *
+     * @param  int  $total_width
+     * @param  array  $data
+     * @return mixed
+     */
+    private function getTitle(int $total_width, array $data): string
+    {
+        $theme_applied = ' | Theme Applied: Default ';
+        $title_text    = $theme_applied . '| Output of Given Variable | Type: ' . $data['type'] . ' | ';
+        return $this->commons->fillCharBoth(
             $title_text,
             $total_width,
             '='
         );
-        $body_text     = '';
-        $copyright     = $this->getCopyRight($indent, $total_width);
-
-
-        return PHP_EOL . $title_text . PHP_EOL . $body_text . PHP_EOL . $copyright . PHP_EOL;
     }
 
-    private function getCopyRight(array $indent, int $total_width): string
+    /**
+     *
+     * @param  int  $total_width
+     * @return mixed
+     */
+    private function getCopyRight(int $total_width): string
     {
         $copyright1 = $this->commons->fillCharBoth(
-            '[BOH] Basic Output Handler for PHP - Copyright 20020 - ' . date('Y'),
+            ' [BOH] Basic Output Handler for PHP - Copyright 20020 - ' . date('Y') . ' ',
             $total_width,
             '='
         );
         $copyright2 = $this->commons->fillCharBoth(
-            'Open Source Project Developed by Icaros Net. S.A',
+            ' Open Source Project Developed by Icaros Net. S.A ',
             $total_width,
             '='
         );
-        $copyright3 = $this->commons->fillCharBoth(
-            'URL: https://github.com/arcanisgk/BOH-Basic-Output-Handler',
-            $total_width,
-            '='
-        );
-        return $copyright1 . PHP_EOL . $copyright2 . PHP_EOL . $copyright3;
+
+        $copyright_indent = (int) floor(($total_width - 44) / 2);
+        $copyright3       = $this->commons->repeatChar('=', $copyright_indent)
+            . ' URL:  <a href="https://github.com/IcarosNetSA/BOH-Basic-Output-Handler">IcarosNetSA/BOH-Basic-Output-Handler</a> '
+            . $this->commons->repeatChar('=', (($copyright_indent * 2) < $total_width ? $copyright_indent + 1 : $copyright_indent));
+        return $copyright1 . '<br>' . $copyright2 . '<br>' . $copyright3;
     }
 
     /**
@@ -143,15 +179,6 @@ class Designer
     {
         $data = is_object($data) ? get_object_vars($data) : $data;
         return is_array($data) ? array_map(__METHOD__, $data) : $data;
-    }
-
-    private function calcDeepArray($data): int
-    {
-        $max_depth = 1;
-        foreach ($data as $innerarray) {
-            $max_depth = is_array($innerarray) ? count($innerarray) > $max_depth ? count($innerarray) : $max_depth : $max_depth;
-        }
-        return $max_depth;
     }
 
     private function calcIndentKey($data): int
