@@ -137,7 +137,7 @@ class Output
         //echo var_dump($indent);
         //echo '</pre>';
 
-        echo '<div style="font-family: monospace;">' . $this->designer->getLayout($data, $indent) . '</div>';
+        echo '<div style="font-family: monospace;background-color: black;color: white">' . $this->designer->getLayout($data, $indent) . '</div>';
 
         //echo $layout = nl2br($layout);
         //echo '<pre>';

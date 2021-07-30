@@ -170,11 +170,8 @@ class Commons
                         . PHP_EOL;
                 }
             } elseif (isset($data['class'])) {
-                //echo '<pre>';
-                //echo var_dump($data);
-                //echo '</pre>';
                 $auto_close = isset($data['properties']) || isset($data['constants']) || isset($data['methods']) ? '=(object)[ ' : '=(object)[], ';
-                $buffer     .= $this->fillCharRight(
+                $line       = $this->fillCharRight(
                         '',
                         $in,
                         ' ')
@@ -187,17 +184,17 @@ class Commons
                         $indent['value'] + 3,
                         ' ')
                     . '// ' . $this->fillCharRight(
-                        'object node of Class (' . $data['class'] . ')',
+                        'object node of Class: ' . $data['class'] . (isset($data['traits']) && $data['traits'] != '' ? '; implement of traits: ' . $data['traits'] . '' : ''),
                         ($indent['total'] - $indent['comments']),
-                        ' ')
-                    . PHP_EOL;
+                        ' ');
+                $buffer     .= $this->lineValidation($line, $indent, $in);
                 $in         += 4;
                 // Property Analysis
                 if (isset($data['properties'])) {
-                    foreach ($data['properties'] as $sub_data) {
+                    foreach ($data['properties'] as $skk => $sub_data) {
                         $is = '(property) ';
                         if (gettype($sub_data['value']) != 'array') {
-                            $sub_data['value'] = gettype($sub_data['value']) == 'string' ? "'" . $sub_data['value'] . "'" : $sub_data['value'];
+                            $sub_data['value'] = gettype($sub_data['value']) == 'string' ? '"' . $sub_data['value'] . '"' : $sub_data['value'];
                             $line              = $this->fillCharRight(
                                     '',
                                     $in,
@@ -261,6 +258,12 @@ class Commons
                                     $indent['total'],
                                     ' ')
                                 . PHP_EOL;
+                        } elseif ($sub_data['type'] == 'object') {
+                            $buffer .= $this->getStringFromArray(
+                                $indent,
+                                $sub_data['value'],
+                                $in,
+                                $skk);
                         }
                     }
                 }
@@ -330,59 +333,35 @@ class Commons
                         }
                     }
                 }
-
-
                 // Property Methods
-
-                /*
-                if (isset($data['properties'])) {
-                    foreach ($data['properties'] as $sk => $sub_data) {
-                        if (gettype($sub_data['value']) != 'array') {
-                            $sub_data['value'] = gettype($sub_data['value']) == 'string' ? "'" . $sub_data['value'] . "'" : $sub_data['value'];
-                            $line              = $this->fillCharRight(
-                                    '',
-                                    $in,
-                                    ' ')
-                                . $this->fillCharRight(
-                                    $sub_data['name'] === null ? "'unknown'" : "'"
-                                        . $sub_data['name']
-                                        . "'", $indent['main'] - $in,
-                                    ' ')
-                                . '=> ' . $this->fillCharRight(
-                                    $sub_data['value']
-                                    . ',', $indent['value'],
-                                    ' ')
-                                . '// ' . $this->fillCharRight(
-                                    $sub_data['comment']
-                                    . ' (scope: '
-                                    . $sub_data['scope']
-                                    . ', visibility: '
-                                    . $sub_data['visibility']
-                                    . ').',
-                                    ($indent['total'] - $indent['comments'])
-                                    , ' ');
-                            $buffer            .= $this->lineValidation($line, $indent, $in);
-                        } elseif (isset($sub_data['value'][''])) {
-                            $line   = $this->fillCharRight('', $in + 4, ' ')
-                                . $this->fillCharRight($sub_data['name'] === null ? "'unknown'" : "'" . $sub_data['name'] . "'", $indent['main'] - $in - 4, ' ')
-                                . '=[ ' . $this->fillCharRight('', $indent['value'], ' ')
-                                . '// ' . $this->fillCharRight($sub_data['comment'] . ' (scope: ' . $sub_data['scope'] . ', visibility: ' . $sub_data['visibility'] . ').', ($indent['total'] - $indent['comments']), ' ');
-                            $buffer .= $this->lineValidation($line, $indent, $in - 5);
-                            foreach ($sub_data['value'][''] as $inner_data) {
-                                if (gettype($inner_data) == 'array') {
-                                    foreach ($inner_data as $sks => $inner_sub_data) {
-                                        $buffer .= $this->getStringFromArray($indent, $inner_sub_data, $in + 8, $sks);
-                                    }
-                                }
-                            }
-                            $buffer .= $this->fillCharRight('', $in + 4, ' ') . $this->fillCharRight('],', $indent['total'], ' ') . PHP_EOL;
-                        }
+                if (isset($data['methods'])) {
+                    foreach ($data['methods'] as $sk => $sub_data) {
+                        $line   = $this->fillCharRight(
+                                '',
+                                $in,
+                                ' ')
+                            . $this->fillCharRight(
+                                $sub_data['name'] === null ? "'unknown'" : "'"
+                                    . $sub_data['name']
+                                    . "'", $indent['main'] - $in,
+                                ' ')
+                            . '=> ' . $this->fillCharRight(
+                                $sub_data['params']
+                                . ',', $indent['value'],
+                                ' ')
+                            . '// ' . $this->fillCharRight(
+                                '(class: '
+                                . $sub_data['class']
+                                . ', modifiers: '
+                                . $sub_data['modifiers']
+                                . ').',
+                                ($indent['total'] - $indent['comments'])
+                                , ' ');
+                        $buffer .= $this->lineValidation($line, $indent, $in);
                     }
                 }
-                */
-
                 if ($auto_close != '=(object)[], ') {
-                    $buffer .= $this->fillCharRight('', $in - 4, ' ') . $this->fillCharRight('],', $indent['total'], ' ') . PHP_EOL;
+                    $buffer .= $this->fillCharRight('', $in - 4, ' ') . $this->fillCharRight(']' . (($in - 4) === 0 ? ';' : ','), $indent['total'], ' ') . PHP_EOL;
                 }
             }
         }

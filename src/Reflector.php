@@ -87,7 +87,7 @@ class Reflector
     {
         if (null === $value || 'null' === $value || 'NULL' === $value) {
             return is_string($value) ?
-                ['name' => $key, 'type' => 'null', 'value' => "'null'", 'comment' => 'null value string.'] :
+                ['name' => $key, 'type' => 'null', 'value' => '"null"', 'comment' => 'null value string.'] :
                 ['name' => $key, 'type' => 'null', 'value' => 'null', 'comment' => 'null value.'];
         }
 
@@ -97,7 +97,7 @@ class Reflector
 
         if (in_array($value, ["true", "false", true, false], true)) {
             return is_string($value) ?
-                ['name' => $key, 'type' => 'boolean', 'value' => "'" . $value . "'", 'comment' => 'string value boolean ' . $value . '.'] :
+                ['name' => $key, 'type' => 'boolean', 'value' => '"' . $value . '"', 'comment' => 'string value boolean ' . $value . '.'] :
                 ['name' => $key, 'type' => 'boolean', 'value' => ($value ? 'true' : 'false'), 'comment' => 'boolean value ' . ($value ? 'true' : 'false') . '.'];
         }
 
@@ -110,13 +110,13 @@ class Reflector
 
         if ((int) $value == $value && is_numeric($value)) {
             return is_string($value) ?
-                ['name' => $key, 'type' => 'integer', 'value' => "'" . $value . "'", 'comment' => '(' . mb_strlen($value) . ') integer value string.'] :
+                ['name' => $key, 'type' => 'integer', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') integer value string.'] :
                 ['name' => $key, 'type' => 'integer', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') integer value.'];
         }
 
         if ((float) $value == $value && is_numeric($value)) {
             return is_string($value) ?
-                ['name' => $key, 'type' => 'float', 'value' => "'" . $value . "'", 'comment' => '(' . mb_strlen($value) . ') float value string.'] :
+                ['name' => $key, 'type' => 'float', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') float value string.'] :
                 ['name' => $key, 'type' => 'float', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') float value.'];
         }
 
@@ -139,20 +139,20 @@ class Reflector
                 }
             }
             if ($validate >= 2) {
-                return ['name' => $key, 'string' => 'datetime', 'value' => "'" . $value . "'", 'comment' => '(' . mb_strlen($value) . ') string value datetime.'];
+                return ['name' => $key, 'string' => 'datetime', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value datetime.'];
             }
         }
 
         if ($this->validateDate($value) && mb_strpos($value, ':') !== false) {
-            return ['name' => $key, 'type' => 'string', 'value' => "'" . $value . "'", 'comment' => '(' . mb_strlen($value) . ') string value time.'];
+            return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value time.'];
         }
 
         if ($this->validateDate($value) && mb_strlen($value) >= 8 && mb_strpos($value, '-') !== false) {
-            return ['name' => $key, 'type' => 'string', 'value' => "'" . $value . "'", 'comment' => '(' . mb_strlen($value) . ') string value date.'];
+            return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value date.'];
         }
 
         if ($this->validateDate($value) && mb_strlen($value) >= 8 && mb_strpos($value, '-') !== false) {
-            return ['name' => $key, 'type' => 'string', 'value' => "'" . $value . "'", 'comment' => '(' . mb_strlen($value) . ') string value date.'];
+            return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value date.'];
         }
 
         if (is_string($value)) {
@@ -167,14 +167,14 @@ class Reflector
                 return [
                     'name'    => $key,
                     'type'    => 'string',
-                    'value'   => "'" . $value . "'",
+                    'value'   => '"' . $value . '"',
                     'comment' => 'string/amount value related to currency (' . implode(',', $currencycheck) . ').',
                 ];
             }
         }
 
         if (is_string($value)) {
-            return ['name' => $key, 'type' => 'string', 'value' => "'" . $value . "'", 'comment' => 'string value of ' . mb_strlen($value) . ' character.'];
+            return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => 'string value of ' . mb_strlen($value) . ' character.'];
         }
 
         return ['name' => 'unknown', 'type' => 'unknown', 'value' => 'unknown', 'comment' => 'unknown'];
@@ -222,13 +222,25 @@ class Reflector
     public function ReflectObject(object $object): array
     {
         $reflection = new ReflectionClass($object);
+        $traits     = $this->getTraits($object);
         $result     = [
             'class'      => $reflection->getName(),
+            'traits'     => (empty($traits) ? '' : implode(',', $traits)),
             'properties' => $this->getProps($object),
             'constants'  => $this->getConsts($object),
             'methods'    => $this->getMethods($object),
         ];
         return array_filter($result, fn($value) => !empty($value));
+    }
+
+    public function getTraits($classInstance)
+    {
+        $parentClasses = class_parents($classInstance);
+        $traits        = class_uses($classInstance);
+        foreach ($parentClasses as $parentClass) {
+            $traits = array_merge($traits, class_uses($parentClass));
+        }
+        return $traits;
     }
 
     /**
@@ -284,11 +296,9 @@ class Reflector
     private function getConsts(object $object): array
     {
         $reflectionClass = new ReflectionClass($object);
-
-
-        $constlist  = $reflectionClass->getConstants();
-        $class      = $reflectionClass->getName();
-        $constarray = [];
+        $constlist       = $reflectionClass->getConstants();
+        $class           = $reflectionClass->getName();
+        $constarray      = [];
         foreach ($constlist as $key => $const) {
             $constarray[$key] = $this->analyzeConstant($key, $class, $const, $reflectionClass);
         }
@@ -341,11 +351,19 @@ class Reflector
     private function analyzeMethod(object $method, object $object): array
     {
         $method->setAccessible(true);
+        $paramsList       = $method->getParameters();
+        $full_list_detail = [];
+        foreach ($paramsList as $param) {
+            $name               = $param->getName();
+            $type               = $param->getType()->getName();
+            $full_list_detail[] = '(' . $type . ') ' . '$' . $name;
+        }
         return [
             'name'      => $method->getName(),
             'code'      => $this->getCode($object, $method->getName()),
             'class'     => get_class($object),
             'modifiers' => '(' . implode(',', Reflection::getModifierNames($method->getModifiers())) . ')',
+            'params'    => (empty($full_list_detail) ? 'no parameters' : 'params(' . implode(',', $full_list_detail) . ')'),
         ];
     }
 

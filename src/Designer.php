@@ -69,23 +69,23 @@ class Designer
      */
     public function getIndent(array $data): array
     {
-        //echo '<pre>';
-        //echo var_dump($data);
-        //echo '</pre>';
-
-        $deep            = $this->calcDeepArray($data);
-        $main            = $this->commons->getHighestCharAmountByKey($data, 'name') +
-            $this->commons->getHighestCharAmountByKey($data, 'scope') + 12;
-        $indent          = [
-            'main'     => $main < 8 ? 8 + $deep : $main + $deep,
-            'value'    => $this->commons->getHighestCharAmountByKey($data, 'value') + 5,
-            'comments' => $this->commons->getHighestCharAmountByKey($data, 'comment') + 28,
+        $name             = $this->commons->getHighestCharAmountByKey($data, 'name');
+        $value            = $this->commons->getHighestCharAmountByKey($data, 'value');
+        $param            = $this->commons->getHighestCharAmountByKey($data, 'params');
+        $deep             = $this->calcDeepArray($data) * 4;
+        $main             = $name + $deep;
+        $value_calculated = $value < $param ? $param : $value;
+        $indent           = [
+            'main'     => $main < 8 ? 10 + $main : $main + 2,
+            'value'    => $value_calculated + 4,
+            'comments' => $this->commons->getHighestCharAmountByKey($data, 'comment') + 5,
             'min'      => 80,
             'max'      => 200,
         ];
-        $total           = $indent['main'] + $indent['value'] + $indent['comments'];
-        $total           = $total < $indent['min'] ? $indent['min'] : $total;
-        $indent['total'] = $this->commons->checkNumber($total) ? $total : $total + 1;
+        $total            = $indent['main'] + $indent['value'] + $indent['comments'];
+        $total            = $total < $indent['min'] ? $indent['min'] : $total;
+        $total            = $total > $indent['max'] ? $indent['max'] : $total;
+        $indent['total']  = $this->commons->checkNumber($total) ? $total : $total + 1;
         return $indent;
     }
 
@@ -97,10 +97,15 @@ class Designer
     private function calcDeepArray(array $data): int
     {
         $max_depth = 0;
-        foreach ($data as $inner_array) {
-            $max_depth = is_array($inner_array) ? count($inner_array) > $max_depth ? count($inner_array) : $max_depth : $max_depth;
+        foreach ($data as $value) {
+            if (is_array($value)) {
+                $depth = $this->calcDeepArray($value) + 1;
+                if ($depth > $max_depth) {
+                    $max_depth = $depth;
+                }
+            }
         }
-        return ($max_depth - 1) < 0 ? 4 : ($max_depth - 1) * 4;
+        return ($max_depth - 1) < 0 ? 4 : ($max_depth - 1);
     }
 
     /**

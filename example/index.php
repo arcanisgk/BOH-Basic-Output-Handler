@@ -10,12 +10,40 @@ use IcarosNet\BOHBasicOutputHandler\Output as Output;
 const PATH = __DIR__ . '\..\vendor\autoload.php';
 
 if (file_exists(PATH)) {
-    /** @noinspection PhpIncludeInspection */
     require_once PATH;
 } else {
     echo 'This library "[BOH] Basic Output Handler for PHP" requires composer installation and autoload; run composer install command in your root.';
     die;
 }
+
+
+trait talkWorld
+{
+    public function sayHello()
+    {
+        parent::sayHello();
+        echo 'World!';
+    }
+}
+
+class Base
+{
+    public function sayHello()
+    {
+        echo '¡Hello ';
+    }
+}
+
+class MyHelloWorld extends Base
+{
+    use talkWorld;
+
+    public function __construct()
+    {
+    }
+}
+
+$trait_instance = new MyHelloWorld();
 
 
 /**
@@ -62,7 +90,7 @@ class FooBar
         return self::$public_static_string_prop;
     }
 
-    private final function fooMethod4()
+    private final function fooMethod4(array $example, object $class, string $event)
     {
 
     }
@@ -83,6 +111,13 @@ $example_single_string = 'Hello World';
  */
 $example_short_array = ['a' => 1, 'b' => 2];
 
+
+/**
+ *
+ */
+$json = file_get_contents('https://randomuser.me/api/');
+$obj  = json_decode($json);
+
 /**
  * $object is a short variable to use as an example stdClass.
  */
@@ -91,6 +126,7 @@ $object->int_example    = 100;
 $object->string_example = 'Hello World 1';
 $object->float_example  = 3.1416;
 $object->array_example  = ['Hello World 2', 'test' => [10.35, '500']];
+$object->json_example   = $obj;
 
 /**
  * $object_casted is a short variable to use as an example stdClass casted.
@@ -98,36 +134,37 @@ $object->array_example  = ['Hello World 2', 'test' => [10.35, '500']];
 
 $object_casted = (object) ['int1' => 120, 120.25, 'datos' => ['int2' => '120', 'float' => '120.25']];
 
+
 /**
  * $example_big_array is a large array variable to use as an example.
  */
 $example_big_array = [
-    'null'         => null,
-    'null_text'    => 'null',
-    'integer'      => 10,
-    'integer_text' => '10',
-    'float'        => 20.35,
-    'float_text'   => '20.35',
-    'string'       => 'Hello World',
-    'date_1'       => '2021-01-17',
-    'date_2'       => '2021-Jan-17',
-    'hour_1'       => '6:31:00 AM',
-    'hour_2'       => '17:31:00',
-    'datetime_1'   => '2021-01-17 17:31:00',
-    'datetime_2'   => '2021-Jan-17 6:31:00 AM',
-    'datetime_3'   => '2021-01-17 6:31:00 AM',
-    'datetime_4'   => '2021-Jan-17 17:31:00',
-    'currency_1'   => '1.45$',
-    'currency_2'   => 'db£ 1.45 ₹',
-    'array_empty'  => [],
-    'objects_list' => [
+    'null'          => null,
+    'null_text'     => 'null',
+    'integer'       => 10,
+    'integer_text'  => '10',
+    'float'         => 20.35,
+    'float_text'    => '20.35',
+    'string'        => 'Hello World',
+    'date_1'        => '2021-01-17',
+    'date_2'        => '2021-Jan-17',
+    'hour_1'        => '6:31:00 AM',
+    'hour_2'        => '17:31:00',
+    'datetime_1'    => '2021-01-17 17:31:00',
+    'datetime_2'    => '2021-Jan-17 6:31:00 AM',
+    'datetime_3'    => '2021-01-17 6:31:00 AM',
+    'datetime_4'    => '2021-Jan-17 17:31:00',
+    'currency_1'    => '1.45$',
+    'currency_2'    => 'db£ 1.45 ₹',
+    'array_empty'   => [],
+    'objects_list'  => [
         'object_empty'   => (object) [],
         'object_example' => $object,
         'object_casted'  => $object_casted,
         'class_stored'   => $variable_class,
         'resource'       => curl_init(),
     ],
-    'array_node'   => [
+    'array_node'    => [
         'boolean_true'       => true,
         'boolean_false'      => false,
         'boolean_true_text'  => 'true',
@@ -146,6 +183,7 @@ $example_big_array = [
             ],
         ],
     ],
+    'trait_example' => $trait_instance,
 ];
 
 //Instance Class BOHBasicOutputHandler
