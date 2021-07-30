@@ -184,6 +184,7 @@ $output = new Output();                                           //instancia el
 
 //$output->output(['object_empty' => (object) [], 'object_fill' => $variable_class]);
 //$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
+
 $output->output($example_big_array);
 
 //Example 2: Output the rich html with theme color based
