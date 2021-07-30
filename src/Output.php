@@ -52,26 +52,31 @@ function boh(...$args)
  */
 class Output
 {
+
     /**
      * auto-instantiate tool kit of Validation class.
      * @var ?Output
      */
     private static ?Output $instance = null;
+
     /**
      * Store value if Running from Terminal/Command-Line Environment.
      * @var bool
      */
     public bool $ifTerminal = false;
+
     /**
      * instantiate tool kit of Designer class.
      * @var Designer
      */
     protected Designer $designer;
+
     /**
      * instantiate tool kit of Reflector class.
      * @var Reflector
      */
     private Reflector $reflector;
+
     /**
      * instantiate tool kit of Commons class.
      * @var Commons
@@ -79,13 +84,21 @@ class Output
     private Commons $commons;
 
     /**
+     * instantiate tool kit of ThemeController class.
+     * @var ThemeController
+     */
+    private ThemeController $theme_controller;
+
+    /**
      * Constructor of the Class Output
      */
-    public function __construct()
+    public function __construct(string $theme = 'default')
     {
-        $this->reflector  = new Reflector();
-        $this->designer   = new Designer();
-        $this->commons    = new Commons();
+        $this->reflector        = new Reflector();
+        $this->designer         = new Designer();
+        $this->commons          = new Commons();
+        $this->theme_controller = new ThemeController();
+        $this->theme_controller->setTheme($theme);
         $this->ifTerminal = $this->checkTerminal();
     }
 
@@ -161,6 +174,11 @@ class Output
     {
         $this->validateEnvironment() ?: die('You are trying to use the outputTerminal from a Website we recommend using output method.');
         //under Development
+    }
+
+    public function setOptions(array $array)
+    {
+
     }
 }
 

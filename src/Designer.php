@@ -121,12 +121,11 @@ class Designer
         $output = $this->commons->getStringFromArray($indent, $data['analyzed']);
         $output = $this->commons->cleanLinesString($output, $total_width);
 
-        $body_text  = highlight_string("<?php\n"
-            . $output
-            . "?>", true);
+        $body_text = highlight_string("<?php\n" . $output . "?>", true);
+        //$body_text  = $this->commons->removePHPStart($body_text);
         $title_text = $this->getTitle($total_width, $data);
         $copyright  = $this->getCopyRight($total_width);
-        return '<br>' . $title_text . '<br>' . $body_text . '<br>' . $copyright;
+        return $title_text . '<br>' . $body_text . '<br>' . $copyright;
     }
 
     /**

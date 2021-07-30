@@ -23,8 +23,9 @@ if (file_exists(PATH)) {
  */
 class FooBar
 {
-    const CONST_ARRAY = ['a' => 1, 'b' => 2];
-    const CONST_STRING = 'Constant String example';
+    public const CONST_ARRAY = ['a' => 1, 'b' => 2];
+    protected const CONST_STRING = 'Constant String example';
+    private const CONST_INT = 5000;
     public static string $public_static_string_prop = 'Example Hello World! 2';
     protected static bool $protected_static_boolean_prop = true;
     private static object $private_static_object_prop;
@@ -181,10 +182,9 @@ $output = new Output();                                           //instancia el
 //echo var_dump($object);
 //echo '</pre>';
 
-$output->output(['object_empty' => (object) [], 'object_fill' => $variable_class]);
-
-
-//$output->output($example_big_array);
+//$output->output(['object_empty' => (object) [], 'object_fill' => $variable_class]);
+//$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
+$output->output($example_big_array);
 
 //Example 2: Output the rich html with theme color based
 //$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);

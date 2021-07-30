@@ -20,6 +20,7 @@ namespace IcarosNet\BOHBasicOutputHandler;
 
 use Reflection;
 use ReflectionClass;
+use ReflectionClassConstant;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionObject;
@@ -283,11 +284,13 @@ class Reflector
     private function getConsts(object $object): array
     {
         $reflectionClass = new ReflectionClass($object);
-        $constlist       = $reflectionClass->getConstants();
-        $class           = $reflectionClass->getName();
-        $constarray      = [];
+
+
+        $constlist  = $reflectionClass->getConstants();
+        $class      = $reflectionClass->getName();
+        $constarray = [];
         foreach ($constlist as $key => $const) {
-            $constarray[$key] = $this->analyzeConstant($key, $class, $const);
+            $constarray[$key] = $this->analyzeConstant($key, $class, $const, $reflectionClass);
         }
         return $constarray;
     }
@@ -296,17 +299,19 @@ class Reflector
      * @param  string  $name
      * @param  string  $class
      * @param $value
+     * @param  object  $reflectionClass
      * @return array
      * @throws ReflectionException
      */
-    private function analyzeConstant(string $name, string $class, $value): array
+    private function analyzeConstant(string $name, string $class, $value, object $reflectionClass): array
     {
         return [
-            'name'    => $name,
-            'value'   => $this->getReflection($value),
-            'type'    => gettype($value),
-            'class'   => $class,
-            'comment' => $this->evaluateVariable($value)['comment'],
+            'name'      => $name,
+            'value'     => $this->getReflection($value),
+            'type'      => gettype($value),
+            'class'     => $class,
+            'modifiers' => implode(',', Reflection::getModifierNames((new ReflectionClassConstant($class, $name))->getModifiers())),
+            'comment'   => $this->evaluateVariable($value)['comment'],
         ];
     }
 
