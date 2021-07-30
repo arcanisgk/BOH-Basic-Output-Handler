@@ -358,12 +358,14 @@ class Reflector
             $type               = $param->getType()->getName();
             $full_list_detail[] = '(' . $type . ') ' . '$' . $name;
         }
+        $return_type = $method->getReturnType();
         return [
             'name'      => $method->getName(),
             'code'      => $this->getCode($object, $method->getName()),
             'class'     => get_class($object),
             'modifiers' => '(' . implode(',', Reflection::getModifierNames($method->getModifiers())) . ')',
             'params'    => (empty($full_list_detail) ? 'no parameters' : 'params(' . implode(',', $full_list_detail) . ')'),
+            'return'    => ($return_type != null ? $return_type->getName() : 'undefined'),
         ];
     }
 

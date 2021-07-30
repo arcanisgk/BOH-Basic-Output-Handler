@@ -354,6 +354,8 @@ class Commons
                                 . $sub_data['class']
                                 . ', modifiers: '
                                 . $sub_data['modifiers']
+                                . ', return type: '
+                                . $sub_data['return']
                                 . ').',
                                 ($indent['total'] - $indent['comments'])
                                 , ' ');

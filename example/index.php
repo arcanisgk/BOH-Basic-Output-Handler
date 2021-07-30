@@ -90,7 +90,7 @@ class FooBar
         return self::$public_static_string_prop;
     }
 
-    private final function fooMethod4(array $example, object $class, string $event)
+    private final function fooMethod4(array $example, object $class, string $event): void
     {
 
     }
