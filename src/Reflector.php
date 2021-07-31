@@ -39,6 +39,17 @@ class Reflector
     ];
 
     /**
+     * instantiate tool kit of Commons class.
+     * @var Commons
+     */
+    private Commons $commons;
+
+    public function __construct(string $theme = 'default')
+    {
+        $this->commons = new Commons();
+    }
+
+    /**
      *
      * @param $data
      * @return array
@@ -102,9 +113,7 @@ class Reflector
         }
 
         if (is_object($value)) {
-            ob_start();
-            var_dump($value);
-            $string = explode('{', ob_get_clean());
+            $string = explode('{', $this->commons->getBuffer($value));
             return ['name' => $key, 'type' => 'object', 'value' => '(object) ', 'comment' => rtrim(reset($string)) . '.'];
         }
 
@@ -120,9 +129,7 @@ class Reflector
                 ['name' => $key, 'type' => 'float', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') float value.'];
         }
 
-        ob_start();
-        var_dump($value);
-        $string = ob_get_clean();
+        $string = $this->commons->getBuffer($value);
         if (mb_strpos($string, 'resource') !== false) {
             return ['name' => $key, 'type' => 'resource', 'value' => 'resource', 'comment' => rtrim($string) . '.'];
         } elseif (mb_strpos($string, 'of type ') !== false) {
@@ -233,6 +240,11 @@ class Reflector
         return array_filter($result, fn($value) => !empty($value));
     }
 
+    /**
+     * Filler of String.
+     * @param $classInstance
+     * @return array|false|string[]
+     */
     public function getTraits($classInstance)
     {
         $parentClasses = class_parents($classInstance);

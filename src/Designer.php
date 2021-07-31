@@ -18,7 +18,6 @@ declare(strict_types=1);
 
 namespace IcarosNet\BOHBasicOutputHandler;
 
-
 class Designer
 {
     /**
@@ -116,17 +115,10 @@ class Designer
      */
     public function getLayout(array $data, array $indent): string
     {
-        //analisis del entorno
-        //aplicar las variables de entorno y themes
-        //obtener el texto parseado
         $total_width = $indent['total'] < $indent['min'] ? $indent['min'] : $indent['total'];
-        //echo '<pre>';
-        //echo var_dump($indent, $data);
-        //echo '</pre>';
-        $output = $this->commons->getStringFromArray($indent, $data['analyzed']);
-        $output = $this->commons->cleanLinesString($output, $total_width);
-
-        $body_text = highlight_string("<?php\n" . $output . "?>", true);
+        $output      = $this->commons->getStringFromArray($indent, $data['analyzed']);
+        $output      = $this->commons->cleanLinesString($output, $total_width);
+        $body_text   = highlight_string("<?php\n" . $output . "?>", true);
         //$body_text  = $this->commons->removePHPStart($body_text);
         $title_text = $this->getTitle($total_width, $data);
         $copyright  = $this->getCopyRight($total_width);
@@ -173,48 +165,5 @@ class Designer
             . ' URL:  <a href="https://github.com/IcarosNetSA/BOH-Basic-Output-Handler">IcarosNetSA/BOH-Basic-Output-Handler</a> '
             . $this->commons->repeatChar('=', (($copyright_indent * 2) < $total_width ? $copyright_indent + 1 : $copyright_indent));
         return $copyright1 . '<br>' . $copyright2 . '<br>' . $copyright3;
-    }
-
-    /**
-     *
-     * @return mixed
-     * @var mixed
-     */
-    private function convertObject2Array($data)
-    {
-        $data = is_object($data) ? get_object_vars($data) : $data;
-        return is_array($data) ? array_map(__METHOD__, $data) : $data;
-    }
-
-    private function calcIndentKey($data): int
-    {
-        ob_start();
-        var_dump($data);
-        $string = ob_get_clean();
-        $max    = 0;
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $string) as $line) {
-            $size = strripos($line, ']') - stripos($line, '[') - 1;
-            $max  = $size > $max ? $size : $max;
-        }
-        return $max;
-    }
-
-    private function calcIndentVal($newArray, $len): int
-    {
-        if (is_array($newArray)) {
-            foreach ($newArray as $child) {
-                $len = $this->calcIndentVal($child, $len);
-            }
-        } else {
-            if (is_resource($newArray)) {
-                $temp = rtrim($this->commons->getBuffer($newArray));
-                $len  = ($len >= $this->commons->calculateLength($temp)) ? $len : $this->commons->calculateLength($temp);
-            } else {
-                $newArray = (string) $newArray;
-                $len      = ($len >= $this->commons->calculateLength($newArray)) ? $len : $this->commons->calculateLength($newArray);
-
-            }
-        }
-        return $len;
     }
 }

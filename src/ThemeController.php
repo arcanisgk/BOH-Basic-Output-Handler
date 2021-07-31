@@ -1,4 +1,5 @@
 <?php
+
 /**
  * BOHBasicOutputHandler - Data output manager in PHP development environments.
  * PHP Version 7.4.
@@ -16,7 +17,6 @@
 declare(strict_types=1);
 
 namespace IcarosNet\BOHBasicOutputHandler;
-
 
 class ThemeController
 {

@@ -80,13 +80,16 @@ class Commons
         return $name_len;
     }
 
+    /**
+     * Filler of String.
+     * @param $indent
+     * @param $data
+     * @param  int  $in
+     * @param  null  $k
+     * @return string
+     */
     public function getStringFromArray($indent, $data, $in = 0, $k = null): string
     {
-
-        //echo '<pre>';
-        //echo var_dump($data);
-        //echo '</pre>';
-
         $buffer = '';
         if (gettype($data) == 'array') {
             if (isset($data['type']) && $data['type'] != 'array') {
@@ -187,7 +190,7 @@ class Commons
                         'object node of Class: ' . $data['class'] . (isset($data['traits']) && $data['traits'] != '' ? '; implement of traits: ' . $data['traits'] . '' : ''),
                         ($indent['total'] - $indent['comments']),
                         ' ');
-                $buffer     .= $this->lineValidation($line, $indent, $in);
+                $buffer     .= $this->lineValidation($line, $indent);
                 $in         += 4;
                 // Property Analysis
                 if (isset($data['properties'])) {
@@ -335,7 +338,7 @@ class Commons
                 }
                 // Property Methods
                 if (isset($data['methods'])) {
-                    foreach ($data['methods'] as $sk => $sub_data) {
+                    foreach ($data['methods'] as $sub_data) {
                         $line   = $this->fillCharRight(
                                 '',
                                 $in,
@@ -359,7 +362,7 @@ class Commons
                                 . ').',
                                 ($indent['total'] - $indent['comments'])
                                 , ' ');
-                        $buffer .= $this->lineValidation($line, $indent, $in);
+                        $buffer .= $this->lineValidation($line, $indent);
                     }
                 }
                 if ($auto_close != '=(object)[], ') {
@@ -434,6 +437,12 @@ class Commons
         return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
     }
 
+    /**
+     * Filler of String.
+     * @param $line
+     * @param $indent
+     * @return string
+     */
     public function lineValidation($line, $indent): string
     {
         $line   = rtrim($line);
@@ -518,6 +527,12 @@ class Commons
         return ($number % 2 == 0);
     }
 
+    /**
+     * Filler of String.
+     * @param $string
+     * @param $max
+     * @return string
+     */
     public function cleanLinesString($string, $max): string
     {
         $linesReader = '';
@@ -527,10 +542,4 @@ class Commons
         }
         return $linesReader;
     }
-
-    public function removePHPStart(string $text): string
-    {
-        return preg_replace('~(.*)<span>.*?</span>~', '$1', $text);
-    }
-
 }

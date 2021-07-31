@@ -223,7 +223,6 @@ $output = new Output();                                           //instancia el
 //$output->output(['object_empty' => (object) [], 'object_fill' => $variable_class]);
 //$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
 
-$output->output($example_big_array);
 
 //Example 2: Output the rich html with theme color based
 //$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
@@ -240,5 +239,8 @@ $output->output($example_big_array);
  * In line Instance:
  */
 
-//Output::getInstance()->output($examplearray);
+//$output = new Output();
+//$output->output($example_big_array);
+
+Output::getInstance()->output($example_big_array);
 

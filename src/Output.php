@@ -1,4 +1,5 @@
 <?php
+
 /**
  * BOHBasicOutputHandler - Data output manager in PHP development environments.
  * PHP Version 7.4.
