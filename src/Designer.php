@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BOHBasicOutputHandler - Data output manager in PHP development environments.
+ * src - Data toPlain manager in PHP development environments.
  * PHP Version 7.4.
  *
  * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace IcarosNet\BOHBasicOutputHandler;
+namespace IcarosNet\BOH;
 
 class Designer
 {
@@ -54,7 +54,7 @@ class Designer
     protected Commons $commons;
 
     /**
-     * Constructor of the Class Output
+     * Constructor of the Class OutputHandler
      */
     public function __construct()
     {
@@ -134,7 +134,7 @@ class Designer
     private function getTitle(int $total_width, array $data): string
     {
         $theme_applied = ' | Theme Applied: Default ';
-        $title_text    = $theme_applied . '| Output of Given Variable | Type: ' . $data['type'] . ' | ';
+        $title_text    = $theme_applied . '| OutputHandler of Given Variable | Type: ' . $data['type'] . ' | ';
         return $this->commons->fillCharBoth(
             $title_text,
             $total_width,
@@ -150,7 +150,7 @@ class Designer
     private function getCopyRight(int $total_width): string
     {
         $copyright1 = $this->commons->fillCharBoth(
-            ' [BOH] Basic Output Handler for PHP - Copyright 20020 - ' . date('Y') . ' ',
+            ' [src] Basic OutputHandler Handler for PHP - Copyright 20020 - ' . date('Y') . ' ',
             $total_width,
             '='
         );
@@ -162,7 +162,7 @@ class Designer
 
         $copyright_indent = (int) floor(($total_width - 44) / 2);
         $copyright3       = $this->commons->repeatChar('=', $copyright_indent)
-            . ' URL:  <a href="https://github.com/IcarosNetSA/BOH-Basic-Output-Handler">IcarosNetSA/BOH-Basic-Output-Handler</a> '
+            . ' URL:  <a href="https://github.com/IcarosNetSA/src-Basic-OutputHandler-Handler">IcarosNetSA/src-Basic-OutputHandler-Handler</a> '
             . $this->commons->repeatChar('=', (($copyright_indent * 2) < $total_width ? $copyright_indent + 1 : $copyright_indent));
         return $copyright1 . '<br>' . $copyright2 . '<br>' . $copyright3;
     }

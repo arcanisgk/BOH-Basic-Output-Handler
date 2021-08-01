@@ -1,18 +1,18 @@
 <?php
 
 /**
- * This example shows how the BOHBasicOutputHandler class and its methods are declared.
+ * This example shows how the src class and its methods are declared.
  */
 
 
-use IcarosNet\BOHBasicOutputHandler\Output as Output;
+use IcarosNet\BOH\OutputHandler;
 
 const PATH = __DIR__ . '\..\vendor\autoload.php';
 
 if (file_exists(PATH)) {
     require_once PATH;
 } else {
-    echo 'This library "[BOH] Basic Output Handler for PHP" requires composer installation and autoload; run composer install command in your root.';
+    echo 'This library "[src] Basic OutputHandler Handler for PHP" requires composer installation and autoload; run composer install command in your root.';
     die;
 }
 
@@ -129,7 +129,7 @@ $object->array_example  = ['Hello World 2', 'test' => [10.35, '500']];
 $object->json_example   = $obj;
 
 /**
- * $object_casted is a short variable to use as an example stdClass casted.
+ * $object_casted is a short variable to use as an example stdClass cast.
  */
 
 $object_casted = (object) ['int1' => 120, 120.25, 'datos' => ['int2' => '120', 'float' => '120.25']];
@@ -186,21 +186,28 @@ $example_big_array = [
     'trait_example' => $trait_instance,
 ];
 
-//Instance Class BOHBasicOutputHandler
+//Instance Class src
 //Ejemplo 1: Ejecucion con CSS independiente del proyecto
-$output = new Output();                                           //instancia el output
-//$output->loadBOHDesign('full', 'Tailwing');                       // establece que el ouput es independiente al Framwrork del Proyecto.
-//$output->output($example_big_array);                              // ejecuta la salida
-
+$output = new OutputHandler();
+$output->toPlain($example_big_array);
+/*
+$output = new OutputHandler();                                       // instancia el toPlain
+$output->loadBOHDesign('full', 'BS4');                               // establece que el ouput es independiente al Framwrork del Proyecto (debera cargar todo).
+$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);         // establece el Framework a usar y el thema del resaltado de colores
+$output->toPlain($example_big_array);                                // ejecuta la salida como texto plano
+$output->toWeb($example_big_array);                                  // ejecuta la salida para entorno web
+$output->toJson($example_big_array);                                 // ejecuta la salida para entorno web Request Json
+$output->toTerminal($example_big_array);                             // ejecuta la salida para entorno CLI
+*/
 //ejecucion con CSS dependiente del proyecto
 //Ejemplo 2: dependecia de BS4
-//$output = new Output();                                           //instancia el output
-//$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);      // establece que el ouput es dependiente de librerias CSS de BS4 usado en el proyecto y que la paleta de colores sera Monokai.
-//$output->output($example_big_array);                              // ejecuta la salida
+//$toPlain = new OutputHandler();                                           //instancia el toPlain
+//$toPlain->setOptions(['css' => 'BS4', 'theme' => 'monokai']);      // establece que el ouput es dependiente de librerias CSS de BS4 usado en el proyecto y que la paleta de colores sera Monokai.
+//$toPlain->toPlain($example_big_array);                              // ejecuta la salida
 
 //Ejemplo 3: dependecia de TailWing
-//$output->setOptions(['css' => 'tailwing', 'theme' => 'monokai']); // establece que el ouput es dependiente de librerias CSS de BS4 usado en el proyecto y que la paleta de colores sera Monokai.
-//$output->output($example_big_array);                              // ejecuta la salida
+//$toPlain->setOptions(['css' => 'tailwing', 'theme' => 'monokai']); // establece que el ouput es dependiente de librerias CSS de BS4 usado en el proyecto y que la paleta de colores sera Monokai.
+//$toPlain->toPlain($example_big_array);                              // ejecuta la salida
 
 
 /**
@@ -213,34 +220,38 @@ $output = new Output();                                           //instancia el
 
 
 //$examplearray = ['int1' => 120, 120.25, 'datos' => ['int2' => '120', 'float' => '120.25']];
-//Example 1: Output the Basic Html in Line
+//Example 1: OutputHandler the Basic Html in Line
 
 
 //echo '<pre>';
 //echo var_dump($object);
 //echo '</pre>';
 
-//$output->output(['object_empty' => (object) [], 'object_fill' => $variable_class]);
-//$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
+//$toPlain->toPlain(['object_empty' => (object) [], 'object_fill' => $variable_class]);
+//$toPlain->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
 
 
-//Example 2: Output the rich html with theme color based
-//$output->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
-//$output->output($examplearray);
+//Example 2: OutputHandler the rich html with theme color based
+//$toPlain->setOptions(['css' => 'BS4', 'theme' => 'monokai']);
+//$toPlain->toPlain($examplearray);
 
-//Example 3: Output json-string
-//$output->outputJson($examplearray);
+//Example 3: OutputHandler json-string
+//$toPlain->toJson($examplearray);
 
-//Example 4: Output the rich html with theme color based
-//$output->setOptions(['theme' => 'monokai']);
-//$output->outputTerminal($examplearray);
+//Example 4: OutputHandler the rich html with theme color based
+//$toPlain->setOptions(['theme' => 'monokai']);
+//$toPlain->toTerminal($examplearray);
 
 /**
  * In line Instance:
  */
 
-//$output = new Output();
-//$output->output($example_big_array);
+//$toPlain = new OutputHandler();
+//$toPlain->toPlain($example_big_array);
 
-Output::getInstance()->output($example_big_array);
+OutputHandler::getInstance()->toPlain($variable_class);
+
+
+
+
 

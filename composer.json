@@ -14,7 +14,7 @@
   },
   "autoload": {
     "psr-4": {
-      "IcarosNet\\BOHBasicOutputHandler\\": "src/"
+      "IcarosNet\\BOH\\": "src/"
     }
   }
 }

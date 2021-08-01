@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BOHBasicOutputHandler - Data output manager in PHP development environments.
+ * src - Data toPlain manager in PHP development environments.
  * PHP Version 7.4.
  *
  * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace IcarosNet\BOHBasicOutputHandler;
+namespace IcarosNet\BOH;
 
 /**
  * Validation of php version.
@@ -29,15 +29,15 @@ if (!version_compare(PHP_VERSION, '7.4', '>=')) {
 }
 
 /*
- * Fast implementation of default data output...
+ * Fast implementation of default data toPlain...
  * @param $args
  */
 function boh(...$args)
 {
     /*
-    $output = new Output();
+    $toPlain = new OutputHandler();
     foreach ($args as $arg) {
-        $output->output($arg);
+        $toPlain->toPlain($arg);
     }
     */
     foreach ($args as $arg) {
@@ -48,17 +48,17 @@ function boh(...$args)
 }
 
 /**
- * BOHBasicOutputHandler - Data output manager in PHP development environments.
+ * src - Data toPlain manager in PHP development environments.
  * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
  */
-class Output
+class OutputHandler
 {
 
     /**
      * auto-instantiate tool kit of Validation class.
-     * @var ?Output
+     * @var ?OutputHandler
      */
-    private static ?Output $instance = null;
+    private static ?OutputHandler $instance = null;
 
     /**
      * Store value if Running from Terminal/Command-Line Environment.
@@ -91,7 +91,7 @@ class Output
     private ThemeController $theme_controller;
 
     /**
-     * Constructor of the Class Output
+     * Constructor of the Class OutputHandler
      */
     public function __construct(string $theme = 'default')
     {
@@ -115,7 +115,7 @@ class Output
             || (empty($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0);
     }
 
-    public static function getInstance(): Output
+    public static function getInstance(): OutputHandler
     {
         if (!self::$instance instanceof self) {
             self::$instance = new self;
@@ -127,9 +127,9 @@ class Output
      *
      * @param $data
      */
-    public function output($data)
+    public function toPlain($data)
     {
-        !$this->validateEnvironment() ?: die('You are trying to use the output from a terminal we recommend using outputTerminal method.');
+        !$this->validateEnvironment() ?: die('You are trying to use the toPlain from a terminal we recommend using toTerminal method.');
 
         $data   = $this->reflector->initReflectVariable($data);
         $indent = $this->designer->getIndent($data);
@@ -138,7 +138,7 @@ class Output
         //echo var_dump($indent);
         //echo '</pre>';
 
-        echo '<div style="font-family: monospace;">' . $this->designer->getLayout($data, $indent) . '</div>';
+        echo '<div style="font-family: monospace;background-color: black;color: white">' . $this->designer->getLayout($data, $indent) . '</div>';
 
         //echo $layout = nl2br($layout);
         //echo '<pre>';
@@ -158,11 +158,13 @@ class Output
         return $this->ifTerminal;
     }
 
+
     /**
      *
      * @param $data
+     * @param $otros
      */
-    public function outputJson($data)
+    public function loadBOHDesign($data, $otros)
     {
         //under Development
     }
@@ -171,9 +173,27 @@ class Output
      *
      * @param $data
      */
-    public function outputTerminal($data)
+    public function toWeb($data)
     {
-        $this->validateEnvironment() ?: die('You are trying to use the outputTerminal from a Website we recommend using output method.');
+        //under Development
+    }
+
+    /**
+     *
+     * @param $data
+     */
+    public function toJson($data)
+    {
+        //under Development
+    }
+
+    /**
+     *
+     * @param $data
+     */
+    public function toTerminal($data)
+    {
+        $this->validateEnvironment() ?: die('You are trying to use the toTerminal from a Website we recommend using toPlain method.');
         //under Development
     }
 
