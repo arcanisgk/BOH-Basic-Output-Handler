@@ -249,7 +249,7 @@ $output->toTerminal($example_big_array);                             // ejecuta 
 //$toPlain = new OutputHandler();
 //$toPlain->toPlain($example_big_array);
 
-OutputHandler::getInstance()->toPlain($variable_class);
+//OutputHandler::getInstance()->toPlain($variable_class);
 
 
 
