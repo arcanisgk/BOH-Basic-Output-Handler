@@ -90,6 +90,13 @@ class OutputHandler
      */
     private ThemeController $theme_controller;
 
+
+    /**
+     * instantiate tool kit of ThemeController class.
+     * @var string
+     */
+    private string $env;
+
     /**
      * Constructor of the Class OutputHandler
      */
@@ -101,6 +108,7 @@ class OutputHandler
         $this->theme_controller = new ThemeController();
         $this->theme_controller->setTheme($theme);
         $this->ifTerminal = $this->checkTerminal();
+        $this->env        = $this->ifTerminal ? 'cli' : 'plain';
     }
 
     /**
@@ -127,46 +135,41 @@ class OutputHandler
      *
      * @param $data
      */
-    public function toPlain($data)
+    public function show($data)
     {
-        !$this->validateEnvironment() ?: die('You are trying to use the toPlain from a terminal we recommend using toTerminal method.');
-
-        $data   = $this->reflector->initReflectVariable($data);
-        $indent = $this->designer->getIndent($data);
-
-        //echo '<pre>';
-        //echo var_dump($indent);
-        //echo '</pre>';
-
-        echo '<div style="font-family: monospace;background-color: black;color: white">' . $this->designer->getLayout($data, $indent) . '</div>';
-
-        //echo $layout = nl2br($layout);
-        //echo '<pre>';
-        //echo var_dump($layout);
-        //echo '</pre>';
-
-
-        //Hydrate Data
-
-        //$indents = $this->designer->getIndent($data);
-        //$string  = $this->validator->getVariableToText($data, $indents);
-
+        //echo var_dump($this->env);
+        switch ($this->env) {
+            case 'cli':
+                $this->toTerminal($data);
+                break;
+            case 'json':
+                $this->toJson($data);
+                break;
+            case 'web':
+                $this->toWeb($data);
+                break;
+            default:
+                $this->toPlain($data);
+                break;
+        }
     }
-
-    public function validateEnvironment(): bool
-    {
-        return $this->ifTerminal;
-    }
-
 
     /**
      *
      * @param $data
-     * @param $otros
      */
-    public function loadBOHDesign($data, $otros)
+    public function toTerminal($data)
     {
-        //under Development
+        echo 'under Development';
+    }
+
+    /**
+     *
+     * @param $data
+     */
+    public function toJson($data)
+    {
+        echo 'under Development';
     }
 
     /**
@@ -182,24 +185,42 @@ class OutputHandler
      *
      * @param $data
      */
-    public function toJson($data)
+    public function toPlain($data)
     {
-        //under Development
+        !$this->validateEnvironment() ?: die('You are trying to use the toPlain from a terminal we recommend using toTerminal method.');
+
+        $data   = $this->reflector->initReflectVariable($data);
+        $indent = $this->designer->getIndent($data);
+
+        echo '<div style="font-family: monospace;background-color: black;color: white">' . $this->designer->getLayout($data, $indent) . '</div>';
+
+
+    }
+
+    public function validateEnvironment(): bool
+    {
+        return $this->ifTerminal;
     }
 
     /**
      *
      * @param $data
+     * @param $otros
      */
-    public function toTerminal($data)
+    public function loadBOHDesign($data, $otros)
     {
-        $this->validateEnvironment() ?: die('You are trying to use the toTerminal from a Website we recommend using toPlain method.');
-        //under Development
+        echo 'under Development';
     }
 
     public function setOptions(array $array)
     {
-
+        foreach ($array as $key => $value) {
+            if (isset($this->$key)) {
+                $this->$key = $value;
+            } else {
+                echo 'la propiedad: ' . $key . ' no existe.';
+            }
+        }
     }
 }
 

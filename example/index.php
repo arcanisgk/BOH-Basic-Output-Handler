@@ -189,7 +189,8 @@ $example_big_array = [
 //Instance Class src
 //Ejemplo 1: Ejecucion con CSS independiente del proyecto
 $output = new OutputHandler();
-$output->toPlain($example_big_array);
+//$output->setOptions(['env' => 'json']); // puede ser web o cli
+$output->show($example_big_array);
 /*
 $output = new OutputHandler();                                       // instancia el toPlain
 $output->loadBOHDesign('full', 'BS4');                               // establece que el ouput es independiente al Framwrork del Proyecto (debera cargar todo).
