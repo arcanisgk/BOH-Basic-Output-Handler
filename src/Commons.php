@@ -1,7 +1,7 @@
 <?php
 
 /**
- * src - Data toPlain manager in PHP development environments.
+ * BOH - Data Output Manager in PHP Development Environments.
  * PHP Version 7.4.
  *
  * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
@@ -16,23 +16,169 @@
 
 declare(strict_types=1);
 
-namespace IcarosNet\BOH;
+namespace IcarosNetSA\BOH;
 
+/**
+ * OutputHandler Class.
+ *
+ */
 class Commons
 {
     /**
-     * repeater of String.
-     * @param  string|int|null  $haystack
-     * @param  string|int|null  $needle
-     * @return false|int
+     * List of currency.
+     * @var array
      */
-    public function checkStrPos($haystack, $needle)
+    const CURRENCIES_LIST = [
+        '¤', '$', '¢', '£', '¥', '₣', '₤', '₧', '€', '₹', '₩', '₴', '₯',
+        '₮', '₰', '₲', '₱', '₳', '₵', '₭', '₪', '₫', '₠', '₡', '₢', '₥',
+        '₦', '₨', '₶', '₷', '₸', '₺', '₻', '₼', '₽', '₾', '₿',
+    ];
+
+    /**
+     * Description: return validation if is empty.
+     * @param $array
+     * @return bool
+     */
+    public function isEmpty($array): bool
     {
-        return mb_strpos((string) $haystack, (string) $needle);
+        return empty($array);
     }
 
     /**
-     * captures a variable buffer and rhetoric as string
+     * Description: parses the data type passed, evaluates and adds an enriched
+     * description, and returns a descriptive array.
+     * @param $value
+     * @param  string  $key
+     * @return array
+     */
+    public function descriptionVariable($value, string $key): array
+    {
+
+        if (null === $value || 'null' === $value || 'NULL' === $value) {
+            return $this->isNullType($value, $key);
+        }
+
+        if (is_array($value)) {
+            return $this->isArrayType($value, $key);
+        }
+
+        if (in_array($value, ["true", "false", true, false], true)) {
+            return $this->isBoolType($value, $key);
+        }
+
+        if (is_object($value)) {
+            return $this->isObjectType($value, $key);
+        }
+
+        if ((int) $value == $value && is_numeric($value)) {
+            return $this->isIntegerType($value, $key);
+        }
+
+        if ((float) $value == $value && is_numeric($value)) {
+            return $this->isFloatType($value, $key);
+
+        }
+
+        $string = $this->getBuffer($value);
+        if (mb_strpos($string, 'resource') !== false || mb_strpos($string, 'of type ') !== false) {
+            return $this->isResourceType($string, $key);
+        }
+        unset($string);
+
+        if (mb_strpos($value, ' ') !== false && mb_strpos($value, ':') !== false && mb_strpos($value, '-') !== false) {
+            $datetime = explode(" ", $value);
+            $validate = 0;
+            foreach ($datetime as $sub_value) {
+                if ($this->validateDate($sub_value)) {
+                    $validate++;
+                }
+            }
+            if ($validate >= 2) {
+                return $this->isDateTimeType($value, $key);
+
+            }
+        }
+
+        if ($this->validateDate($value) && mb_strpos($value, ':') !== false) {
+            return $this->isTimeType($value, $key);
+        }
+
+        if ($this->validateDate($value) && mb_strlen($value) >= 8 && mb_strpos($value, '-') !== false) {
+            return $this->isDateType($value, $key);
+        }
+
+        if (is_string($value)) {
+            $arr            = $this->splitStrToUnicode($value);
+            $currency_check = [];
+            foreach ($arr as $char) {
+                if (in_array($char, self::CURRENCIES_LIST, true)) {
+                    $currency_check[] = $char;
+                }
+            }
+            if (!empty($currency_check)) {
+                return $this->isStringCurrencyType($value, $key, $currency_check);
+            }
+        }
+
+        if (is_string($value)) {
+            return $this->isStringType($value, $key);
+        }
+
+        return $this->isUnknown();
+
+    }
+
+    /**
+     * Description: This method should evaluate if the null type is a stored string.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isNullType($value, $key): array
+    {
+        return is_string($value) ?
+            ['name' => $key, 'type' => 'null', 'value' => '"null"', 'comment' => 'null value string.'] :
+            ['name' => $key, 'type' => 'null', 'value' => 'null', 'comment' => 'null value.'];
+    }
+
+    /**
+     * Description: This method should evaluate if is array type to add comment like node.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isArrayType($value, $key): array
+    {
+        return ['name' => $key, 'type' => 'array', 'value' => "", 'comment' => 'array node' . (empty($value) ? ' that is empty.' : '.')];
+    }
+
+    /**
+     * Description: This method should evaluate if is boolean type like string.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isBoolType($value, $key): array
+    {
+        return is_string($value) ?
+            ['name' => $key, 'type' => 'boolean', 'value' => '"' . $value . '"', 'comment' => 'string value boolean ' . $value . '.'] :
+            ['name' => $key, 'type' => 'boolean', 'value' => ($value ? 'true' : 'false'), 'comment' => 'boolean value ' . ($value ? 'true' : 'false') . '.'];
+    }
+
+    /**
+     * Description: This method should evaluate if is object.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isObjectType($value, $key): array
+    {
+        $string = explode('{', $this->getBuffer($value));
+        return ['name' => $key, 'type' => 'object', 'value' => '(object) ', 'comment' => rtrim(reset($string)) . '.'];
+    }
+
+    /**
+     * Description: This method should capture the buffer of a variable and returns it as a string
      * @param  mixed  $data
      * @return string
      */
@@ -44,7 +190,157 @@ class Commons
     }
 
     /**
-     * repeater of String.
+     * Description: This method should evaluate if is integer.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isIntegerType($value, $key): array
+    {
+        return is_string($value) ?
+            ['name' => $key, 'type' => 'integer', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') integer value string.'] :
+            ['name' => $key, 'type' => 'integer', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') integer value.'];
+    }
+
+    /**
+     * Description: This method should evaluate if is float.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isFloatType($value, $key): array
+    {
+        return is_string($value) ?
+            ['name' => $key, 'type' => 'float', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') float value string.'] :
+            ['name' => $key, 'type' => 'float', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') float value.'];
+    }
+
+    /**
+     * Description: This method should evaluate if is resource.
+     * @param $string
+     * @param $key
+     * @return array
+     */
+    private function isResourceType($string, $key): array
+    {
+        return ['name' => $key, 'type' => 'resource', 'value' => 'resource', 'comment' => rtrim($string) . '.'];
+    }
+
+    /**
+     * Description: This method should validate Date String.
+     * @param  string  $date
+     * @return bool
+     */
+    private function validateDate(string $date): bool
+    {
+        return (strtotime($date) !== false);
+    }
+
+    /**
+     * Description: This method should evaluate if the datetime type is a stored string.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isDateTimeType($value, $key): array
+    {
+        return ['name' => $key, 'string' => 'datetime', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value datetime.'];
+    }
+
+    /**
+     * Description: This method should evaluate if is time.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isTimeType($value, $key): array
+    {
+        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value time.'];
+    }
+
+    /**
+     * Description: This method should evaluate if is date.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isDateType($value, $key): array
+    {
+        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value date.'];
+    }
+
+    /**
+     * Description: This should cut the strings in unicode format.
+     * @param  string  $str
+     * @param  int  $length  default 1
+     * @return array
+     */
+    private function splitStrToUnicode(string $str, int $length = 1): array
+    {
+        $tmp = preg_split('~~u', $str, -1, PREG_SPLIT_NO_EMPTY);
+        if ($length > 1) {
+            $chunks = array_chunk($tmp, $length);
+            foreach ($chunks as $i => $chunk) {
+                $chunks[$i] = join('', (array) $chunk);
+            }
+            $tmp = $chunks;
+        }
+        return $tmp;
+    }
+
+    /**
+     * Description: This method should evaluate if is string related to currency.
+     * @param $value
+     * @param $key
+     * @param $currency_check
+     * @return array
+     */
+    private function isStringCurrencyType($value, $key, $currency_check): array
+    {
+        return [
+            'name'    => $key,
+            'type'    => 'string',
+            'value'   => '"' . $value . '"',
+            'comment' => 'string/amount value related to currency (' . implode(',', $currency_check) . ').',
+        ];
+    }
+
+    /**
+     * Description: This method should evaluate if is string related to currency.
+     * @param $value
+     * @param $key
+     * @return array
+     */
+    private function isStringType($value, $key): array
+    {
+        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => 'string value of ' . mb_strlen($value) . ' character.'];
+    }
+
+    /**
+     * Description: This method should evaluate to unknown type data.
+     * @return array
+     */
+    private function isUnknown(): array
+    {
+        return ['name' => 'unknown', 'type' => 'unknown', 'value' => 'unknown', 'comment' => 'unknown'];
+    }
+
+    /**
+     * Description: This method should evaluate / iterate the passed array
+     * and find the key with the most characters.
+     * @param  array  $data
+     * @param  string  $key
+     * @return int
+     */
+    public function getHighestCharacterAmountByKey(array $data, string $key): int
+    {
+        $name_len = 0;
+        array_walk_recursive($data, [$this, 'getArrayData'], ['search' => $key, &$name_len]);
+        return $name_len;
+    }
+
+    /**
+     * Description: This method is a callbacks for parsing the getHighestCharacterAmountByKey method
      * @param  array|string  $value
      * @param  string  $key
      * @param  array  $argument
@@ -58,7 +354,7 @@ class Commons
     }
 
     /**
-     * repeater of String.
+     * Description: This method calculates the size of a character string given.
      * @param $string
      * @return int
      */
@@ -68,478 +364,32 @@ class Commons
     }
 
     /**
-     * repeater of String.
+     * Description: This method should evaluate / iterate the passed array
+     * and find the highest deep node.
      * @param  array  $data
-     * @param  string  $key
      * @return int
      */
-    public function getHighestCharAmountByKey(array $data, string $key): int
+    public function calculateDeepArray(array $data): int
     {
-        $name_len = 0;
-        array_walk_recursive($data, [$this, 'getArrayData'], ['search' => $key, &$name_len]);
-        return $name_len;
-    }
-
-    /**
-     * Filler of String.
-     * @param $indent
-     * @param $data
-     * @param  int  $in
-     * @param  null  $k
-     * @return string
-     */
-    public function getStringFromArray($indent, $data, $in = 0, $k = null): string
-    {
-        $buffer = '';
-        if (gettype($data) == 'array') {
-            if (isset($data['type']) && $data['type'] != 'array') {
-                $buffer .= $this->fillCharRight('', $in, ' ')
-                    . $this->fillCharRight(
-                        ($k === null ? '$unknown' : "'$k'"),
-                        $indent['main'] - $in,
-                        ' ')
-                    . '=> ' . $this->fillCharRight(
-                        $data['value'] . ',',
-                        $indent['value'],
-                        ' ')
-                    . '// ' . $this->fillCharRight(
-                        $data['comment'],
-                        ($indent['total'] - $indent['comments']),
-                        ' ')
-                    . PHP_EOL;
-            } elseif (isset($data[''])) {
-                $buffer .= $this->fillCharRight(
-                        ($k === null ? '$array' : "'$k'"),
-                        ($indent['main']),
-                        ' ')
-                    . '=[ ' . $this->fillCharRight(
-                        '',
-                        $indent['value'],
-                        ' ')
-                    . '// ' . $this->fillCharRight(
-                        $data['']['comment'],
-                        ($indent['total'] - $indent['comments']),
-                        ' ')
-                    . PHP_EOL;
-                $in     += 4;
-                foreach ($data['']['value'] as $sk => $sub_data) {
-                    $buffer .= $this->getStringFromArray(
-                        $indent,
-                        $sub_data,
-                        $in,
-                        $sk);
-                }
-                $buffer .= $this->fillCharRight(
-                    '];',
-                    $indent['total'],
-                    ' ');
-            } elseif (isset($data[$k]['type']) && $data[$k]['type'] == 'array') {
-                $auto_close = isset($data[$k]['value']) && !empty($data[$k]['value']) ? '=[ ' : '=[] ';
-                $buffer     .= $this->fillCharRight(
-                        '',
-                        $in,
-                        ' ')
-                    . $this->fillCharRight(
-                        ($k === null ? '$array' : "'$k'"),
-                        ($indent['main'] - $in),
-                        ' ')
-                    . $this->fillCharRight(
-                        $auto_close,
-                        $indent['value'] + 3,
-                        ' ')
-                    . '// ' . $this->fillCharRight(
-                        $data[$k]['comment']
-                        . ($auto_close == '=[] ' ? ' (empty array)' : ''),
-                        ($indent['total'] - $indent['comments']),
-                        ' ')
-                    . PHP_EOL;
-                $in         += 4;
-                foreach ($data[$k]['value'] as $sk => $sub_data) {
-                    $buffer .= $this->getStringFromArray(
-                        $indent,
-                        $sub_data,
-                        $in,
-                        $sk);
-                }
-                if ($auto_close != '=[] ') {
-                    $buffer .= $this->fillCharRight(
-                            '',
-                            $in - 4,
-                            ' ')
-                        . $this->fillCharRight(
-                            '],',
-                            $indent['total'],
-                            ' ')
-                        . PHP_EOL;
-                }
-            } elseif (isset($data['class'])) {
-                $auto_close = isset($data['properties']) || isset($data['constants']) || isset($data['methods']) ? '=(object)[ ' : '=(object)[], ';
-                $line       = $this->fillCharRight(
-                        '',
-                        $in,
-                        ' ')
-                    . $this->fillCharRight(
-                        ($k === null ? "'object'" : "'$k'"),
-                        ($indent['main'] - $in),
-                        ' ')
-                    . $this->fillCharRight(
-                        $auto_close,
-                        $indent['value'] + 3,
-                        ' ')
-                    . '// ' . $this->fillCharRight(
-                        'object node of Class: ' . $data['class'] . (isset($data['traits']) && $data['traits'] != '' ? '; implement of traits: ' . $data['traits'] . '' : ''),
-                        ($indent['total'] - $indent['comments']),
-                        ' ');
-                $buffer     .= $this->lineValidation($line, $indent);
-                $in         += 4;
-                // Property Analysis
-                if (isset($data['properties'])) {
-                    foreach ($data['properties'] as $skk => $sub_data) {
-                        $is = '(property) ';
-                        if (gettype($sub_data['value']) != 'array') {
-                            $sub_data['value'] = gettype($sub_data['value']) == 'string' ? '"' . $sub_data['value'] . '"' : $sub_data['value'];
-                            $line              = $this->fillCharRight(
-                                    '',
-                                    $in,
-                                    ' ')
-                                . $this->fillCharRight(
-                                    $sub_data['name'] === null ? "'unknown'" : "'"
-                                        . $sub_data['name']
-                                        . "'", $indent['main'] - $in,
-                                    ' ')
-                                . '=> ' . $this->fillCharRight(
-                                    $sub_data['value']
-                                    . ',', $indent['value'],
-                                    ' ')
-                                . '// ' . $this->fillCharRight(
-                                    $is . $sub_data['comment']
-                                    . ' (scope: '
-                                    . $sub_data['scope']
-                                    . ', visibility: '
-                                    . $sub_data['visibility']
-                                    . ').',
-                                    ($indent['total'] - $indent['comments'])
-                                    , ' ');
-                            $buffer            .= $this->lineValidation($line, $indent);
-                        } elseif (isset($sub_data['value'][''])) {
-                            $line   = $this->fillCharRight(
-                                    '',
-                                    $in,
-                                    ' ')
-                                . $this->fillCharRight(
-                                    $sub_data['name'] === null ? "'unknown'" : "'" . $sub_data['name'] . "'",
-                                    $indent['main'] - $in,
-                                    ' ')
-                                . '=[ ' . $this->fillCharRight(
-                                    '',
-                                    $indent['value'],
-                                    ' ')
-                                . '// ' . $this->fillCharRight(
-                                    $is . $sub_data['comment']
-                                    . ' (scope: ' . $sub_data['scope']
-                                    . ', visibility: ' . $sub_data['visibility'] . ').',
-                                    ($indent['total'] - $indent['comments']),
-                                    ' ');
-                            $buffer .= $this->lineValidation($line, $indent);
-                            foreach ($sub_data['value'][''] as $inner_data) {
-                                if (gettype($inner_data) == 'array') {
-                                    foreach ($inner_data as $sks => $inner_sub_data) {
-                                        $buffer .= $this->getStringFromArray(
-                                            $indent,
-                                            $inner_sub_data,
-                                            $in + 4,
-                                            $sks);
-                                    }
-                                }
-                            }
-                            $buffer .= $this->fillCharRight(
-                                    '',
-                                    $in,
-                                    ' ')
-                                . $this->fillCharRight(
-                                    '],',
-                                    $indent['total'],
-                                    ' ')
-                                . PHP_EOL;
-                        } elseif ($sub_data['type'] == 'object') {
-                            $buffer .= $this->getStringFromArray(
-                                $indent,
-                                $sub_data['value'],
-                                $in,
-                                $skk);
-                        }
-                    }
-                }
-                // Property Constants
-                if (isset($data['constants'])) {
-                    foreach ($data['constants'] as $sub_data) {
-                        $is = '(constant) ';
-                        if (isset($sub_data['value']['value'])) {
-                            $line   = $this->fillCharRight(
-                                    '',
-                                    $in,
-                                    ' ')
-                                . $this->fillCharRight(
-                                    $sub_data['name'] === null ? "'unknown'" : "'"
-                                        . $sub_data['name']
-                                        . "'", $indent['main'] - $in,
-                                    ' ')
-                                . '=> ' . $this->fillCharRight(
-                                    $sub_data['value']['value']
-                                    . ',', $indent['value'],
-                                    ' ')
-                                . '// ' . $this->fillCharRight(
-                                    $is . $sub_data['value']['comment']
-                                    . ' (modifiers: ' . $sub_data['modifiers'] . ').',
-                                    ($indent['total'] - $indent['comments'])
-                                    , ' ');
-                            $buffer .= $this->lineValidation($line, $indent);
-                        } elseif (isset($sub_data['value'][''])) {
-                            $line   = $this->fillCharRight(
-                                    '',
-                                    $in,
-                                    ' ')
-                                . $this->fillCharRight(
-                                    $sub_data['name'] === null ? "'unknown'" : "'" . $sub_data['name'] . "'",
-                                    $indent['main'] - $in,
-                                    ' ')
-                                . '=[ ' . $this->fillCharRight(
-                                    '',
-                                    $indent['value'],
-                                    ' ')
-                                . '// ' . $this->fillCharRight(
-                                    $is . $sub_data['comment']
-                                    . ' (modifiers: ' . $sub_data['modifiers'] . ').',
-                                    ($indent['total'] - $indent['comments']),
-                                    ' ');
-                            $buffer .= $this->lineValidation($line, $indent);
-                            foreach ($sub_data['value'][''] as $inner_data) {
-                                if (gettype($inner_data) == 'array') {
-                                    foreach ($inner_data as $sks => $inner_sub_data) {
-                                        $buffer .= $this->getStringFromArray(
-                                            $indent,
-                                            $inner_sub_data,
-                                            $in + 4,
-                                            $sks);
-                                    }
-                                }
-                            }
-                            $buffer .= $this->fillCharRight(
-                                    '',
-                                    $in,
-                                    ' ')
-                                . $this->fillCharRight(
-                                    '],',
-                                    $indent['total'],
-                                    ' ')
-                                . PHP_EOL;
-                        }
-                    }
-                }
-                // Property Methods
-                if (isset($data['methods'])) {
-                    foreach ($data['methods'] as $sub_data) {
-                        $line   = $this->fillCharRight(
-                                '',
-                                $in,
-                                ' ')
-                            . $this->fillCharRight(
-                                $sub_data['name'] === null ? "'unknown'" : "'"
-                                    . $sub_data['name']
-                                    . "'", $indent['main'] - $in,
-                                ' ')
-                            . '=> ' . $this->fillCharRight(
-                                $sub_data['params']
-                                . ',', $indent['value'],
-                                ' ')
-                            . '// ' . $this->fillCharRight(
-                                '(class: '
-                                . $sub_data['class']
-                                . ', modifiers: '
-                                . $sub_data['modifiers']
-                                . ', return type: '
-                                . $sub_data['return']
-                                . ').',
-                                ($indent['total'] - $indent['comments'])
-                                , ' ');
-                        $buffer .= $this->lineValidation($line, $indent);
-                    }
-                }
-                if ($auto_close != '=(object)[], ') {
-                    $buffer .= $this->fillCharRight('', $in - 4, ' ') . $this->fillCharRight(']' . (($in - 4) === 0 ? ';' : ','), $indent['total'], ' ') . PHP_EOL;
+        $max_depth = 0;
+        foreach ($data as $value) {
+            if (is_array($value)) {
+                $depth = $this->calculateDeepArray($value) + 1;
+                if ($depth > $max_depth) {
+                    $max_depth = $depth;
                 }
             }
         }
-        return $buffer;
+        return ($max_depth - 1) < 0 ? 4 : ($max_depth - 1);
     }
 
     /**
-     * Filler of String.
-     * @param  string  $text
-     * @param  int  $repetitions
-     * @param  string  $character
-     * @return string
-     */
-    public function fillCharRight(string $text, int $repetitions, string $character): string
-    {
-        return $repetitions > 0 ? $this->str_pad_unicode($text, $repetitions, $character) : $text;
-    }
-
-    /**
-     * Filler of String.
-     * @param $str
-     * @param $pad_len
-     * @param  string  $pad_str
-     * @param  int  $dir
-     * @return string
-     */
-    private function str_pad_unicode($str, $pad_len, string $pad_str = ' ', int $dir = STR_PAD_RIGHT): string
-    {
-        $str_len     = $this->calculateLength($str);
-        $pad_str_len = $this->calculateLength($pad_str);
-        if (!$str_len && ($dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT)) {
-            $str_len = 1; // @debug
-        }
-        if (!$pad_len || !$pad_str_len || $pad_len <= $str_len) {
-            return $str;
-        }
-        $result = null;
-        if ($dir == STR_PAD_BOTH) {
-            $length = ($pad_len - $str_len) / 2;
-            $repeat = (int) ceil($length / $pad_str_len);
-            $result = mb_substr($this->repeatChar($pad_str, $repeat), 0, (int) floor($length))
-                . $str
-                . mb_substr($this->repeatChar($pad_str, $repeat), 0, (int) ceil($length));
-        } else {
-            $repeat = ceil($str_len - $pad_str_len + $pad_len);
-            if ($dir == STR_PAD_RIGHT) {
-                $result = $str . $this->repeatChar($pad_str, (int) $repeat);
-                $result = mb_substr($result, 0, $pad_len);
-            } else {
-                if ($dir == STR_PAD_LEFT) {
-                    $result = $this->repeatChar($pad_str, (int) $repeat);
-                    $result = mb_substr($result, 0, $pad_len - (($str_len - $pad_str_len) + $pad_str_len))
-                        . $str;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * repeater of String.
-     * @param  string  $character
-     * @param  int  $repetitions
-     * @return string
-     */
-    public function repeatChar(string $character, int $repetitions): string
-    {
-        return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
-    }
-
-    /**
-     * Filler of String.
-     * @param $line
-     * @param $indent
-     * @return string
-     */
-    public function lineValidation($line, $indent): string
-    {
-        $line   = rtrim($line);
-        $buffer = '';
-        if ($this->calculateLength($line) > $indent['total']) {
-            $optimized_lines = $this->getLineOptimized(
-                $line,
-                $indent['total']);
-            foreach ($optimized_lines as $number_line => $line) {
-                if ($number_line == 0) {
-                    $buffer .= $this->fillCharRight(
-                            $line,
-                            $indent['total'],
-                            ' ')
-                        . PHP_EOL;
-                } else {
-                    $buffer .= $this->fillCharRight(
-                            '',
-                            $indent['main'] + $indent['value'] + 3,
-                            ' ')
-                        . $this->fillCharRight(
-                            '// ' . $line,
-                            $indent['total'],
-                            ' ')
-                        . PHP_EOL;
-                }
-            }
-        } else {
-            $buffer .= $line . PHP_EOL;
-        }
-        return $buffer;
-    }
-
-    /**
-     * repeater of String.
-     * @param $line
-     * @param $line_limit
-     * @return array
-     */
-    public function getLineOptimized($line, $line_limit): array
-    {
-        $words          = explode(' ', $line);
-        $current_length = 0;
-        $index          = 0;
-        $output         = [];
-        foreach ($words as $word) {
-            $word_length = $this->calculateLength($word) + 1;
-            if (!isset($output[$index])) {
-                $output = [$index => ''];
-            }
-            if (($current_length + $word_length) <= $line_limit) {
-                $output[$index] .= $word . ' ';
-                $current_length += $word_length;
-            } else {
-                $index          += 1;
-                $current_length = $word_length;
-                $output[$index] = $word . ' ';
-            }
-        }
-        return $output;
-    }
-
-    /**
-     * Filler of String.
-     * @param  string  $text
-     * @param  int  $repetitions
-     * @param  string  $character
-     * @return string
-     */
-    public function fillCharBoth(string $text, int $repetitions, string $character): string
-    {
-        return $repetitions > 0 ? $this->str_pad_unicode($text, $repetitions, $character, STR_PAD_BOTH) : $text;
-    }
-
-    /**
-     * Filler of String.
+     * Description: This method should evaluate the passed number is pair.
      * @param $number
      * @return bool
      */
-    public function checkNumber($number): bool
+    public function isPair($number): bool
     {
         return ($number % 2 == 0);
-    }
-
-    /**
-     * Filler of String.
-     * @param $string
-     * @param $max
-     * @return string
-     */
-    public function cleanLinesString($string, $max): string
-    {
-        $linesReader = '';
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $string) as $line) {
-            $line        = rtrim($line);
-            $linesReader .= $this->fillCharRight($line, $max, ' ') . PHP_EOL;
-        }
-        return $linesReader;
     }
 }

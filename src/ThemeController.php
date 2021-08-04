@@ -1,7 +1,7 @@
 <?php
 
 /**
- * src - Data toPlain manager in PHP development environments.
+ * BOH - Data Output Manager in PHP Development Environments.
  * PHP Version 7.4.
  *
  * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
@@ -16,12 +16,18 @@
 
 declare(strict_types=1);
 
-namespace IcarosNet\BOH;
+namespace IcarosNetSA\BOH;
 
+/**
+ * OutputHandler Class.
+ *
+ */
 class ThemeController
 {
-    public function setTheme(string $theme): void
-    {
+    private Commons $commons;
 
+    public function __construct()
+    {
+        $this->commons = new Commons();
     }
 }

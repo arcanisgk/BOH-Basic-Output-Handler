@@ -1,7 +1,7 @@
 <?php
 
 /**
- * src - Data toPlain manager in PHP development environments.
+ * BOH - Data Output Manager in PHP Development Environments.
  * PHP Version 7.4.
  *
  * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
@@ -16,7 +16,9 @@
 
 declare(strict_types=1);
 
-namespace IcarosNet\BOH;
+namespace IcarosNetSA\BOH;
+
+use ReflectionException;
 
 /**
  * Validation of php version.
@@ -25,97 +27,129 @@ namespace IcarosNet\BOH;
  */
 
 if (!version_compare(PHP_VERSION, '7.4', '>=')) {
-    die('IcarosNet\BOHBasicOutputHandler requires PHP ver. 7.4 or higher');
-}
-
-/*
- * Fast implementation of default data toPlain...
- * @param $args
- */
-function boh(...$args)
-{
-    /*
-    $toPlain = new OutputHandler();
-    foreach ($args as $arg) {
-        $toPlain->toPlain($arg);
-    }
-    */
-    foreach ($args as $arg) {
-        echo '<pre>';
-        echo var_dump($arg);
-        echo '<pre>';
-    }
+    die('IcarosNetSA\BOH requires PHP ver. 7.4 or higher');
 }
 
 /**
- * src - Data toPlain manager in PHP development environments.
- * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
+ * OutputHandler Class.
+ *
  */
 class OutputHandler
 {
-
     /**
-     * auto-instantiate tool kit of Validation class.
-     * @var ?OutputHandler
-     */
-    private static ?OutputHandler $instance = null;
-
-    /**
-     * Store value if Running from Terminal/Command-Line Environment.
+     * Description: Store value if Running from Terminal/Command-Line Environment.
      * @var bool
      */
-    public bool $ifTerminal = false;
+    private bool $ifTerminal;
 
     /**
-     * instantiate tool kit of Designer class.
-     * @var Designer
-     */
-    protected Designer $designer;
-
-    /**
-     * instantiate tool kit of Reflector class.
-     * @var Reflector
-     */
-    private Reflector $reflector;
-
-    /**
-     * instantiate tool kit of Commons class.
+     * Description: instantiate tool kit of Commons class.
      * @var Commons
      */
     private Commons $commons;
 
     /**
-     * instantiate tool kit of ThemeController class.
+     * Description: instantiate tool kit of Designer class.
+     * @var Designer
+     */
+    private Designer $designer;
+
+    /**
+     * Description: instantiate tool kit of Analyzer class.
+     * @var Analyzer
+     */
+    private Analyzer $analyzer;
+
+    /**
+     * Description: instantiate tool kit of ThemeController class.
      * @var ThemeController
      */
     private ThemeController $theme_controller;
 
-
     /**
-     * instantiate tool kit of ThemeController class.
+     * Description: Library configuration variable.
+     * + Determines which of the web environments should run in the view.
+     * - 'env': supported list
+     *      - 'plain' (default)
+     *      - 'web'
+     *      - 'json'
      * @var string
      */
-    private string $env;
+    private string $env = 'plain';
 
     /**
-     * Constructor of the Class OutputHandler
+     * Description: Library configuration variable.
+     * + Preload all the html, javascript in a separate web module from the original, it has no effect in cli environment.
+     * - 'build': supported list
+     *      - 'default' (default)
+     *      - 'full'
+     * @var string
      */
-    public function __construct(string $theme = 'default')
+    private string $build = 'default';
+
+    /**
+     * Description: Library configuration variable.
+     * + Used only for the web and json environment, it determines which HTML template will be loaded based on the chosen css framework.
+     * - 'css': supported list
+     *      - 'default' (default)
+     *      - 'bs5'
+     *      - 'bs4'
+     *      - 'bulma'
+     *      - 'foundation'
+     *      - 'jquery-ui'
+     *      - 'semantic-ui'
+     *      - 'uikit'
+     *      - 'materialize'
+     *      - 'pure'
+     *      - 'tailwind'
+     * @var string
+     */
+    private string $css = 'default';
+
+    /**
+     * Description: Library configuration variable.
+     * + Establishes the color palette that is used in the view / display of the information.
+     * - 'theme':
+     *      - 'default' (default)
+     *      - 'monokai'
+     *      - 'x-space'
+     *      - 'mauro-dark'
+     *      - 'natural-flow'
+     *      - 'vs-code'
+     *      - 'red-redemption'
+     *      - 'gray-scale'
+     * @var string
+     */
+    private string $theme = 'default';
+
+    /**
+     * Description: Library configuration variable.
+     * + set if we want to use indentation between name, values and comments.
+     * - 'indent'
+     *      - true (default)
+     *      - false
+     * @var bool
+     */
+    private bool $indent = true;
+
+
+    /**
+     * Description: Constructor of the Class OutputHandler
+     */
+    public function __construct()
     {
-        $this->reflector        = new Reflector();
-        $this->designer         = new Designer();
+        $this->ifTerminal       = $this->checkTerminal();
         $this->commons          = new Commons();
+        $this->designer         = new Designer();
+        $this->analyzer         = new Analyzer();
         $this->theme_controller = new ThemeController();
-        $this->theme_controller->setTheme($theme);
-        $this->ifTerminal = $this->checkTerminal();
-        $this->env        = $this->ifTerminal ? 'cli' : 'plain';
     }
 
     /**
-     * Determinate if Running from Terminal/Command-Line Environment.
+     * Description: Determinate if Running from Terminal/Command-Line Environment.
      * @return bool
      */
-    public function checkTerminal(): bool
+    private function checkTerminal(): bool
     {
         return defined('STDIN')
             || php_sapi_name() === "cli"
@@ -123,104 +157,104 @@ class OutputHandler
             || (empty($_SERVER['REMOTE_ADDR']) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0);
     }
 
-    public static function getInstance(): OutputHandler
-    {
-        if (!self::$instance instanceof self) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
-
     /**
-     *
-     * @param $data
+     * Description: Evaluates past configuration options.
+     * @param  array  $array
      */
-    public function show($data)
+    public function setOptions(array $array): void
     {
-        //echo var_dump($this->env);
-        switch ($this->env) {
-            case 'cli':
-                $this->toTerminal($data);
-                break;
-            case 'json':
-                $this->toJson($data);
-                break;
-            case 'web':
-                $this->toWeb($data);
-                break;
-            default:
-                $this->toPlain($data);
-                break;
-        }
-    }
-
-    /**
-     *
-     * @param $data
-     */
-    public function toTerminal($data)
-    {
-        echo 'under Development';
-    }
-
-    /**
-     *
-     * @param $data
-     */
-    public function toJson($data)
-    {
-        echo 'under Development';
-    }
-
-    /**
-     *
-     * @param $data
-     */
-    public function toWeb($data)
-    {
-        //under Development
-    }
-
-    /**
-     *
-     * @param $data
-     */
-    public function toPlain($data)
-    {
-        !$this->validateEnvironment() ?: die('You are trying to use the toPlain from a terminal we recommend using toTerminal method.');
-
-        $data   = $this->reflector->initReflectVariable($data);
-        $indent = $this->designer->getIndent($data);
-
-        echo '<div style="font-family: monospace;background-color: black;color: white">' . $this->designer->getLayout($data, $indent) . '</div>';
-
-
-    }
-
-    public function validateEnvironment(): bool
-    {
-        return $this->ifTerminal;
-    }
-
-    /**
-     *
-     * @param $data
-     * @param $otros
-     */
-    public function loadBOHDesign($data, $otros)
-    {
-        echo 'under Development';
-    }
-
-    public function setOptions(array $array)
-    {
-        foreach ($array as $key => $value) {
-            if (isset($this->$key)) {
-                $this->$key = $value;
-            } else {
-                echo 'la propiedad: ' . $key . ' no existe.';
+        if ($this->commons->isEmpty($array)) {
+            echo 'you are trying to pass empty array Options to setOptions() method and is not supported.';
+            die;
+        } else {
+            foreach ($array as $key => $value) {
+                if (isset($this->$key)) {
+                    $this->$key = $value;
+                } else {
+                    echo 'the property: ' . $key . ' not exist in BOH.' . PHP_EOL;
+                }
             }
         }
     }
+
+    /**
+     * Description: Main Method to expose the variable
+     * @param $data
+     */
+    public function chewed($data): void
+    {
+        try {
+            switch ($this->env) {
+                case 'cli':
+                    $this->ifTerminal ?: die('You are trying to use the toTerminal from a Web we recommend using toTerminal method.');
+                    $this->toTerminal($data);
+                    break;
+                case 'web':
+                    !$this->ifTerminal ?: die('You are trying to use the toWeb from a CLI we recommend using toTerminal method.');
+                    $this->toWeb($data);
+                    break;
+                case 'json':
+                    !$this->ifTerminal ?: die('You are trying to use the toJson from a CLI we recommend using toTerminal method.');
+                    $this->toJson($data);
+                    break;
+                default:
+                    $this->toPlain($data);
+                    break;
+            }
+        } catch (ReflectionException $e) {
+            die('invalid argument');
+        }
+    }
+
+    /**
+     * Description: Method to expose the data of a variable in Colored CLI Terminal format
+     * @param $data
+     */
+    public function toTerminal($data): void
+    {
+        dump($data);
+        echo 'Under Development toTerminal.<br>';
+    }
+
+    /**
+     * Description: Method to expose the data of a variable in Html format ready to insert and show in html body
+     * @param $data
+     */
+    public function toWeb($data): void
+    {
+        dump($data);
+        echo 'Under Development toWeb.<br>';
+    }
+
+    /**
+     * Description: Method to expose the data of a variable in json format ready to send a response to frontend.
+     * @param $data
+     */
+    public function toJson($data): void
+    {
+        dump($data);
+        echo 'Under Development toJson.<br>';
+    }
+
+    /**
+     * Description: Method to expose the data of a variable in plain text format ready to save to file.
+     * @param $data
+     * @throws ReflectionException
+     */
+    public function toPlain($data): void
+    {
+        $description = $this->analyzer->getVariableDescription($data);
+        $indent      = $this->designer->getIndent($description);
+
+        dump($indent);
+    }
 }
 
+function dump(...$args)
+{
+    foreach ($args as $arg) {
+        echo '<pre>';
+        echo var_dump($arg);
+        echo '<pre>';
+    }
+}
