@@ -34,17 +34,25 @@ class Analyzer
 
     /**
      * Description: instantiate tool kit of Commons class.
-     * @var Custom_Reflection
+     * @var CustomReflection
      */
-    private Custom_Reflection $custom_reflection;
+    private CustomReflection $custom_reflection;
+
+    /**
+     * Description: instantiate tool kit of DescriptionAnalyzer class.
+     * @var DescriptionAnalyzer
+     */
+    private DescriptionAnalyzer $description_analyzer;
+
 
     /**
      * Description: Constructor of the Class Analyzer
      */
     public function __construct()
     {
-        $this->commons           = new Commons();
-        $this->custom_reflection = new Custom_Reflection($this);
+        $this->commons              = new Commons();
+        $this->description_analyzer = new DescriptionAnalyzer();
+        $this->custom_reflection    = new CustomReflection($this);
     }
 
     /**
@@ -56,7 +64,7 @@ class Analyzer
     public function getVariableDescription($data): array
     {
         return [
-            'type'     => gettype($data),
+            'type'     => strtolower(gettype($data)),
             'analyzed' => $this->variableAnalyzer($data),
         ];
     }
@@ -98,7 +106,7 @@ class Analyzer
     {
         $description = [];
         foreach ($data as $sk => $value) {
-            $description[$sk] = $this->variableAnalyzer($value, (string) $sk);
+            $description['value'][$sk] = $this->variableAnalyzer($value, (string) $sk);
         }
         $evaluation = $this->commons->descriptionVariable($data, (string) $key);
         if (!isset($evaluation['name']) || $evaluation['name'] === '') {
@@ -107,4 +115,30 @@ class Analyzer
         unset($evaluation['value']);
         return array_merge($description, $evaluation);
     }
+
+    /**
+     * Description: this method establishes some necessary variables and
+     * requests the analysis of the description in a string format.
+     * @param  array  $indent
+     * @param  array  $description
+     * @return string
+     */
+    public function getAnalysisDescription(array $indent, array $description): string
+    {
+        $this->description_analyzer->assignment = $this->getAssignmentSign($description['type']);
+        $this->description_analyzer->add_indent = $indent['add'];
+        return $this->description_analyzer->getStringFromDescription($indent, $description['analyzed']);
+    }
+
+    /**
+     * Description: this method evaluates and sets the assignment symbol to use
+     * @param  string  $type
+     * @return string
+     */
+    private function getAssignmentSign(string $type): string
+    {
+        return in_array($type, ['array', 'object']) ? '=>' : '=';
+    }
+
+
 }

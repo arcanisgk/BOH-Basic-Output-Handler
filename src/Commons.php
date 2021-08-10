@@ -131,10 +131,10 @@ class Commons
     /**
      * Description: This method should evaluate if the null type is a stored string.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isNullType($value, $key): array
+    private function isNullType($value, string $key): array
     {
         return is_string($value) ?
             ['name' => $key, 'type' => 'null', 'value' => '"null"', 'comment' => 'null value string.'] :
@@ -144,10 +144,10 @@ class Commons
     /**
      * Description: This method should evaluate if is array type to add comment like node.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isArrayType($value, $key): array
+    private function isArrayType($value, string $key): array
     {
         return ['name' => $key, 'type' => 'array', 'value' => "", 'comment' => 'array node' . (empty($value) ? ' that is empty.' : '.')];
     }
@@ -155,10 +155,10 @@ class Commons
     /**
      * Description: This method should evaluate if is boolean type like string.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isBoolType($value, $key): array
+    private function isBoolType($value, string $key): array
     {
         return is_string($value) ?
             ['name' => $key, 'type' => 'boolean', 'value' => '"' . $value . '"', 'comment' => 'string value boolean ' . $value . '.'] :
@@ -168,17 +168,17 @@ class Commons
     /**
      * Description: This method should evaluate if is object.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isObjectType($value, $key): array
+    private function isObjectType($value, string $key): array
     {
         $string = explode('{', $this->getBuffer($value));
         return ['name' => $key, 'type' => 'object', 'value' => '(object) ', 'comment' => rtrim(reset($string)) . '.'];
     }
 
     /**
-     * Description: This method should capture the buffer of a variable and returns it as a string
+     * Description: This method should capture the output buffer with var_dump of a variable and returns it as a string
      * @param  mixed  $data
      * @return string
      */
@@ -192,10 +192,10 @@ class Commons
     /**
      * Description: This method should evaluate if is integer.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isIntegerType($value, $key): array
+    private function isIntegerType($value, string $key): array
     {
         return is_string($value) ?
             ['name' => $key, 'type' => 'integer', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') integer value string.'] :
@@ -205,10 +205,10 @@ class Commons
     /**
      * Description: This method should evaluate if is float.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isFloatType($value, $key): array
+    private function isFloatType($value, string $key): array
     {
         return is_string($value) ?
             ['name' => $key, 'type' => 'float', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') float value string.'] :
@@ -218,16 +218,16 @@ class Commons
     /**
      * Description: This method should evaluate if is resource.
      * @param $string
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isResourceType($string, $key): array
+    private function isResourceType($string, string $key): array
     {
         return ['name' => $key, 'type' => 'resource', 'value' => 'resource', 'comment' => rtrim($string) . '.'];
     }
 
     /**
-     * Description: This method should validate Date String.
+     * Description: This method should validate is string is DateTime String formatted.
      * @param  string  $date
      * @return bool
      */
@@ -239,21 +239,21 @@ class Commons
     /**
      * Description: This method should evaluate if the datetime type is a stored string.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isDateTimeType($value, $key): array
+    private function isDateTimeType($value, string $key): array
     {
-        return ['name' => $key, 'string' => 'datetime', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value datetime.'];
+        return ['name' => $key, 'type' => 'datetime', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value datetime.'];
     }
 
     /**
      * Description: This method should evaluate if is time.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isTimeType($value, $key): array
+    private function isTimeType($value, string $key): array
     {
         return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value time.'];
     }
@@ -261,10 +261,10 @@ class Commons
     /**
      * Description: This method should evaluate if is date.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isDateType($value, $key): array
+    private function isDateType($value, string $key): array
     {
         return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value date.'];
     }
@@ -291,11 +291,11 @@ class Commons
     /**
      * Description: This method should evaluate if is string related to currency.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @param $currency_check
      * @return array
      */
-    private function isStringCurrencyType($value, $key, $currency_check): array
+    private function isStringCurrencyType($value, string $key, $currency_check): array
     {
         return [
             'name'    => $key,
@@ -308,10 +308,10 @@ class Commons
     /**
      * Description: This method should evaluate if is string related to currency.
      * @param $value
-     * @param $key
+     * @param  string  $key
      * @return array
      */
-    private function isStringType($value, $key): array
+    private function isStringType($value, string $key): array
     {
         return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => 'string value of ' . mb_strlen($value) . ' character.'];
     }
@@ -335,12 +335,12 @@ class Commons
     public function getHighestCharacterAmountByKey(array $data, string $key): int
     {
         $name_len = 0;
-        array_walk_recursive($data, [$this, 'getArrayData'], ['search' => $key, &$name_len]);
+        array_walk_recursive($data, [$this, 'getArrayData'], ['search' => $key, 'count' => &$name_len]);
         return $name_len;
     }
 
     /**
-     * Description: This method is a callbacks for parsing the getHighestCharacterAmountByKey method
+     * Description: This method is a callbacks for parsing the @qmethod(getHighestCharacterAmountByKey).
      * @param  array|string  $value
      * @param  string  $key
      * @param  array  $argument
@@ -348,8 +348,8 @@ class Commons
      */
     public function getArrayData($value, string $key, array &$argument)
     {
-        if (strcasecmp($key, $argument['search']) == 0 && $this->calculateLength($value) > $argument[0]) {
-            $argument[0] = $this->calculateLength($value);
+        if (strcasecmp($key, $argument['search']) == 0 && $this->calculateLength($value) > $argument['count']) {
+            $argument['count'] = $this->calculateLength($value) + 2;
         }
     }
 
@@ -380,7 +380,8 @@ class Commons
                 }
             }
         }
-        return ($max_depth - 1) < 0 ? 4 : ($max_depth - 1);
+        //return ($max_depth - 1) < 0 ? 4 : ($max_depth - 1);
+        return $max_depth;
     }
 
     /**
@@ -391,5 +392,156 @@ class Commons
     public function isPair($number): bool
     {
         return ($number % 2 == 0);
+    }
+
+    /**
+     * Filler of String to Both sides.
+     * @param  string  $text
+     * @param  int  $repetitions
+     * @param  string  $character
+     * @return string
+     */
+    public function fillCharBoth(string $text, int $repetitions, string $character): string
+    {
+        return $repetitions > 0 ? $this->str_pad_unicode($text, $repetitions, $character, STR_PAD_BOTH) : $text;
+    }
+
+    /**
+     * Filler of String Unicode.
+     * @param $str
+     * @param $pad_len
+     * @param  string  $pad_str
+     * @param  int  $dir
+     * @return string
+     */
+    private function str_pad_unicode($str, $pad_len, string $pad_str = ' ', int $dir = STR_PAD_RIGHT): string
+    {
+        $str_len     = $this->calculateLength($str);
+        $pad_str_len = $this->calculateLength($pad_str);
+        if (!$str_len && ($dir == STR_PAD_RIGHT || $dir == STR_PAD_LEFT)) {
+            $str_len = 1; // @debug
+        }
+        if (!$pad_len || !$pad_str_len || $pad_len <= $str_len) {
+            return $str;
+        }
+        $result = null;
+        if ($dir == STR_PAD_BOTH) {
+            $length = ($pad_len - $str_len) / 2;
+            $repeat = (int) ceil($length / $pad_str_len);
+            $result = mb_substr($this->repeatChar($pad_str, $repeat), 0, (int) floor($length))
+                . $str
+                . mb_substr($this->repeatChar($pad_str, $repeat), 0, (int) ceil($length));
+        } else {
+            $repeat = ceil($str_len - $pad_str_len + $pad_len);
+            if ($dir == STR_PAD_RIGHT) {
+                $result = $str . $this->repeatChar($pad_str, (int) $repeat);
+                $result = mb_substr($result, 0, $pad_len);
+            } else {
+                if ($dir == STR_PAD_LEFT) {
+                    $result = $this->repeatChar($pad_str, (int) $repeat);
+                    $result = mb_substr($result, 0, $pad_len - (($str_len - $pad_str_len) + $pad_str_len))
+                        . $str;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * repeater of String.
+     * @param  string  $character
+     * @param  int  $repetitions
+     * @return string
+     */
+    public function repeatChar(string $character, int $repetitions): string
+    {
+        return $repetitions > 0 ? str_repeat($character, $repetitions) : $character;
+    }
+
+    /**
+     * space justified.
+     * @param $string
+     * @param $max
+     * @return string
+     */
+    public function spaceJustify($string, $max): string
+    {
+        $max          = $max < 0 ? 0 : $max;
+        $lines_reader = [];
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $string) as $line) {
+            if ($this->calculateLength($line) > 1) {
+                $lines_reader[] = $this->fillCharRight(rtrim($line, ' '), $max, ' ');
+            }
+        }
+        return implode("\n", $lines_reader);
+    }
+
+    /**
+     * Filler of String to Right.
+     * @param  string  $text
+     * @param  int  $repetitions
+     * @param  string  $character
+     * @return string
+     */
+    public function fillCharRight(string $text, int $repetitions, string $character): string
+    {
+        return $repetitions > 0 ? $this->str_pad_unicode($text, $repetitions, $character) : $text;
+    }
+
+    /**
+     * Description: Take a line and Validate if it is the correct size; if it
+     * detects that the line does not cost and adds the necessary line breaks
+     * for its visualization.
+     * @param  string  $line
+     * @param  array  $indent
+     * @param  bool  $add_indent
+     * @return string
+     */
+    public function lineValidation(string $line, array $indent, bool $add_indent): string
+    {
+        $line   = rtrim($line);
+        $buffer = [];
+        if ($this->calculateLength($line) > $indent['total']) {
+            $buffer = $this->getLineOptimized(
+                $line,
+                $indent['total']
+            );
+        } else {
+            $buffer[] = $line;
+        }
+        return implode(PHP_EOL, $buffer);
+    }
+
+    /**
+     * Description: This method would optimize the given line to work the line
+     * break of the comments.
+     * @param  string  $line
+     * @param  int  $line_limit
+     * @return array
+     */
+    public function getLineOptimized(string $line, int $line_limit): array
+    {
+        $structure      = explode('// ', $line);
+        $new_indent     = $this->calculateLength($structure[0]);
+        $comments_words = explode(' ', trim($structure[1]));
+        $current_length = 0;
+        $new_lines      = [];
+        $index          = 0;
+        foreach ($comments_words as $word) {
+            if (!isset($new_lines[$index])) {
+                $new_lines[$index] = $structure[0] . '// ' . $word;
+                $current_length    = $this->calculateLength($new_lines[$index]);
+            } else {
+                if (($current_length <= $line_limit) && $this->calculateLength($new_lines[$index] . ' ' . $word) < $line_limit) {
+                    $new_lines[$index] .= ' ' . $word;
+                    $current_length    = $this->calculateLength($new_lines[$index]);
+                } else {
+                    $index             += 1;
+                    $new_lines[$index] = $this->repeatChar(' ', $new_indent) . '// ' . $word;
+                    $current_length    = $this->calculateLength($new_lines[$index]);
+                }
+            }
+        }
+        return $new_lines;
     }
 }

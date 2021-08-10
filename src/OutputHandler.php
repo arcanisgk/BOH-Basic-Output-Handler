@@ -134,6 +134,17 @@ class OutputHandler
 
 
     /**
+     * Description: Library configuration variable.
+     * + set if we want to return data instead of exposing it.
+     * - 'return'
+     *      - true
+     *      - false (default)
+     * @var bool
+     */
+    private bool $return = false;
+
+
+    /**
      * Description: Constructor of the Class OutputHandler
      */
     public function __construct()
@@ -180,25 +191,26 @@ class OutputHandler
     /**
      * Description: Main Method to expose the variable
      * @param $data
+     * @return string|void
      */
-    public function chewed($data): void
+    public function chewed($data)
     {
         try {
             switch ($this->env) {
                 case 'cli':
                     $this->ifTerminal ?: die('You are trying to use the toTerminal from a Web we recommend using toTerminal method.');
-                    $this->toTerminal($data);
+                    return $this->toTerminal($data);
                     break;
                 case 'web':
                     !$this->ifTerminal ?: die('You are trying to use the toWeb from a CLI we recommend using toTerminal method.');
-                    $this->toWeb($data);
+                    return $this->toWeb($data);
                     break;
                 case 'json':
                     !$this->ifTerminal ?: die('You are trying to use the toJson from a CLI we recommend using toTerminal method.');
-                    $this->toJson($data);
+                    return $this->toJson($data);
                     break;
                 default:
-                    $this->toPlain($data);
+                    return $this->toPlain($data);
                     break;
             }
         } catch (ReflectionException $e) {
@@ -239,16 +251,86 @@ class OutputHandler
     /**
      * Description: Method to expose the data of a variable in plain text format ready to save to file.
      * @param $data
+     * @return string|void
      * @throws ReflectionException
      */
-    public function toPlain($data): void
+    public function toPlain($data)
     {
+        //dump($data);
         $description = $this->analyzer->getVariableDescription($data);
-        $indent      = $this->designer->getIndent($description);
+        $indent      = $this->designer->getIndent($description, $this->indent);
+        //dump($description);
+        $description_string = $this->analyzer->getAnalysisDescription(
+            $indent,
+            $description
+        );
 
-        dump($indent);
+        //temporal output
+        $result = $this->temporalOutput($description['type'], $indent, $description_string);
+        if ($this->return == true) {
+            return $result;
+        } else {
+            return;
+        }
     }
+
+    public function temporalOutput(string $type, array $indent, string $description_string): string
+    {
+        $total_width        = $indent['total'] < $indent['min'] ? $indent['min'] : $indent['total'];
+        $description_string = $this->commons->spaceJustify("<?php" . PHP_EOL . $description_string . "?>", $total_width);
+        $title_text         = $this->getTitle($total_width, $type);
+        $copyright          = $this->getCopyRight($total_width);
+        $body_text          = highlight_string($description_string, true);
+        return $title_text . '<br>' . $body_text . '<br>' . $copyright;
+    }
+
+    /**
+     *
+     * @param  int  $total_width
+     * @param  string  $type
+     * @return mixed
+     */
+    private function getTitle(int $total_width, string $type): string
+    {
+        $theme_applied = ' | Theme Applied: Default ';
+        $title_text    = $theme_applied . '| OutputHandler of Given Variable | Type: ' . $type . ' | ';
+        return $this->commons->fillCharBoth(
+            $title_text,
+            $total_width,
+            '='
+        );
+    }
+
+    /**
+     *
+     * @param  int  $total_width
+     * @return mixed
+     */
+    private function getCopyRight(int $total_width): string
+    {
+        $copyright1 = $this->commons->fillCharBoth(
+            ' [BOH] Basic Output Handler for PHP - Copyright 2020 - ' . date('Y') . ' ',
+            $total_width,
+            '='
+        );
+        /*
+        $copyright2       = $this->commons->fillCharBoth(
+            ' Open Source Project Developed by Icaros Net. S.A ',
+            $total_width,
+            '='
+        );
+        $copyright_indent = (int) floor(($total_width - 44) / 2);
+        /*
+        $copyright3       = $this->commons->repeatChar('=', $copyright_indent)
+            . ' URL: <a href="https://github.com/IcarosNetSA/BOH-Basic-Output-Handler">IcarosNetSA/BOH-Basic-Output-Handler</a> '
+            . $this->commons->repeatChar('=', (($copyright_indent * 2) < $total_width ? $copyright_indent + 1 : $copyright_indent));
+        return $copyright1 . '<br>' . $copyright2 . '<br>' . $copyright3;
+        */
+        return $copyright1;
+    }
+
 }
+
 
 function dump(...$args)
 {
@@ -258,3 +340,4 @@ function dump(...$args)
         echo '<pre>';
     }
 }
+

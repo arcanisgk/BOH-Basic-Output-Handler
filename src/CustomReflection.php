@@ -29,7 +29,7 @@ use ReflectionObject;
  * Custom_Reflection Class.
  *
  */
-class Custom_Reflection
+class CustomReflection
 {
     /**
      * Description: instantiate tool kit of Commons class.
@@ -71,6 +71,10 @@ class Custom_Reflection
             'properties' => $this->getProperties($object),
             'constants'  => $this->getConstants($object),
             'methods'    => $this->getMethods($object),
+            'comment'    => 'object node of Class: '
+                . $reflection->getName()
+                . (empty($traits) ? '' : ', implement of traits: ' . implode(',', $traits))
+            ,
         ];
         return array_filter($result, fn($value) => !empty($value));
     }
@@ -120,8 +124,9 @@ class Custom_Reflection
         $property->setAccessible(true);
         $property_init = $property->isInitialized($object);
         $value         = $property_init ? $property->getValue($object) : 'uninitialized';
-        if (gettype($value) === 'array' || gettype($value) === 'object') {
-            $value = $this->analyzer->variableAnalyzer($value);
+        $value         = $this->analyzer->variableAnalyzer($value);
+        if (isset($value['value']) && in_array(gettype($value), ['array', 'object'])) {
+            $value = $value['value'];
         }
         return [
             'name'       => $property->getName(),

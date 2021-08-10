@@ -99,16 +99,47 @@ if (!file_exists(TEST_VARIABLE)) {
      *      - true (default)
      *      - false
      */
-    //$output->setOptions(['env' => 'plain']);
+
+    $output->setOptions(['indent' => true, 'return' => true]);
 
     /**
      * Use the variables in /example/test_variable.php to get a test view of each type of data that can be analyzed.
      * @var $example_big_array
      *
      */
-    //$output->chewed([1, 2]);
+
+    /*
+    $result = '';
     foreach ($example_big_array as $key => $value) {
-        echo '<h1>' . $key . '</h1><br>';
-        $output->chewed($value);
+        $result .= '<h1>' . $key . '</h1><br>' . $output->chewed($value);
     }
+    */
+
+    echo '<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+                <title>Example</title>
+                <style>
+                    @font-face {
+                        font-family: "KawkabMono-Regular";
+                                src: url("/sources/fonts/KawkabMono-Regular.woff2") format("woff2"),
+                                     url("/sources/fonts/KawkabMono-Regular.woff") format("woff");
+                    }
+                    @font-face {
+                        font-family: "Fira Code";
+                                src: url("/sources/fonts/FiraCode-Regular.woff") format("woff");
+                    }
+                    body, span {
+                        font-family: "Fira Code", monospace !important;
+                        font-size: 12px;
+                        line-height: 1.4;
+                    }
+                </style>
+            </head>
+            <body>
+                <div>' . $output->chewed($variable_class) . '</div>
+            </body>
+        </html>';
 }

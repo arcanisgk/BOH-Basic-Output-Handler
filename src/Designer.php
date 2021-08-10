@@ -40,21 +40,22 @@ class Designer
 
     /**
      * Description: Method responsible for returning the indent to parse array to String.
+     * @param  bool  $add_indent
+     * @param $data array
      * @return array
-     * @var $data array
      */
-    public function getIndent(array $data): array
+    public function getIndent(array $data, bool $add_indent): array
     {
         $name             = $this->commons->getHighestCharacterAmountByKey($data, 'name');
         $value            = $this->commons->getHighestCharacterAmountByKey($data, 'value');
         $param            = $this->commons->getHighestCharacterAmountByKey($data, 'params');
-        $deep             = $this->commons->calculateDeepArray($data) * 4;
+        $deep             = ((int) ceil($this->commons->calculateDeepArray($data['analyzed']) / 2)) * 4;
         $main             = $name + $deep;
         $value_calculated = $value < $param ? $param : $value;
         $indent           = [
             'main'     => $main < 8 ? 10 + $main : $main + 2,
             'value'    => $value_calculated + 4,
-            'comments' => $this->commons->getHighestCharacterAmountByKey($data, 'comment') + 8,
+            'comments' => $this->commons->getHighestCharacterAmountByKey($data, 'comment') + 12,
             'min'      => 80,
             'max'      => 200,
         ];
@@ -62,6 +63,7 @@ class Designer
         $total            = $total < $indent['min'] ? $indent['min'] : $total;
         $total            = $total > $indent['max'] ? $indent['max'] : $total;
         $indent['total']  = $this->commons->isPair($total) ? $total : $total + 1;
+        $indent['add']    = $add_indent;
         return $indent;
     }
 }

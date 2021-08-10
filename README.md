@@ -13,7 +13,7 @@ Dependencies: Stand Alone / PHP v7.4.
 
 ## What does *[BOH]* do?
 
-*[BOH]* is a very simple PHP [toPlain handler] implementation that show Human readable information instead of using the default PHP options:
+*[BOH]* is a very simple PHP [output handler] implementation that show Human readable information instead of using the default PHP options:
 
 - var_dump() - Displays information about a variable.
 - print_r() - Print human-readable information about a variable.
@@ -24,9 +24,9 @@ This means that all the data passed is presented to the developer according to t
 
 ## Why use *[BOH]*?
 
-Developers need the ability to decide how their code behaves when data needs to be checked. The native php Methods provide a range of information that is not reusable by the Developer or may even require more work to get the correct toPlain for data verification.
+Developers need the ability to decide how their code behaves when data needs to be checked. The native php Methods provide a range of information that is not reusable by the Developer or may even require more work to get the correct output for data verification.
 
-This library handles data toPlain proven to be extremely effective. *[BOH]* is a Standalone implementation that can be used for any project and does not require a third-party library or software.
+This library handles data output proven to be extremely effective. *[BOH]* is a Standalone implementation that can be used for any project and does not require a third-party library or software.
 
 ## Help to improve *[BOH]*?
 
@@ -60,7 +60,7 @@ $toPlain = new Output\Output_Handler();
 
 ```php
 
-//you can define the theme to be used in the toPlain in web or cli:
+//you can define the theme to be used in the output in web or cli:
 $toPlain = new Output\Output_Handler('monokai'); //in the class Instance or
 $toPlain->Theme('monokai');                      //call the method Theme
 ```
@@ -69,14 +69,14 @@ $toPlain->Theme('monokai');                      //call the method Theme
 
 ```php
 
-$toPlain->toPlain($example_array);            // send the variable and library would check the best toPlain for you.
+$toPlain->toPlain($example_array);            // send the variable and library would check the best output for you.
 $toPlain->toPlain($example_array,'web');      // or send a second argument for enviroment 'web' or 'cli'.
-$toPlain->toPlain($example_array,'web',true); // if you need retrive the string instead of toPlain send true in thirt param.
-$toPlain->toPlain($example_array,'cli');      // the library support toPlain for CLI enviroment.
+$toPlain->toPlain($example_array,'web',true); // if you need retrive the string instead of output send true in thirt param.
+$toPlain->toPlain($example_array,'cli');      // the library support output for CLI enviroment.
 $toPlain->toPlain($example_array,'cli',true); // an cli can retrive strings.
 ```
 
-## Example toPlain:
+## Example output:
 
 ![Image of Example Output ](https://i.imgur.com/5WQ1Dd4.jpg)
 
