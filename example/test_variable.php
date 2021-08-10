@@ -34,24 +34,24 @@ $class_trait_instance = new MyHelloWorld();
  */
 class FooBar
 {
-    public const CONST_ARRAY = ['a' => 1, 'b' => 2];
+    public const CONST_ARRAY = ['a' => 1, 'b' => 20];
     protected const CONST_STRING = 'Constant String example';
     private const CONST_INT = 5000;
-    //public static string $public_static_string_prop = 'Example Hello World! 2';
-    //protected static bool $protected_static_boolean_prop = true;
-    //private static object $private_static_object_prop;
-    //private static object $private_static_object_prop_not_initialized;
-    //private static array $private_static_array_long_name = ['X' => 12, 'Y' => 24];
-    //public MyHelloWorld $class_traits;
-    //public string $public_string_prop = 'Example Hello World!';
-    //public $file_read;
-    //protected int $pro_int_prop = 10;
-    //private array $private_array_long_name = ['a' => 1, 'b' => 2];
-    /*
+    public static string $public_static_string_prop = 'Example Hello World! 2';
+    protected static bool $protected_static_boolean_prop = true;
+    private static object $private_static_object_prop;
+    private static object $private_static_object_prop_not_initialized;
+    private static array $private_static_array_long_name = ['X' => 12, 'Y' => 24];
+    public MyHelloWorld $class_traits;
+    public string $public_string_prop = 'Example Hello World!';
+    public $file_read_property;
+    protected int $pro_int_prop = 10;
+    private array $private_array_long_name = ['a' => 1, 'b' => 2];
+
     public function __construct()
     {
-        $file_name       = "file.txt";
-        $this->file_read = fopen($file_name, "r");
+        $file_name                = "file.txt";
+        $this->file_read_property = fopen($file_name, "r");
         self::fooMethod3();
         //$this->class_traits = new MyHelloWorld();
     }
@@ -83,7 +83,6 @@ class FooBar
     {
 
     }
-    */
 }
 
 /**

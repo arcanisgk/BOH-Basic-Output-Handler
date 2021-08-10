@@ -108,12 +108,11 @@ if (!file_exists(TEST_VARIABLE)) {
      *
      */
 
-    /*
     $result = '';
     foreach ($example_big_array as $key => $value) {
-        $result .= '<h1>' . $key . '</h1><br>' . $output->chewed($value);
+        $result .= '<h1>' . $key . '</h1>' . $output->chewed($value) . '<br><br>';
     }
-    */
+
 
     echo '<!DOCTYPE html>
             <html lang="en">
@@ -139,7 +138,7 @@ if (!file_exists(TEST_VARIABLE)) {
                 </style>
             </head>
             <body>
-                <div>' . $output->chewed($variable_class) . '</div>
+                <div>' . $result . '</div>
             </body>
         </html>';
 }

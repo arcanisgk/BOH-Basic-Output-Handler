@@ -162,12 +162,13 @@ class CustomReflection
      * @param  string  $class
      * @param $value
      * @return array
+     * @throws ReflectionException
      */
     private function analyzeConstant(string $name, string $class, $value): array
     {
         return [
             'name'      => $name,
-            'value'     => $this->commons->descriptionVariable($value, $name),
+            'value'     => $this->analyzer->variableAnalyzer($value)['value'],
             'type'      => gettype($value),
             'class'     => $class,
             'modifiers' => implode(',', Reflection::getModifierNames((new ReflectionClassConstant($class, $name))->getModifiers())),
