@@ -77,7 +77,7 @@ class DescriptionAnalyzer
                 return $this->getStringFromDescriptionEmptyNode($indent, $data, $in, $k, $c);
             } else {
                 return $this->getStringFromDescriptionOpenNode($indent, $data, $in, $k)
-                    . $this->getStringFromDescriptionNavigateArray($indent, $data['value'], $in + 4, $c + 1)
+                    . $this->getStringFromDescriptionNavigateArray($indent, $data['value'], $in + 2, $c + 1)
                     . $this->getStringFromDescriptionCloseNode($indent, $in, $c);
             }
         } else {
@@ -85,7 +85,7 @@ class DescriptionAnalyzer
                 return $this->getStringFromDescriptionEmptyNode($indent, $data, $in, $k, $c);
             } else {
                 return $this->getStringFromDescriptionOpenNode($indent, $data, $in, $k)
-                    . $this->getStringFromDescriptionNavigateObject($indent, $data, $in + 4, $c + 1)
+                    . $this->getStringFromDescriptionNavigateObject($indent, $data, $in + 2, $c + 1)
                     . $this->getStringFromDescriptionCloseNode($indent, $in, $c);
             }
         }
@@ -114,14 +114,13 @@ class DescriptionAnalyzer
                 'char'  => $this->assignment . ' ' . $data['value'] . ($c <= 0 ? ';' : ','),
                 'count' => $this->getInLineIndent($indent['value']),
             ], [
-                'char'  => ' // ' . $data['comment'],
+                'char'  => ' // ' . $data['comment'] . '.',
                 'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
             ],
         ];
         return $this->commons->lineValidation(
                 $this->populateLine($line_array),
-                $indent,
-                $this->add_indent
+                $indent
             ) . PHP_EOL;
     }
 
@@ -169,14 +168,13 @@ class DescriptionAnalyzer
                 'char'  => '=' . $node . '[]' . ($c <= 0 ? ';' : $ending),
                 'count' => $this->getInLineIndent($indent['value']),
             ], [
-                'char'  => ' // ' . $data['comment'],
+                'char'  => ' // ' . $data['comment'] . '.',
                 'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
             ],
         ];
         return $this->commons->lineValidation(
                 $this->populateLine($line_array),
-                $indent,
-                $this->add_indent
+                $indent
             ) . PHP_EOL;
     }
 
@@ -221,14 +219,13 @@ class DescriptionAnalyzer
                 'char'  => '=' . $type . '[',
                 'count' => $this->getInLineIndent($indent['value']),
             ], [
-                'char'  => ' // ' . $data['comment'],
+                'char'  => ' // ' . $data['comment'] . '.',
                 'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
             ],
         ];
         return $this->commons->lineValidation(
                 $this->populateLine($line_array),
-                $indent,
-                $this->add_indent
+                $indent
             ) . PHP_EOL;
     }
 
@@ -273,8 +270,7 @@ class DescriptionAnalyzer
         ];
         return $this->commons->lineValidation(
                 $this->populateLine($line_array),
-                $indent,
-                $this->add_indent
+                $indent
             ) . PHP_EOL;
     }
 
@@ -321,14 +317,13 @@ class DescriptionAnalyzer
                         'char'  => $this->assignment . ' ' . $property['value'] . ($c <= 0 ? ';' : ','),
                         'count' => $this->getInLineIndent($indent['value']),
                     ], [
-                        'char'  => ' // ' . $type . ' ' . $property['comment'] . ' (scope: ' . $property['scope'] . ', visibility: ' . $property['visibility'] . ').',
+                        'char'  => ' // ' . $type . ' ' . $property['comment'] . ', scope: ' . $property['scope'] . ', visibility: ' . $property['visibility'] . '.',
                         'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
                         $this->populateLine($line_array),
-                        $indent,
-                        $this->add_indent
+                        $indent
                     ) . PHP_EOL;
             } elseif ($property['type'] == 'array') {
                 $line_array = [
@@ -342,16 +337,15 @@ class DescriptionAnalyzer
                         'char'  => $this->assignment . '[',
                         'count' => $this->getInLineIndent($indent['value']),
                     ], [
-                        'char'  => ' // ' . $type . ' ' . $property['comment'] . ' (scope: ' . $property['scope'] . ', visibility: ' . $property['visibility'] . ').',
+                        'char'  => ' // ' . $type . ' ' . $property['comment'] . ', scope: ' . $property['scope'] . ', visibility: ' . $property['visibility'] . '.',
                         'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
                         $this->populateLine($line_array),
-                        $indent,
-                        $this->add_indent
+                        $indent
                     ) . PHP_EOL;
-                $buffer[]   = $this->getStringFromDescriptionNavigateArray($indent, $property['value'], $in + 4, $c + 1);
+                $buffer[]   = $this->getStringFromDescriptionNavigateArray($indent, $property['value'], $in + 2, $c + 1);
                 $buffer[]   = $end_Line_Property;
             } elseif ($property['type'] == 'object') {
                 $line_array = [
@@ -365,18 +359,39 @@ class DescriptionAnalyzer
                         'char'  => $this->assignment . '(object)[',
                         'count' => $this->getInLineIndent($indent['value']),
                     ], [
-                        'char'  => ' // ' . $type . ' ' . $property['comment'] . ' (scope: ' . $property['scope'] . ', visibility: ' . $property['visibility'] . ').',
+                        'char'  => ' // ' . $type . ' ' . $property['comment'] . ', scope: ' . $property['scope'] . ', visibility: ' . $property['visibility'] . '.',
                         'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
                         $this->populateLine($line_array),
-                        $indent,
-                        $this->add_indent
+                        $indent
                     ) . PHP_EOL;
-                $buffer[]   = $this->getStringFromDescriptionNavigateObject($indent, $property['value'], $in + 4, $c + 1);
+                $buffer[]   = $this->getStringFromDescriptionNavigateObject($indent, $property['value'], $in + 2, $c + 1);
                 $buffer[]   = $end_Line_Property;
 
+            } else {
+                $line_array = [
+                    [
+                        'char'  => '',
+                        'count' => $in,
+                    ], [
+                        'char'  => ($key === null ? '$given_var' : "'$key'"),
+                        'count' => $this->getInLineIndent($indent['main'] - $in),
+                    ], [
+                        'char'  => $this->assignment . '"class-instance"::[',
+                        'count' => $this->getInLineIndent($indent['value']),
+                    ], [
+                        'char'  => ' // ' . $type . ' ' . $property['comment'] . ', scope: ' . $property['scope'] . ', visibility: ' . $property['visibility'] . '.',
+                        'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
+                    ],
+                ];
+                $buffer[]   = $this->commons->lineValidation(
+                        $this->populateLine($line_array),
+                        $indent
+                    ) . PHP_EOL;
+                $buffer[]   = $this->getStringFromDescriptionNavigateObject($indent, $property['value'], $in + 2, $c + 1);
+                $buffer[]   = $end_Line_Property;
             }
         }
         return implode(PHP_EOL, $buffer);
@@ -409,8 +424,7 @@ class DescriptionAnalyzer
                         ],
                     ]
                 ),
-                $indent,
-                $this->add_indent
+                $indent
             ) . PHP_EOL;
     }
 
@@ -441,14 +455,13 @@ class DescriptionAnalyzer
                         'char'  => $this->assignment . ' ' . $constant['value'] . ($c <= 0 ? ';' : ','),
                         'count' => $this->getInLineIndent($indent['value']),
                     ], [
-                        'char'  => ' // ' . $type . ' ' . $constant['comment'] . ' (modifiers: ' . $constant['modifiers'] . ').',
+                        'char'  => ' // ' . $type . ' ' . $constant['comment'] . ', modifiers: ' . $constant['modifiers'] . '.',
                         'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
                         $this->populateLine($line_array),
-                        $indent,
-                        $this->add_indent
+                        $indent
                     ) . PHP_EOL;
             } elseif ($constant['type'] == 'array') {
                 $line_array = [
@@ -462,16 +475,15 @@ class DescriptionAnalyzer
                         'char'  => $this->assignment . '[',
                         'count' => $this->getInLineIndent($indent['value']),
                     ], [
-                        'char'  => ' // ' . $type . ' ' . $constant['comment'] . ' (modifiers: ' . $constant['modifiers'] . ').',
+                        'char'  => ' // ' . $type . ' ' . $constant['comment'] . ', modifiers: ' . $constant['modifiers'] . '.',
                         'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
                         $this->populateLine($line_array),
-                        $indent,
-                        $this->add_indent
+                        $indent
                     ) . PHP_EOL;
-                $buffer[]   = $this->getStringFromDescriptionNavigateArray($indent, $constant['value'], $in + 4, $c + 1);
+                $buffer[]   = $this->getStringFromDescriptionNavigateArray($indent, $constant['value'], $in + 2, $c + 1);
                 $buffer[]   = $end_Line_Property;
             }
         }
@@ -498,17 +510,16 @@ class DescriptionAnalyzer
                     'char'  => ($key === null ? '$given_var' : "'$key'"),
                     'count' => $this->getInLineIndent($indent['main'] - $in),
                 ], [
-                    'char'  => $this->assignment . $method['params'] . ',',
+                    'char'  => $this->assignment . ' ' . $method['params'] . ',',
                     'count' => $this->getInLineIndent($indent['value']),
                 ], [
-                    'char'  => ' // (class: ' . $method['class'] . ', (modifiers: ' . $method['modifiers'] . '), return type: ' . $method['return'] . ').',
+                    'char'  => ' // class: ' . $method['class'] . ', modifiers: ' . $method['modifiers'] . ', return type: ' . $method['return'] . '.',
                     'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
                 ],
             ];
             $buffer[]   = $this->commons->lineValidation(
                     $this->populateLine($line_array),
-                    $indent,
-                    $this->add_indent
+                    $indent
                 ) . PHP_EOL;
         }
         return implode(PHP_EOL, $buffer);

@@ -137,8 +137,8 @@ class Commons
     private function isNullType($value, string $key): array
     {
         return is_string($value) ?
-            ['name' => $key, 'type' => 'null', 'value' => '"null"', 'comment' => 'null value string.'] :
-            ['name' => $key, 'type' => 'null', 'value' => 'null', 'comment' => 'null value.'];
+            ['name' => $key, 'type' => 'null', 'value' => '"null"', 'comment' => 'null value string'] :
+            ['name' => $key, 'type' => 'null', 'value' => 'null', 'comment' => 'null value'];
     }
 
     /**
@@ -149,7 +149,7 @@ class Commons
      */
     private function isArrayType($value, string $key): array
     {
-        return ['name' => $key, 'type' => 'array', 'value' => "", 'comment' => 'array node' . (empty($value) ? ' that is empty.' : '.')];
+        return ['name' => $key, 'type' => 'array', 'value' => "", 'comment' => 'array node' . (empty($value) ? ' that is empty' : '')];
     }
 
     /**
@@ -161,8 +161,8 @@ class Commons
     private function isBoolType($value, string $key): array
     {
         return is_string($value) ?
-            ['name' => $key, 'type' => 'boolean', 'value' => '"' . $value . '"', 'comment' => 'string value boolean ' . $value . '.'] :
-            ['name' => $key, 'type' => 'boolean', 'value' => ($value ? 'true' : 'false'), 'comment' => 'boolean value ' . ($value ? 'true' : 'false') . '.'];
+            ['name' => $key, 'type' => 'boolean', 'value' => '"' . $value . '"', 'comment' => 'string value boolean ' . $value . ''] :
+            ['name' => $key, 'type' => 'boolean', 'value' => ($value ? 'true' : 'false'), 'comment' => 'boolean value ' . ($value ? 'true' : 'false') . ''];
     }
 
     /**
@@ -174,7 +174,7 @@ class Commons
     private function isObjectType($value, string $key): array
     {
         $string = explode('{', $this->getBuffer($value));
-        return ['name' => $key, 'type' => 'object', 'value' => '(object) ', 'comment' => rtrim(reset($string)) . '.'];
+        return ['name' => $key, 'type' => 'object', 'value' => '(object) ', 'comment' => rtrim(reset($string)) . ''];
     }
 
     /**
@@ -198,8 +198,8 @@ class Commons
     private function isIntegerType($value, string $key): array
     {
         return is_string($value) ?
-            ['name' => $key, 'type' => 'integer', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') integer value string.'] :
-            ['name' => $key, 'type' => 'integer', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') integer value.'];
+            ['name' => $key, 'type' => 'integer', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') integer value string'] :
+            ['name' => $key, 'type' => 'integer', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') integer value'];
     }
 
     /**
@@ -211,8 +211,8 @@ class Commons
     private function isFloatType($value, string $key): array
     {
         return is_string($value) ?
-            ['name' => $key, 'type' => 'float', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') float value string.'] :
-            ['name' => $key, 'type' => 'float', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') float value.'];
+            ['name' => $key, 'type' => 'float', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') float value string'] :
+            ['name' => $key, 'type' => 'float', 'value' => $value, 'comment' => '(' . mb_strlen((string) $value) . ') float value'];
     }
 
     /**
@@ -223,7 +223,7 @@ class Commons
      */
     private function isResourceType($string, string $key): array
     {
-        return ['name' => $key, 'type' => 'resource', 'value' => 'resource', 'comment' => rtrim($string) . '.'];
+        return ['name' => $key, 'type' => 'resource', 'value' => 'resource', 'comment' => rtrim($string)];
     }
 
     /**
@@ -244,7 +244,7 @@ class Commons
      */
     private function isDateTimeType($value, string $key): array
     {
-        return ['name' => $key, 'type' => 'datetime', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value datetime.'];
+        return ['name' => $key, 'type' => 'datetime', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value datetime'];
     }
 
     /**
@@ -255,7 +255,7 @@ class Commons
      */
     private function isTimeType($value, string $key): array
     {
-        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value time.'];
+        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value time'];
     }
 
     /**
@@ -266,26 +266,22 @@ class Commons
      */
     private function isDateType($value, string $key): array
     {
-        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value date.'];
+        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => '(' . mb_strlen($value) . ') string value date'];
     }
 
     /**
      * Description: This should cut the strings in unicode format.
      * @param  string  $str
-     * @param  int  $length  default 1
      * @return array
      */
-    private function splitStrToUnicode(string $str, int $length = 1): array
+    private function splitStrToUnicode(string $str): array
     {
-        $tmp = preg_split('~~u', $str, -1, PREG_SPLIT_NO_EMPTY);
-        if ($length > 1) {
-            $chunks = array_chunk($tmp, $length);
-            foreach ($chunks as $i => $chunk) {
-                $chunks[$i] = join('', (array) $chunk);
-            }
-            $tmp = $chunks;
+        $tmp    = preg_split('~~u', $str, -1, PREG_SPLIT_NO_EMPTY);
+        $chunks = array_chunk($tmp, 1);
+        foreach ($chunks as $i => $chunk) {
+            $chunks[$i] = join('', (array) $chunk);
         }
-        return $tmp;
+        return $chunks;
     }
 
     /**
@@ -301,7 +297,7 @@ class Commons
             'name'    => $key,
             'type'    => 'string',
             'value'   => '"' . $value . '"',
-            'comment' => 'string/amount value related to currency (' . implode(',', $currency_check) . ').',
+            'comment' => 'string/amount value related to currency (' . implode(',', $currency_check) . ')',
         ];
     }
 
@@ -313,7 +309,7 @@ class Commons
      */
     private function isStringType($value, string $key): array
     {
-        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => 'string value of ' . mb_strlen($value) . ' character.'];
+        return ['name' => $key, 'type' => 'string', 'value' => '"' . $value . '"', 'comment' => 'string value of ' . mb_strlen($value) . ' character'];
     }
 
     /**
@@ -366,17 +362,20 @@ class Commons
     /**
      * Description: This method should evaluate / iterate the passed array
      * and find the highest deep node.
-     * @param  array  $data
+     * @param  mixed  $data
      * @return int
      */
-    public function calculateDeepArray(array $data): int
+    public function calculateDeepArray($data): int
     {
         $max_depth = 0;
-        foreach ($data as $value) {
-            if (is_array($value)) {
-                $depth = $this->calculateDeepArray($value) + 1;
-                if ($depth > $max_depth) {
-                    $max_depth = $depth;
+        if (gettype($data) == 'array' || gettype($data) == 'object') {
+            $data = gettype($data) == 'object' ? (array) $data : $data;
+            foreach ($data as $value) {
+                if (is_array($value)) {
+                    $depth = $this->calculateDeepArray($value) + 1;
+                    if ($depth > $max_depth) {
+                        $max_depth = $depth;
+                    }
                 }
             }
         }
@@ -494,10 +493,9 @@ class Commons
      * for its visualization.
      * @param  string  $line
      * @param  array  $indent
-     * @param  bool  $add_indent
      * @return string
      */
-    public function lineValidation(string $line, array $indent, bool $add_indent): string
+    public function lineValidation(string $line, array $indent): string
     {
         $line   = rtrim($line);
         $buffer = [];
@@ -530,17 +528,15 @@ class Commons
         foreach ($comments_words as $word) {
             if (!isset($new_lines[$index])) {
                 $new_lines[$index] = $structure[0] . '// ' . $word;
-                $current_length    = $this->calculateLength($new_lines[$index]);
             } else {
                 if (($current_length <= $line_limit) && $this->calculateLength($new_lines[$index] . ' ' . $word) < $line_limit) {
                     $new_lines[$index] .= ' ' . $word;
-                    $current_length    = $this->calculateLength($new_lines[$index]);
                 } else {
                     $index             += 1;
                     $new_lines[$index] = $this->repeatChar(' ', $new_indent) . '// ' . $word;
-                    $current_length    = $this->calculateLength($new_lines[$index]);
                 }
             }
+            $current_length = $this->calculateLength($new_lines[$index]);
         }
         return $new_lines;
     }

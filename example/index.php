@@ -121,17 +121,8 @@ if (!file_exists(TEST_VARIABLE)) {
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
                 <title>Example</title>
                 <style>
-                    @font-face {
-                        font-family: "KawkabMono-Regular";
-                                src: url("/sources/fonts/KawkabMono-Regular.woff2") format("woff2"),
-                                     url("/sources/fonts/KawkabMono-Regular.woff") format("woff");
-                    }
-                    @font-face {
-                        font-family: "Fira Code";
-                                src: url("/sources/fonts/FiraCode-Regular.woff") format("woff");
-                    }
                     body, span {
-                        font-family: "Fira Code", monospace !important;
+                        font-family: monospace !important;
                         font-size: 12px;
                         line-height: 1.4;
                     }

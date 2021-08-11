@@ -37,46 +37,46 @@ class FooBar
     public const CONST_ARRAY = ['a' => 1, 'b' => 20];
     protected const CONST_STRING = 'Constant String example';
     private const CONST_INT = 5000;
-    public static string $public_static_string_prop = 'Example Hello World! 2';
-    protected static bool $protected_static_boolean_prop = true;
-    private static object $private_static_object_prop;
-    private static object $private_static_object_prop_not_initialized;
-    private static array $private_static_array_long_name = ['X' => 12, 'Y' => 24];
-    public MyHelloWorld $class_traits;
-    public string $public_string_prop = 'Example Hello World!';
+    public static string $public_static_string_property = 'Example Hello World! 2';
+    protected static bool $protected_static_boolean_property = true;
+    private static object $private_static_object_property;
+    private static object $private_static_object_property_not_initialized;
+    private static array $private_static_array_long_name_property = ['X' => 12, 'Y' => 24];
+    public MyHelloWorld $class_traits_property;
+    public string $public_string_property = 'Example Hello World!';
     public $file_read_property;
-    protected int $pro_int_prop = 10;
-    private array $private_array_long_name = ['a' => 1, 'b' => 2];
+    protected int $pro_int_property = 10;
+    private array $private_array_long_name_property = ['a' => 1, 'b' => 2];
 
     public function __construct()
     {
         $file_name                = "file.txt";
         $this->file_read_property = fopen($file_name, "r");
         self::fooMethod3();
-        //$this->class_traits = new MyHelloWorld();
+        $this->class_traits_property = new MyHelloWorld();
     }
 
     public static function fooMethod3(): string
     {
-        self::$private_static_object_prop                  = new stdClass();
-        self::$private_static_object_prop->menber_property = 'Sr Smith';
-        return self::$public_static_string_prop;
+        self::$private_static_object_property                  = new stdClass();
+        self::$private_static_object_property->menber_property = 'Sr Smith';
+        return self::$public_static_string_property;
     }
 
     public function fooMethod(): array
     {
         $c          = 0;
         $array_data = self::CONST_ARRAY;
-        while ($this->pro_int_prop < $c) {
+        while ($this->pro_int_property < $c) {
             $array_data[] = $c;
             ++$c;
         }
-        return array_merge($this->private_array_long_name, $array_data);
+        return array_merge($this->private_array_long_name_property, $array_data);
     }
 
     protected function fooMethod2(): string
     {
-        return $this->public_string_prop . ' ' . $this->fooMethod3();
+        return $this->public_string_property . ' ' . $this->fooMethod3();
     }
 
     private final function fooMethod4(array $example, object $class, string $event): void

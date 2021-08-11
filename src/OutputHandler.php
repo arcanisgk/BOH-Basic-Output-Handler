@@ -256,17 +256,14 @@ class OutputHandler
      */
     public function toPlain($data)
     {
-        //dump($data);
-        $description = $this->analyzer->getVariableDescription($data);
-        $indent      = $this->designer->getIndent($description, $this->indent);
-        //dump($description);
+        $deep               = ((int) ceil($this->commons->calculateDeepArray($data) + 1)) * 4;
+        $description        = $this->analyzer->getVariableDescription($data);
+        $indent             = $this->designer->getIndent($description, $this->indent, $deep);
         $description_string = $this->analyzer->getAnalysisDescription(
             $indent,
             $description
         );
-
-        //temporal output
-        $result = $this->temporalOutput($description['type'], $indent, $description_string);
+        $result             = $this->temporalOutput($description['type'], $indent, $description_string);
         if ($this->return == true) {
             return $result;
         } else {

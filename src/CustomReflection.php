@@ -143,6 +143,7 @@ class CustomReflection
      * Description: this method will get constants that exist on an object.
      * @param  object  $object
      * @return array
+     * @throws ReflectionException
      */
     private function getConstants(object $object): array
     {
@@ -217,7 +218,7 @@ class CustomReflection
             'code'      => $this->getCode($object, $method->getName()),
             'class'     => get_class($object),
             'modifiers' => '(' . implode(',', Reflection::getModifierNames($method->getModifiers())) . ')',
-            'params'    => (empty($full_list_detail) ? 'no parameters' : 'params(' . implode(',', $full_list_detail) . ')'),
+            'params'    => (empty($full_list_detail) ? '"no parameters"' : 'params(' . implode(',', $full_list_detail) . ')'),
             'return'    => ($return_type != null ? $return_type->getName() : 'undefined'),
         ];
     }

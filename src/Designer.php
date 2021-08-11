@@ -40,16 +40,16 @@ class Designer
 
     /**
      * Description: Method responsible for returning the indent to parse array to String.
-     * @param  bool  $add_indent
      * @param $data array
+     * @param  bool  $add_indent
+     * @param  int  $deep
      * @return array
      */
-    public function getIndent(array $data, bool $add_indent): array
+    public function getIndent(array $data, bool $add_indent, int $deep): array
     {
         $name             = $this->commons->getHighestCharacterAmountByKey($data, 'name');
         $value            = $this->commons->getHighestCharacterAmountByKey($data, 'value');
         $param            = $this->commons->getHighestCharacterAmountByKey($data, 'params');
-        $deep             = ((int) ceil($this->commons->calculateDeepArray($data['analyzed']) / 2)) * 4;
         $main             = $name + $deep;
         $value_calculated = $value < $param ? $param : $value;
         $indent           = [
