@@ -105,9 +105,9 @@
              * @var $object_casted
              */
 
-            setOptionsChewData(['indent' => false, 'theme' => 'red', 'debug' => true]);
+            setOptionsChewData(['indent' => true, 'theme' => 'red', 'debug' => true]);
 
-            echo chewData($object_casted);
+            echo chewData($example_big_array);
 
             /**
              * Option Used, See Documentation for a deep explanation.

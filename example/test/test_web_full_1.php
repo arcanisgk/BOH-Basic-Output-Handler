@@ -28,9 +28,9 @@
         <h3>Full Web Environment Test.</h3>
         <span>
         <b>Note:</b>
-        The output contains the full HTML code, includes headers but is NOT affected by any CSS framework.<br>
+        The output contains the full HTML code, but is NOT affected by CSS framework.<br>
         The default HTML code is embedded in an iframe and can be viewed directly.<br>
-        This version is recommended if you are implementing a website in which the navigation refreshes the browser window.
+        This version is recommended if you are implementing a website that navigation<br> refreshes the browser window.
     </span>
         <?php
         $fileContent = file_get_contents('../test/' . basename(__FILE__));
@@ -107,7 +107,7 @@
 
             setOptionsChewData(['indent' => true, 'theme' => 'red', 'css' => 'bulma', 'debug' => true]);
 
-            echo chewData($object_casted);
+            echo chewData($example_big_array);
 
             /**
              * Option Used, See Documentation for a deep explanation.
