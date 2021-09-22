@@ -27,11 +27,14 @@
     <div class="helper">
         <h3>Full Web Environment Test.</h3>
         <span>
-        <b>Note:</b>
-        The output contains the full HTML code, but is NOT affected by CSS framework.<br>
-        The default HTML code is embedded in an iframe and can be viewed directly.<br>
-        This version is recommended if you are implementing a website that navigation<br> refreshes the browser window.
-    </span>
+            <b>Note:</b>
+            The output contains the full HTML code, but is NOT affected by CSS framework.<br>
+            The default HTML code is embedded in an iframe and can be viewed directly.<br>
+            This version is recommended if you are implementing a website that<br>
+            navigation refreshes the browser window.<br>
+            To demonstrate that the use of the CSS Framework has no effect on the<br>
+            data output in this example, the BS5 CSS Framework is implemented.<br>
+        </span>
         <?php
         $fileContent = file_get_contents('../test/' . basename(__FILE__));
         $render      = highlight_string($fileContent, true);
@@ -60,7 +63,7 @@
             require_once PATH;
         } else {
             echo 'This library "[BOH] Basic OutputHandler Handler for PHP" requires 
-        composer installation and autoload; run composer install command in your root.';
+                composer installation and autoload; run composer install command in your root.';
             die;
         }
 
@@ -70,7 +73,7 @@
 
         if (!file_exists(TEST_VARIABLE)) {
             echo '"[BOH] Basic OutputHandler Handler for PHP" need of test_variable.php 
-        file to perform test output.';
+                file to perform test output.';
             die;
         } else {
 

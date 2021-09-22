@@ -152,16 +152,13 @@ class Designer
 
     public function wrapElement(string $result, string $bg): string
     {
-        /* wrap <code> in a div */
-        return '<div style="padding: 10px; background-color: rgb(' . $bg . '); border-radius: 10px;"><div>' . $result . '</div></div>';
+        return '<div style="position: relative; float: left; padding: 10px; background-color: rgb(' . $bg . '); border-radius: 10px;">' . $result . '</div>';
     }
 
     public function addFull(string $result): string
     {
         $code = $result;
-        $css  = '
-
-        ';
+        $css  = '';
         $js   = '/*empty*/';
         $id1  = $this->commons->generateRandomString();
         $id2  = $this->commons->generateRandomString();
@@ -180,42 +177,49 @@ class Designer
                     obj.style.height = (obj.contentWindow.document.documentElement.scrollHeight+20) + "px";
                 }
                 document.addEventListener("DOMContentLoaded", function () {
-                    let source = `
-                    <!DOCTYPE html>
-                    <html>
-                      <head>
-                        <meta charset="UTF-8">
-                      </head>
-                      <body>
-                       Hello World
-                      </body>
-                    </html>`;      
-                    let style = document.createElement("style");
-                    style.innerHTML = `' . $css . '`;
-                    let script = document.createElement("script");
-                    script.type="text/javascript";
-                    script.innerHTML = `' . $js . '`;
-                    
-                    let body = document.createElement("body");
-                    body.innerHTML =  `' . $code . '`;
-                    body.appendChild(script);
-    
-                    let html = document.createElement("html");
-                    html.innerHTML = source;
-                    html.querySelector("head").append(style);
-                    html.querySelector("body").parentNode.replaceChild(body, html.querySelector("body"));
-                    
-                    let iframe = document.createElement("iframe");
-                    iframe.setAttribute("id", "boh-' . $id2 . '");
-                    iframe.onload = function() {
-                        resizeIframe(iframe);
-                    };
-                    
-                    iframe.srcdoc=html.outerHTML;
-                    document.getElementById("' . $id1 . '").prepend(iframe);
-
+                    try {
+                        let source = `
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <meta charset="UTF-8">
+                          </head>
+                          <body style="margin:0;">
+                           Hello World
+                          </body>
+                        </html>`;
+                        
+                        let style = document.createElement("style");
+                        style.innerHTML = `' . $css . '`;
+                        
+                        let script = document.createElement("script");
+                        script.type="text/javascript";
+                        script.innerHTML = `' . $js . '`;
+                        
+                        let body = document.createElement("body");
+                        body.style.margin = 0;
+                        body.innerHTML =  `' . $code . '`;
+                        body.appendChild(script);
+        
+                        let html = document.createElement("html");
+                        html.innerHTML = source;
+                        html.querySelector("head").append(style);
+                        html.querySelector("body").parentNode.replaceChild(body, html.querySelector("body"));
+                        
+                        let iframe = document.createElement("iframe");
+                        iframe.setAttribute("id", "boh-' . $id2 . '");
+                        iframe.onload = function() {
+                            resizeIframe(iframe);
+                        };
+                        
+                        iframe.srcdoc=html.outerHTML;
+                        document.getElementById("' . $id1 . '").prepend(iframe);
+                        
+                    } catch (error) {
+                        console.error(error);
+                    }
                 });
-</script>';
+            </script>';
     }
 
     public function addModal(string $result): string

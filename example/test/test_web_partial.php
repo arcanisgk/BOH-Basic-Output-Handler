@@ -27,11 +27,11 @@
     <div class="helper">
         <h3>Partial Web Environment Test.</h3>
         <span>
-        <b>Note:</b>
-        The output contains the partial HTML code (does not include headers).<br>
-        This generates a basic HTML if you have implemented CSS or CSS Framework,<br>
-        it can affect the visibility of the exposed data.
-    </span>
+            <b>Note:</b>
+            The output contains the partial HTML code (does not include headers).<br>
+            This generates a basic HTML if you have implemented CSS or CSS Framework,<br>
+            it can affect the visibility of the exposed data.<br>
+        </span>
         <?php
         $fileContent = file_get_contents('../test/' . basename(__FILE__));
         $render      = highlight_string($fileContent, true);
@@ -60,7 +60,7 @@
             require_once PATH;
         } else {
             echo 'This library "[BOH] Basic OutputHandler Handler for PHP" requires 
-        composer installation and autoload; run composer install command in your root.';
+                composer installation and autoload; run composer install command in your root.';
             die;
         }
 
@@ -70,7 +70,7 @@
 
         if (!file_exists(TEST_VARIABLE)) {
             echo '"[BOH] Basic OutputHandler Handler for PHP" need of test_variable.php 
-        file to perform test output.';
+                file to perform test output.';
             die;
         } else {
 
@@ -107,7 +107,7 @@
 
             setOptionsChewData(['indent' => true, 'theme' => 'red', 'debug' => true]);
 
-            echo chewData($example_big_array);
+            echo chewData($class_trait_instance);
 
             /**
              * Option Used, See Documentation for a deep explanation.

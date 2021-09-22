@@ -372,7 +372,7 @@ class OutputHandler
 function dump(...$args)
 {
     foreach ($args as $arg) {
-        echo '<pre>';
+        echo '<pre style="position: relative; clear: both">';
         echo var_export($arg, true);
         echo '</pre>';
     }
