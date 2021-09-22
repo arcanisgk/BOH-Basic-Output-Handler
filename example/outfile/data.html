@@ -1,0 +1,275 @@
+<pre>
+// Theme: Default | Given Variable | Type: array                                                                                                                                                        
+$given_var                                                                =[                                                                       // array node.                                       
+  'null'                                                                  => null,                                                                 // null value.                                       
+  'null_text'                                                             => "null",                                                               // null value string.                                
+  'integer'                                                               => 10,                                                                   // (2) integer value.                                
+  'integer_text'                                                          => "10",                                                                 // (2) integer value string.                         
+  'float'                                                                 => 20.35,                                                                // (5) float value.                                  
+  'float_text'                                                            => "20.35",                                                              // (5) float value string.                           
+  'string'                                                                => "Hello World",                                                        // string value of 11 character.                     
+  'date_1'                                                                => "2021-01-17",                                                         // (10) string value date.                           
+  'date_2'                                                                => "2021-Jan-17",                                                        // (11) string value date.                           
+  'hour_1'                                                                => "6:31:00 AM",                                                         // (10) string value time.                           
+  'hour_2'                                                                => "17:31:00",                                                           // (8) string value time.                            
+  'datetime_1'                                                            => "2021-01-17 17:31:00",                                                // (19) string value datetime.                       
+  'datetime_2'                                                            => "2021-Jan-17 6:31:00 AM",                                             // (22) string value datetime.                       
+  'datetime_3'                                                            => "2021-01-17 6:31:00 AM",                                              // (21) string value datetime.                       
+  'datetime_4'                                                            => "2021-Jan-17 17:31:00",                                               // (20) string value datetime.                       
+  'currency_1'                                                            => "1.45$",                                                              // string/amount value related to currency ($).      
+  'currency_2'                                                            => "db£ 1.45 ₹",                                                         // string/amount value related to currency (£,₹).    
+  'array_empty'                                                           =[],                                                                     // array node that is empty.                         
+  'array_node'                                                            =[                                                                       // array node.                                       
+    'boolean_true'                                                        => true,                                                                 // boolean value true.                               
+    'boolean_false'                                                       => false,                                                                // boolean value false.                              
+    'boolean_true_text'                                                   => "true",                                                               // string value boolean true.                        
+    'boolean_false_text'                                                  => "false",                                                              // string value boolean false.                       
+  ],                                                                                                                                                                                                    
+  'array_multidimensional'                                                =[                                                                       // array node.                                       
+    'array_lvl_1'                                                         =[                                                                       // array node.                                       
+      'array_lvl_2'                                                       =[                                                                       // array node.                                       
+        '0'                                                               => "member_1",                                                           // string value of 8 character.                      
+        '1'                                                               => "member_2",                                                           // string value of 8 character.                      
+        '2'                                                               => "member_3",                                                           // string value of 8 character.                      
+        'array_lvl_3'                                                     =[                                                                       // array node.                                       
+          'member_1'                                                      => "Hello World",                                                        // string value of 11 character.                     
+          'array_lvl_4'                                                   =[                                                                       // array node.                                       
+            'member_1_more_text_index'                                    => "other",                                                              // string value of 5 character.                      
+          ],                                                                                                                                                                                            
+        ],                                                                                                                                                                                              
+      ],                                                                                                                                                                                                
+    ],                                                                                                                                                                                                  
+  ],                                                                                                                                                                                                    
+  'resource'                                                              => resource,                                                             // resource(15) of type (curl).                      
+  'object_empty'                                                          =(object)[],                                                             // object node of Class: stdClass.                   
+  'object_example'                                                        =(object)[                                                               // object node of Class: stdClass.                   
+    'int_property'                                                        => 1000,                                                                 // (property) (4) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+    'string_property'                                                     => "Hello World 1",                                                      // (property) string value of 13 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+    'float_property'                                                      => 3.1416,                                                               // (property) (6) float value, scope: instance,      
+                                                                                                                                                   // visibility: public.                               
+    'array_property'                                                      =>[                                                                      // (property) array node, scope: instance,           
+                                                                                                                                                   // visibility: public.                               
+      '0'                                                                 => "Hello World 2",                                                      // string value of 13 character.                     
+      '1'                                                                 => "test",                                                               // string value of 4 character.                      
+      'indice_'                                                           =[                                                                       // array node.                                       
+        '0'                                                               => "12",                                                                 // (2) integer value string.                         
+        'float_data'                                                      => 12.45,                                                                // (5) float value.                                  
+      ],                                                                                                                                                                                                
+    ],                                                                                                                                                                                                  
+    'object_property'                                                     =>(object)[                                                              // (property) object(stdClass)#21 (3), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+      'index'                                                             => 125,                                                                  // (property) (3) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+      '0'                                                                 => "Hello World3",                                                       // (property) string value of 12 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+      '1'                                                                 =>[                                                                      // (property) array node, scope: instance,           
+                                                                                                                                                   // visibility: public.                               
+        'other'                                                           => 3.14,                                                                 // (4) float value.                                  
+        '0'                                                               =(object)[                                                               // object node of Class: stdClass.                   
+          'internal_object_prop'                                          => "value",                                                              // (property) string value of 5 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+        ],                                                                                                                                                                                              
+      ],                                                                                                                                                                                                
+    ],                                                                                                                                                                                                  
+  ],                                                                                                                                                                                                    
+  'object_casted'                                                         =(object)[                                                               // object node of Class: stdClass.                   
+    'int1'                                                                => 120,                                                                  // (property) (3) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+    '0'                                                                   => 120.25,                                                               // (property) (6) float value, scope: instance,      
+                                                                                                                                                   // visibility: public.                               
+    'data'                                                                =>[                                                                      // (property) array node, scope: instance,           
+                                                                                                                                                   // visibility: public.                               
+      'int2'                                                              => "120",                                                                // (3) integer value string.                         
+      'float'                                                             => "120.25",                                                             // (6) float value string.                           
+    ],                                                                                                                                                                                                  
+  ],                                                                                                                                                                                                    
+  'class_stored'                                                          =(object)[                                                               // object node of Class: FooBar.                     
+    'public_static_string_property'                                       => "Example Hello World! 2",                                             // (property) string value of 22 character, scope:   
+                                                                                                                                                   // static, visibility: public.                       
+    'protected_static_boolean_property'                                   => true,                                                                 // (property) boolean value true, scope: static,     
+                                                                                                                                                   // visibility: protected.                            
+    'private_static_object_property'                                      =>(object)[                                                              // (property) object(stdClass)#4 (1), scope: static, 
+                                                                                                                                                   // visibility: private.                              
+      'menber_property'                                                   => "Sr Smith",                                                           // (property) string value of 8 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+    ],                                                                                                                                                                                                  
+    'private_static_object_property_not_initialized'                      => "uninitialized",                                                      // (property) uninitialized, scope: static,          
+                                                                                                                                                   // visibility: private.                              
+    'private_static_array_long_name_property'                             =>[                                                                      // (property) array node, scope: static, visibility: 
+                                                                                                                                                   // private.                                          
+      'X'                                                                 => 12,                                                                   // (2) integer value.                                
+      'Y'                                                                 => 24,                                                                   // (2) integer value.                                
+    ],                                                                                                                                                                                                  
+    'class_traits_property'                                               =>"class-instance"::[                                                    // (property) object(MyHelloWorld)#5 (0), scope:     
+                                                                                                                                                   // instance, visibility: public.                     
+      '__construct'                                                       => "no parameters",                                                      // Method of class: MyHelloWorld, modifiers:         
+                                                                                                                                                   // (public), return type: undefined.                 
+      'sayHello'                                                          => "no parameters",                                                      // Method of class: MyHelloWorld, modifiers:         
+                                                                                                                                                   // (public), return type: undefined.                 
+    ],                                                                                                                                                                                                  
+    'public_string_property'                                              => "Example Hello World!",                                               // (property) string value of 20 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+    'file_read_property'                                                  => resource,                                                             // (property) resource(13) of type (stream), scope:  
+                                                                                                                                                   // instance, visibility: public.                     
+    'pro_int_property'                                                    => 10,                                                                   // (property) (2) integer value, scope: instance,    
+                                                                                                                                                   // visibility: protected.                            
+    'private_array_long_name_property'                                    =>[                                                                      // (property) array node, scope: instance,           
+                                                                                                                                                   // visibility: private.                              
+      'a'                                                                 => 1,                                                                    // (1) integer value.                                
+      'b'                                                                 => 2,                                                                    // (1) integer value.                                
+    ],                                                                                                                                                                                                  
+    'CONST_ARRAY'                                                         =>[                                                                      // (constant) array node, modifiers: public.         
+      'a'                                                                 => 1,                                                                    // (1) integer value.                                
+      'b'                                                                 => 20,                                                                   // (2) integer value.                                
+    ],                                                                                                                                                                                                  
+    'CONST_STRING'                                                        => "Constant String example",                                            // (constant) string value of 23 character,          
+                                                                                                                                                   // modifiers: protected.                             
+    'CONST_INT'                                                           => 5000,                                                                 // (constant) (4) integer value, modifiers: private. 
+    '__construct'                                                         => "no parameters",                                                      // Method of class: FooBar, modifiers: (public),     
+                                                                                                                                                   // return type: undefined.                           
+    'fooMethod3'                                                          => "no parameters",                                                      // Method of class: FooBar, modifiers:               
+                                                                                                                                                   // (public,static), return type: string.             
+    'fooMethod'                                                           => "no parameters",                                                      // Method of class: FooBar, modifiers: (public),     
+                                                                                                                                                   // return type: array.                               
+    'fooMethod2'                                                          => "no parameters",                                                      // Method of class: FooBar, modifiers: (protected),  
+                                                                                                                                                   // return type: string.                              
+    'fooMethod4'                                                          => params((array) $example,(object) $class,(string) $event),             // Method of class: FooBar, modifiers:               
+                                                                                                                                                   // (final,private), return type: void.               
+  ],                                                                                                                                                                                                    
+  'trait_example'                                                         =(object)[                                                               // object node of Class: MyHelloWorld, implement of  
+                                                                                                                                                   // traits: talkWorld.                                
+    '__construct'                                                         => "no parameters",                                                      // Method of class: MyHelloWorld, modifiers:         
+                                                                                                                                                   // (public), return type: undefined.                 
+    'sayHello'                                                            => "no parameters",                                                      // Method of class: MyHelloWorld, modifiers:         
+                                                                                                                                                   // (public), return type: undefined.                 
+  ],                                                                                                                                                                                                    
+  'json_object_from_api'                                                  =(object)[                                                               // object node of Class: stdClass.                   
+    'results'                                                             =>[                                                                      // (property) array node, scope: instance,           
+                                                                                                                                                   // visibility: public.                               
+      '0'                                                                 =(object)[                                                               // object node of Class: stdClass.                   
+        'gender'                                                          => "male",                                                               // (property) string value of 4 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+        'name'                                                            =>(object)[                                                              // (property) object(stdClass)#7 (3), scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+          'title'                                                         => "Mr",                                                                 // (property) string value of 2 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+          'first'                                                         => "Jayden",                                                             // (property) string value of 6 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+          'last'                                                          => "Little",                                                             // (property) string value of 6 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+        ],                                                                                                                                                                                              
+        'location'                                                        =>(object)[                                                              // (property) object(stdClass)#9 (7), scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+          'street'                                                        =>(object)[                                                              // (property) object(stdClass)#8 (2), scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+            'number'                                                      => 8092,                                                                 // (property) (4) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+            'name'                                                        => "Brown Terrace",                                                      // (property) string value of 13 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          ],                                                                                                                                                                                            
+          'city'                                                          => "Sunshine Coast",                                                     // (property) string value of 14 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'state'                                                         => "Queensland",                                                         // (property) string value of 10 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'country'                                                       => "Australia",                                                          // (property) string value of 9 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+          'postcode'                                                      => 9138,                                                                 // (property) (4) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+          'coordinates'                                                   =>(object)[                                                              // (property) object(stdClass)#10 (2), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+            'latitude'                                                    => "-84.1892",                                                           // (property) (8) float value string, scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+            'longitude'                                                   => "-34.7605",                                                           // (property) (8) float value string, scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+          ],                                                                                                                                                                                            
+          'timezone'                                                      =>(object)[                                                              // (property) object(stdClass)#11 (2), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+            'offset'                                                      => "+3:00",                                                              // (property) (5) string value time, scope:          
+                                                                                                                                                   // instance, visibility: public.                     
+            'description'                                                 => "Baghdad, Riyadh, Moscow, St. Petersburg",                            // (property) string value of 39 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          ],                                                                                                                                                                                            
+        ],                                                                                                                                                                                              
+        'email'                                                           => "jayden.little@example.com",                                          // (property) string value of 25 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+        'login'                                                           =>(object)[                                                              // (property) object(stdClass)#12 (7), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+          'uuid'                                                          => "788c0c74-5bbb-451b-a7e1-cfc824373827",                               // (property) string value of 36 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'username'                                                      => "whitebutterfly780",                                                  // (property) string value of 17 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'password'                                                      => "jazz",                                                               // (property) string value of 4 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+          'salt'                                                          => "uUUTweUy",                                                           // (property) string value of 8 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+          'md5'                                                           => "bb1f7566d2bb05aad3745bb0163d4bcb",                                   // (property) string value of 32 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'sha1'                                                          => "d28b7f350943701961bcff4e3fb6396e2e905ee2",                           // (property) string value of 40 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'sha256'                                                        => "a44f6dcbd9d0cde411b386b8f5fa2f42e5d85a991136394b3274c26543c1739d",   // (property) string value of 64 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+        ],                                                                                                                                                                                              
+        'dob'                                                             =>(object)[                                                              // (property) object(stdClass)#13 (2), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+          'date'                                                          => "1996-10-11T11:42:23.867Z",                                           // (property) (24) string value time, scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+          'age'                                                           => 25,                                                                   // (property) (2) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+        ],                                                                                                                                                                                              
+        'registered'                                                      =>(object)[                                                              // (property) object(stdClass)#14 (2), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+          'date'                                                          => "2016-06-11T21:22:58.630Z",                                           // (property) (24) string value time, scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+          'age'                                                           => 5,                                                                    // (property) (1) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+        ],                                                                                                                                                                                              
+        'phone'                                                           => "01-2242-5144",                                                       // (property) string value of 12 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+        'cell'                                                            => "0450-675-742",                                                       // (property) string value of 12 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+        'id'                                                              =>(object)[                                                              // (property) object(stdClass)#15 (2), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+          'name'                                                          => "TFN",                                                                // (property) string value of 3 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+          'value'                                                         => "131347138",                                                          // (property) (9) integer value string, scope:       
+                                                                                                                                                   // instance, visibility: public.                     
+        ],                                                                                                                                                                                              
+        'picture'                                                         =>(object)[                                                              // (property) object(stdClass)#16 (3), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+          'large'                                                         => "https://randomuser.me/api/portraits/men/55.jpg",                     // (property) string value of 46 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'medium'                                                        => "https://randomuser.me/api/portraits/med/men/55.jpg",                 // (property) string value of 50 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+          'thumbnail'                                                     => "https://randomuser.me/api/portraits/thumb/men/55.jpg",               // (property) string value of 52 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+        ],                                                                                                                                                                                              
+        'nat'                                                             => "AU",                                                                 // (property) string value of 2 character, scope:    
+                                                                                                                                                   // instance, visibility: public.                     
+      ],                                                                                                                                                                                                
+    ],                                                                                                                                                                                                  
+    'info'                                                                =>(object)[                                                              // (property) object(stdClass)#18 (4), scope:        
+                                                                                                                                                   // instance, visibility: public.                     
+      'seed'                                                              => "30c02f860747107e",                                                   // (property) string value of 16 character, scope:   
+                                                                                                                                                   // instance, visibility: public.                     
+      'results'                                                           => 1,                                                                    // (property) (1) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+      'page'                                                              => 1,                                                                    // (property) (1) integer value, scope: instance,    
+                                                                                                                                                   // visibility: public.                               
+      'version'                                                           => "1.3",                                                                // (property) (3) float value string, scope:         
+                                                                                                                                                   // instance, visibility: public.                     
+    ],                                                                                                                                                                                                  
+  ],                                                                                                                                                                                                    
+  'special_characters'                                                    =[                                                                       // array node.                                       
+    'str_4_ch1'                                                           => "ABCW",                                                               // string value of 4 character.                      
+    'str_4_ch2'                                                           => "عباس",                                                               // string value of 4 character.                      
+    'str_4_ch3'                                                           => "正在下雨",                                                               // string value of 4 character.                      
+    'str_4_ch4'                                                           => "ождж",                                                               // string value of 4 character.                      
+    'str_4_ch5'                                                           => "雨が降降",                                                               // string value of 4 character.                      
+    'str_4_ch6'                                                           => "רגשם",                                                               // string value of 4 character.                      
+  ],                                                                                                                                                                                                    
+];                                                                                                                                                                                                      
+// [BOH] Basic Output Handler for PHP - Copyright 2020 - 2021                                                                                                                                           
+// Open Source Project Developed by Icaros Net. S.A                                                                                                                                                     
+</pre>

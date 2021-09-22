@@ -208,8 +208,9 @@ class CustomReflection
         $params_list      = $method->getParameters();
         $full_list_detail = [];
         foreach ($params_list as $param) {
+            //dump($param);
             $name               = $param->getName();
-            $type               = $param->getType()->getName();
+            $type               = ($param->getType() != null ? $param->getType()->getName() : 'Undefined');
             $full_list_detail[] = '(' . $type . ') ' . '$' . $name;
         }
         $return_type = $method->getReturnType();

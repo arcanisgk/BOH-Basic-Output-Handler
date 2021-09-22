@@ -50,7 +50,7 @@ class FooBar
 
     public function __construct()
     {
-        $file_name                = "file.txt";
+        $file_name                = "../test_data/file.txt";
         $this->file_read_property = fopen($file_name, "r");
         self::fooMethod3();
         $this->class_traits_property = new MyHelloWorld();

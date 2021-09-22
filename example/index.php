@@ -1,135 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BOH - Data Output Manager in PHP Development Environments</title>
+</head>
+<body>
+<div style="margin: 25px">
+    <h3 style="color:darkblue">BOH - Data Output Manager in PHP Development Environments - Test and Example Implementations</h3>
+    <pre>
+    * BOH - Data Output Manager in PHP Development Environments.
+    * PHP Version required 7.4.* or higher
+    *
+    * @see https://github.com/IcarosNetSA/BOH-Basic-Output-Handler
+    *
+    * @author    Walter Nuñez (arcanisgk/original founder)
+    * @email     icarosnet@gmail.com
+    * @copyright 2020 - 2021 Walter Nuñez.
+    * @license   http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+    * @note      This program is distributed in the hope that it will be useful
+    *            WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+    *            or FITNESS FOR A PARTICULAR PURPOSE.
+    *
+    * This example shows how the BOH class and its function/methods are declared.
+    </pre>
+    <div style="color:orangered;font-weight: bold; float: left; margin-right: 10px">Plain Text Test</div>
+    <a href="test/test_plain.php" target="_blank">Link</a> <a href="doc" target="_blank">Doc</a><br>
+    <span>
+        <b>Note:</b>
+        The output contains plain text that is returned from the method.<br>
+        This generates a basic plain text, implement it if you need to create a variable<br> usage record in scenario like "CRON" or wherever you require it.
+    </span><br><br>
+    <div style="color:orangered;font-weight: bold; float: left; margin-right: 10px">Partial Web Environment Test</div>
+    <a href="test/test_web_partial.php" target="_blank">Link</a> <a href="doc" target="_blank">Doc</a><br>
+    <span>
+        <b>Note:</b>
+        The output contains the partial HTML code (does not include headers).<br>
+        This generates a basic HTML if you have implemented CSS or CSS Framework,<br> it can affect the visibility of the exposed data.
+    </span><br><br>
+    <div style="color:orangered;font-weight: bold; float: left; margin-right: 10px">Full Web Environment Test</div>
+    <a href="test/test_web_full_1.php" target="_blank">Link</a> <a href="doc" target="_blank">Doc</a><br>
+    <span>
+        <b>Note:</b>
+        The output contains the full HTML code, includes headers but is NOT affected by any CSS framework.<br>
+        The default HTML code is embedded in an iframe and can be viewed directly.<br>
+        This version is recommended if you are implementing a website in which the navigation refreshes the browser window.
+    </span><br><br>
+    <div style="color:orangered;font-weight: bold; float: left; margin-right: 10px">Full Web Environment Test with Code Injection</div>
+    <a href="test/test_web_full_2.php" target="_blank">Link</a> <a href="doc" target="_blank">Doc</a><br>
+    <div style="color:orangered;font-weight: bold; float: left; margin-right: 10px">Full Web Environment Test with Code Injection (different CSS / Recommended)</div>
+    <a href="test/test_web_full_3.php" target="_blank">Link</a> <a href="doc" target="_blank">Doc</a><br>
+    <div style="color:orangered;font-weight: bold; float: left; margin-right: 10px">json Data Return Test</div>
+    <a href="test/test_json.php" target="_blank">Link</a> <a href="doc" target="_blank">Doc</a><br>
+</div>
+</body>
+
+</html>
+
+
 <?php
-
-/**
- * BOH - Data Output Manager in PHP Development Environments.
- * PHP Version 7.4.
- *
- * @see https://github.com/arcanisgk/BOH-Basic-Output-Handler
- *
- * @author    Walter Nuñez (arcanisgk/original founder) <icarosnet@gmail.com>
- * @copyright 2020 - 2021 Walter Nuñez.
- * @license   http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
- * @note      This program is distributed in the hope that it will be useful
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- */
-
-/**
- * This example shows how the BOH class and its methods are declared.
- */
-
-use IcarosNetSA\BOH\OutputHandler;
-
-const PATH          = __DIR__ . '\..\vendor\autoload.php';
-const TEST_VARIABLE = __DIR__ . '\test_variable.php';
-
-
-/**
- * Validate the existence of the Class File [BOH].
- */
-if (file_exists(PATH)) {
-    /**
-     * import the class [BOH] to be used as an example.
-     */
-    require_once PATH;
-} else {
-    echo 'This library "[BOH] Basic OutputHandler Handler for PHP" requires composer installation and autoload; run composer install command in your root.';
-    die;
-}
-
-/**
- * Validate the existence of the File test_variable.php.
- */
-if (!file_exists(TEST_VARIABLE)) {
-    echo '"[BOH] Basic OutputHandler Handler for PHP" need of test_variable.php file to perform test output.';
-    die;
-} else {
-
-    /**
-     * import the file test_variable.php to be used as an example.
-     */
-    require_once TEST_VARIABLE;
-
-    /**
-     * Instance Class [BOH] to be used as Example.
-     */
-    $output = new OutputHandler();
-
-    /**
-     * Options Enabled.
-     *
-     * + Determines which of the web environments should run in the view.
-     * - 'env': supported list
-     *      - 'plain' (default)
-     *      - 'web'
-     *      - 'json'
-     *
-     * + Preload all the html, javascript in a separate web module from the original, it has no effect in cli environment.
-     * - 'build': supported list
-     *      - 'default' (default)
-     *      - 'full'
-     *
-     * + Used only for the web and json environment, it determines which HTML template will be loaded based on the chosen css framework.
-     * - 'css': supported list
-     *      - 'default' (default)
-     *      - 'bs5'
-     *      - 'bs4'
-     *      - 'bulma'
-     *      - 'foundation'
-     *      - 'jquery-ui'
-     *      - 'semantic-ui'
-     *      - 'uikit'
-     *      - 'materialize'
-     *      - 'pure'
-     *      - 'tailwind'
-     *
-     * + Establishes the color palette that is used in the view / display of the information.
-     * - 'theme':
-     *      - 'default' (default)
-     *      - 'monokai'
-     *      - 'x-space'
-     *      - 'mauro-dark'
-     *      - 'natural-flow'
-     *      - 'vs-code'
-     *      - 'red-redemption'
-     *      - 'gray-scale'
-     *
-     * + set if we want to use indentation between name, values and comments.
-     * - 'indent'
-     *      - true (default)
-     *      - false
-     */
-
-    $output->setOptions(['indent' => true, 'return' => true]);
-
-    /**
-     * Use the variables in /example/test_variable.php to get a test view of each type of data that can be analyzed.
-     * @var $example_big_array
-     *
-     */
-
-    $result = '';
-    foreach ($example_big_array as $key => $value) {
-        $result .= '<h1>' . $key . '</h1>' . $output->chewed($value) . '<br><br>';
-    }
-
-
-    echo '<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-                <title>Example</title>
-                <style>
-                    body, span {
-                        font-family: monospace !important;
-                        font-size: 12px;
-                        line-height: 1.4;
-                    }
-                </style>
-            </head>
-            <body>
-                <div>' . $result . '</div>
-            </body>
-        </html>';
-}

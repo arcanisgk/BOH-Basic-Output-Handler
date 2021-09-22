@@ -139,6 +139,4 @@ class Analyzer
     {
         return in_array($type, ['array', 'object']) ? '=>' : '=';
     }
-
-
 }

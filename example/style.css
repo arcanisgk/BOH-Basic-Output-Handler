@@ -1,0 +1,13 @@
+.container {
+    height: 97vh;
+}
+
+.helper {
+    float: left;
+    width: 50%;
+    height: 100%;
+    min-height: 100%;
+    white-space: nowrap;
+    overflow: scroll;
+
+}

@@ -156,7 +156,7 @@ class DescriptionAnalyzer
     private function getStringFromDescriptionEmptyNode(array $indent, $data, int $in, $k, int $c): string
     {
         $node       = (isset($data['class']) ? '(object)' : '');
-        $ending     = $this->nodeEnding($data);
+        $ending     = $this->nodeEnding($data, $c);
         $line_array = [
             [
                 'char'  => '',
@@ -182,14 +182,15 @@ class DescriptionAnalyzer
      * Description: validates whether the current node must have an End of an
      * analysis character or is a recursive sub-node.
      * @param  $data
+     * @param  int  $c
      * @return string
      */
-    private function nodeEnding($data): string
+    private function nodeEnding($data, int $c): string
     {
-        if ((isset($data['value']) && !is_array($data['value']))
-            || (isset($data['type']) && $data['type'] == 'array' && !isset($data['value']))
-            || (isset($data['type']) && $data['type'] == 'object' && !isset($data['properties']) && !isset($data['constants']) && !isset($data['methods']))
-            || (isset($data['class']))
+        if (((isset($data['value']) && !is_array($data['value']))
+                || (isset($data['type']) && $data['type'] == 'array' && !isset($data['value']))
+                || (isset($data['type']) && $data['type'] == 'object' && !isset($data['properties']) && !isset($data['constants']) && !isset($data['methods']))
+                || (isset($data['class']))) && $c <= 0
         ) {
             return ';';
         } else {
@@ -243,7 +244,7 @@ class DescriptionAnalyzer
         foreach ($data as $key => $sub_value) {
             $buffer[] = $this->getStringFromDescription($indent, $sub_value, $in, $key, $c + 1);
         }
-        return implode(PHP_EOL, $buffer) . PHP_EOL;
+        return implode('', $buffer) . PHP_EOL;
     }
 
     /**
@@ -285,9 +286,17 @@ class DescriptionAnalyzer
      */
     private function getStringFromDescriptionNavigateObject(array $indent, $data, int $in, int $c): string
     {
-        return (!isset($data['properties']) ? '' : $this->getStringFromDescriptionNavigateObjectProperties($indent, $data['properties'], $in, $c + 1))
-            . (!isset($data['constants']) ? '' : $this->getStringFromDescriptionNavigateObjectConstants($indent, $data['constants'], $in, $c + 1))
-            . (!isset($data['methods']) ? '' : $this->getStringFromDescriptionNavigateObjectMethods($indent, $data['methods'], $in));
+        $buffer = [];
+        if (isset($data['properties'])) {
+            $buffer[] = $this->getStringFromDescriptionNavigateObjectProperties($indent, $data['properties'], $in, $c + 1);
+        }
+        if (isset($data['constants'])) {
+            $buffer[] = $this->getStringFromDescriptionNavigateObjectConstants($indent, $data['constants'], $in, $c + 1);
+        }
+        if (isset($data['methods'])) {
+            $buffer[] = $this->getStringFromDescriptionNavigateObjectMethods($indent, $data['methods'], $in);
+        }
+        return implode(PHP_EOL, $buffer);
     }
 
     /**
@@ -322,9 +331,9 @@ class DescriptionAnalyzer
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
-                        $this->populateLine($line_array),
-                        $indent
-                    ) . PHP_EOL;
+                    $this->populateLine($line_array),
+                    $indent
+                );
             } elseif ($property['type'] == 'array') {
                 $line_array = [
                     [
@@ -342,9 +351,9 @@ class DescriptionAnalyzer
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
-                        $this->populateLine($line_array),
-                        $indent
-                    ) . PHP_EOL;
+                    $this->populateLine($line_array),
+                    $indent
+                );
                 $buffer[]   = $this->getStringFromDescriptionNavigateArray($indent, $property['value'], $in + 2, $c + 1);
                 $buffer[]   = $end_Line_Property;
             } elseif ($property['type'] == 'object') {
@@ -364,12 +373,11 @@ class DescriptionAnalyzer
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
-                        $this->populateLine($line_array),
-                        $indent
-                    ) . PHP_EOL;
+                    $this->populateLine($line_array),
+                    $indent
+                );
                 $buffer[]   = $this->getStringFromDescriptionNavigateObject($indent, $property['value'], $in + 2, $c + 1);
                 $buffer[]   = $end_Line_Property;
-
             } else {
                 $line_array = [
                     [
@@ -387,14 +395,14 @@ class DescriptionAnalyzer
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
-                        $this->populateLine($line_array),
-                        $indent
-                    ) . PHP_EOL;
+                    $this->populateLine($line_array),
+                    $indent
+                );
                 $buffer[]   = $this->getStringFromDescriptionNavigateObject($indent, $property['value'], $in + 2, $c + 1);
                 $buffer[]   = $end_Line_Property;
             }
         }
-        return implode(PHP_EOL, $buffer);
+        return implode(PHP_EOL, $buffer) . PHP_EOL;
     }
 
     /**
@@ -408,24 +416,24 @@ class DescriptionAnalyzer
     private function getEndLineNode(int $in, int $c, array $indent): string
     {
         return $this->commons->lineValidation(
-                $this->populateLine(
+            $this->populateLine(
+                [
                     [
-                        [
-                            'char'  => '',
-                            'count' => $in,
-                        ],
-                        [
-                            'char'  => ']' . ($c <= 0 ? ';' : ','),
-                            'count' => $this->getInLineIndent($indent['value']),
-                        ],
-                        [
-                            'char'  => '',
-                            'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
-                        ],
-                    ]
-                ),
-                $indent
-            ) . PHP_EOL;
+                        'char'  => '',
+                        'count' => $in,
+                    ],
+                    [
+                        'char'  => ']' . ($c <= 0 ? ';' : ','),
+                        'count' => $this->getInLineIndent($indent['value']),
+                    ],
+                    [
+                        'char'  => '',
+                        'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
+                    ],
+                ]
+            ),
+            $indent
+        );
     }
 
     /**
@@ -460,9 +468,9 @@ class DescriptionAnalyzer
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
-                        $this->populateLine($line_array),
-                        $indent
-                    ) . PHP_EOL;
+                    $this->populateLine($line_array),
+                    $indent
+                );
             } elseif ($constant['type'] == 'array') {
                 $line_array = [
                     [
@@ -480,9 +488,9 @@ class DescriptionAnalyzer
                     ],
                 ];
                 $buffer[]   = $this->commons->lineValidation(
-                        $this->populateLine($line_array),
-                        $indent
-                    ) . PHP_EOL;
+                    $this->populateLine($line_array),
+                    $indent
+                );
                 $buffer[]   = $this->getStringFromDescriptionNavigateArray($indent, $constant['value'], $in + 2, $c + 1);
                 $buffer[]   = $end_Line_Property;
             }
@@ -513,16 +521,16 @@ class DescriptionAnalyzer
                     'char'  => $this->assignment . ' ' . $method['params'] . ',',
                     'count' => $this->getInLineIndent($indent['value']),
                 ], [
-                    'char'  => ' // class: ' . $method['class'] . ', modifiers: ' . $method['modifiers'] . ', return type: ' . $method['return'] . '.',
+                    'char'  => ' // Method of class: ' . $method['class'] . ', modifiers: ' . $method['modifiers'] . ', return type: ' . $method['return'] . '.',
                     'count' => $this->getInLineIndent($indent['total'] - $indent['comments']),
                 ],
             ];
             $buffer[]   = $this->commons->lineValidation(
-                    $this->populateLine($line_array),
-                    $indent
-                ) . PHP_EOL;
+                $this->populateLine($line_array),
+                $indent
+            );
         }
-        return implode(PHP_EOL, $buffer);
+        return implode(PHP_EOL, $buffer) . PHP_EOL;
     }
 
     /**
