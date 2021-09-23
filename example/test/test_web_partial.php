@@ -20,6 +20,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Partial Web Environment Test</title>
+    <link rel="stylesheet" href="../sources/bs5/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -30,7 +31,7 @@
             <b>Note:</b>
             The output contains the partial HTML code (does not include headers).<br>
             This generates a basic HTML if you have implemented CSS or CSS Framework,<br>
-            it can affect the visibility of the exposed data.<br>
+            it can affect the visibility of the exposed data.<br><br>
         </span>
         <?php
         $fileContent = file_get_contents('../test/' . basename(__FILE__));
@@ -105,9 +106,9 @@
              * @var $object_casted
              */
 
-            setOptionsChewData(['indent' => true, 'theme' => 'red', 'debug' => true]);
+            setOptionsChewData(['indent' => false, 'theme' => 'red', 'debug' => true]);
 
-            echo chewData($class_trait_instance);
+            echo chewData($object_casted);
 
             /**
              * Option Used, See Documentation for a deep explanation.

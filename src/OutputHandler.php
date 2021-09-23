@@ -368,7 +368,6 @@ class OutputHandler
     }
 }
 
-
 function dump(...$args)
 {
     foreach ($args as $arg) {
@@ -377,4 +376,3 @@ function dump(...$args)
         echo '</pre>';
     }
 }
-

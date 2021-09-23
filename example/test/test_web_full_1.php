@@ -20,6 +20,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Full Web Environment Test</title>
+    <link rel="stylesheet" href="../sources/bs5/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -33,7 +34,7 @@
             This version is recommended if you are implementing a website that<br>
             navigation refreshes the browser window.<br>
             To demonstrate that the use of the CSS Framework has no effect on the<br>
-            data output in this example, the BS5 CSS Framework is implemented.<br>
+            data output in this example, the BS5 CSS Framework is implemented.<br><br>
         </span>
         <?php
         $fileContent = file_get_contents('../test/' . basename(__FILE__));
@@ -108,9 +109,9 @@
              * @var $object_casted
              */
 
-            setOptionsChewData(['indent' => true, 'theme' => 'red', 'css' => 'bulma', 'debug' => true]);
+            setOptionsChewData(['indent' => false, 'theme' => 'red', 'css' => 'bulma', 'debug' => true]);
 
-            echo chewData($example_big_array);
+            echo chewData($object_casted);
 
             /**
              * Option Used, See Documentation for a deep explanation.

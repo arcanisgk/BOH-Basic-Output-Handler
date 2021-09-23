@@ -21,6 +21,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Test of Plain Output</title>
+    <link rel="stylesheet" href="../sources/bs5/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -28,10 +29,11 @@
     <div class="helper">
         <h3>Test of Plain Output.</h3>
         <span>
-        <b>Note:</b>
-        The output contains plain text that is returned from the method.<br>
-        This generates a basic plain text, implement it if you need to create a variable usage record<br> in scenario like "CRON" or wherever you require it.
-    </span>
+            <b>Note:</b>
+            The output contains plain text that is returned from the method.<br>
+            This generates a basic plain text, implement it if you need to create<br>
+            a variable usage record in scenario like "CRON" or wherever you require it.<br><br>
+        </span>
         <?php
 
         /*====================================================================*/

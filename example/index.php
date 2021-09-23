@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>BOH - Data Output Manager in PHP Development Environments</title>
+    <link rel="stylesheet" href="../sources/bs5/bootstrap.min.css">
 </head>
 <body>
 <div style="margin: 25px">
